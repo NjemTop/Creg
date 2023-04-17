@@ -7,3 +7,6 @@ class Client(models.Model):
 
     def __str__(self):
         return self.client_name
+
+class Favicon(models.Model):
+    file = models.FileField(upload_to='favicons/')
