@@ -9,4 +9,4 @@ class Client(models.Model):
         return self.client_name
 
 class Favicon(models.Model):
-    file = models.FileField(upload_to='favicons/')
+    file = models.FileField(upload_to='myapp/static/img')
