@@ -10,11 +10,11 @@ from .renderers import CustomJSONRenderer
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+@renderer_classes([CustomJSONRenderer])
 def get_clients(request):
     clients = Client.objects.all()
     serializer = ClientSerializer(clients, many=True)
     return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False, 'indent': 4})
-
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
