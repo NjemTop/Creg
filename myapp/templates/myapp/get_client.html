@@ -1,0 +1,9 @@
+{% extends "myapp/base.html" %}
+
+{% block content %}
+    <h2>Информация о клиенте</h2>
+    <p>ID: {{ client.id }}</p>
+    <p>Имя: {{ client.client_name }}</p>
+    <p>Статус контакта: {{ client.contact_status }}</p>
+    <p>Заметки: {{ client.notes }}</p>
+{% endblock %}
