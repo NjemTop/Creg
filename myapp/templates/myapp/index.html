@@ -1,0 +1,47 @@
+{% extends "myapp/base.html" %}
+
+{% block content %}
+    <div class="content-container">
+        <h1>Добро пожаловать!</h1>
+        <div class="buttons">
+            <a class="button" href="/get_clients/">Посмотреть список всех контактов</a>
+        </div>
+        <div class="admin-button">
+            <a class="button" href="/admin/">Панель администрирования</a>
+        </div>
+        <button id="search-button" class="button" onclick="toggleSearch()">Выбрать клиента</button>
+        <div id="search-container" style="display:none;">
+            <label for="client-search">Выбрать клиента:</label>
+            <input type="text" id="client-search">
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        $(document).ready(function() {
+            $("#client-search").autocomplete({
+                source: function(request, response) {
+                    $.getJSON("{% url 'search_clients' %}", {
+                        query: request.term
+                    }, function(data) {
+                        response($.map(data, function(item) {
+                            return {
+                                label: item.client_name,
+                                value: item.id
+                            };
+                        }));
+                    });
+                },
+                minLength: 2,
+                select: function(event, ui) {
+                    window.location.href = "{% url 'get_client' 0 %}".replace('0', ui.item.value);
+                }
+            });
+        });
+
+        function toggleSearch() {
+            $("#search-container").toggle();
+        }
+    </script>
+{% endblock %}

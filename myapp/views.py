@@ -12,11 +12,16 @@ from .renderers import CustomJSONRenderer
 
 def index(request):
     clients = Client.objects.all()
-    return render(request, 'index.html', {'clients': clients})
+    return render(request, 'myapp/index.html', {'clients': clients})
 
 def get_client(request, client_id):
     client = get_object_or_404(Client, id=client_id)
     return render(request, 'myapp/get_client.html', {'client': client})
+
+def search_clients(request):
+    query = request.GET.get('query')
+    clients = Client.objects.filter(client_name__icontains=query).values('client_name', 'id')
+    return JsonResponse(list(clients), safe=False)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
