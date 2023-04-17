@@ -1,7 +1,7 @@
 from django.db import models
 
 class Client(models.Model):
-    client_name = models.CharField(max_length=100)
+    client_name = models.CharField(max_length=200)
     contact_status = models.BooleanField(default=True)
     notes = models.TextField(null=True, blank=True)
 
