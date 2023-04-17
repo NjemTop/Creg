@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes, renderer_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import JSONParser
@@ -7,6 +8,9 @@ from rest_framework.response import Response
 from .models import Client
 from .serializers import ClientSerializer
 from .renderers import CustomJSONRenderer
+
+def index(request):
+    return render(request, 'index.html')
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

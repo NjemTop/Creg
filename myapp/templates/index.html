@@ -1,0 +1,28 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>Добро пожаловать!</h1>
+    <div class="buttons">
+        <a class="button" href="/get_clients/">Посмотреть список всех контактов</a>
+    </div>
+    <div class="admin-button">
+        <a class="button" href="/admin/">Панель администрирования</a>
+    </div>
+    <div class="dropdown">
+        <button class="dropbtn">Выбрать клиента</button>
+        <div class="dropdown-content">
+            {% for client in clients %}
+                <a href="/get_client/{{client.id}}">{{client.client_name}}</a>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
