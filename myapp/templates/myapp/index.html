@@ -9,10 +9,12 @@
         <div class="admin-button">
             <a class="button" href="/admin/">Панель администрирования</a>
         </div>
-        <button id="search-button" class="button" onclick="toggleSearch()">Выбрать клиента</button>
-        <div id="search-container" style="display:none;">
-            <label for="client-search">Выбрать клиента:</label>
-            <input type="text" id="client-search">
+        <div class="dropdown">
+            <button class="button">Выбрать клиента</button>
+            <div class="dropdown-content" id="search-container">
+                <label for="client-search">Выбрать клиента:</label>
+                <input type="text" id="client-search">
+            </div>
         </div>
     </div>
 {% endblock %}
@@ -40,8 +42,15 @@
             });
         });
 
-        function toggleSearch() {
+        $(".dropdown button").click(function(event) {
+            event.stopPropagation();
             $("#search-container").toggle();
-        }
+        });
+
+        $(document).click(function(event) {
+            if (!$(event.target).closest(".dropdown").length) {
+                $("#search-container").hide();
+            }
+        });
     </script>
 {% endblock %}
