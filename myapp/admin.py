@@ -5,4 +5,4 @@ admin.site.register(Client)
 
 @admin.register(Favicon)
 class FaviconAdmin(admin.ModelAdmin):
-    pass
+    fields = ['file']

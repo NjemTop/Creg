@@ -10,3 +10,6 @@ class Client(models.Model):
 
 class Favicon(models.Model):
     file = models.FileField(upload_to='myapp/static/img')
+
+    def __str__(self):
+        return self.file.name
