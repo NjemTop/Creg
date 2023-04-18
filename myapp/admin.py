@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Client, Favicon
+from .models import BMInfoOnClient, Favicon
 
-admin.site.register(Client)
+admin.site.register(BMInfoOnClient)
 
 @admin.register(Favicon)
 class FaviconAdmin(admin.ModelAdmin):

@@ -3,17 +3,21 @@ from rest_framework.decorators import api_view, permission_classes, renderer_cla
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
-from .models import Client
 from .serializers import ClientSerializer
 from .renderers import CustomJSONRenderer
+from .models import BMInfoOnClient
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-@renderer_classes([CustomJSONRenderer])
 def api_get_clients(request):
-    clients = Client.objects.all()
+    # Получаем все записи из таблицы BMInfoOnClient
+    clients = BMInfoOnClient.objects.all()
+
+    # Сериализуем записи в JSON
     serializer = ClientSerializer(clients, many=True)
-    return JsonResponse(serializer.data, safe=False, json_dumps_params={'ensure_ascii': False, 'indent': 4})
+
+    # Возвращаем сериализованные данные и статус 200
+    return Response(serializer.data, status=200)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -22,6 +26,6 @@ def api_add_client(request):
     data = JSONParser().parse(request)
     serializer = ClientSerializer(data=data)
     if serializer.is_valid():
-        serializer.save()
+        new_client = serializer.save()
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
