@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import BMInfoOnClient, ClientsCard
+from .models import BMInfoOnClient, ClientsCard, ContactsCard
 from .forms import AddClientForm, ContactsCardForm
 
 def index(request):
@@ -13,7 +13,11 @@ def get_clients(request):
 
 def get_client(request, client_id):
     client = get_object_or_404(BMInfoOnClient, id=client_id)
-    return render(request, 'myapp/get_client.html', {'client': client})
+    try:
+        contacts = client.clients_card.contacts_cards.all()
+    except BMInfoOnClient.clients_card.RelatedObjectDoesNotExist:
+        contacts = []
+    return render(request, 'myapp/get_client.html', {'client': client, 'contacts': contacts})
 
 def search_clients(request):
     query = request.GET.get('query')
