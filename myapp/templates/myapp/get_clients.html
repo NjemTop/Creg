@@ -47,10 +47,10 @@
                                         <input type="checkbox" id="client_{{ client.id }}" {% if client.contact_status %}checked{% endif %} onclick="toggleCheckbox(this)" {% if not user.is_staff %}disabled{% endif %}>
                                     </td>
                                     <td><a href="#"><img src="/media/favicons/icon_card.png" alt="Карточка клиента" /></a></td>
-                                    <td><a href="#"><img src="/path/to/icon_service.png" alt="Обслуживание" /></a></td>
-                                    <td><a href="#"><img src="/path/to/icon_tech_info.png" alt="Тех. Информация" /></a></td>
-                                    <td><a href="#"><img src="/path/to/icon_integrations.png" alt="Интеграции" /></a></td>
-                                    <td><a href="#"><img src="/path/to/icon_documents.png" alt="Документы" /></a></td>
+                                    <td><a href="#"><img src="/media/favicons/icon_service.png" alt="Обслуживание" /></a></td>
+                                    <td><a href="#"><img src="/media/favicons/icon_tech_info.png" alt="Тех. Информация" /></a></td>
+                                    <td><a href="#"><img src="/media/favicons/icon_integrations.png" alt="Интеграции" /></a></td>
+                                    <td><a href="#"><img src="/media/favicons/icon_documents.png" alt="Документы" /></a></td>
                                     <td>{{ client.notes }}</td>
                                     <td>
                                         <a href="#" class="btn btn-warning btn-sm">Изменить</a>
