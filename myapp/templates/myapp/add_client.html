@@ -1,0 +1,49 @@
+{% extends "myapp/base.html" %}
+
+{% block content %}
+<div class="content-container">
+    <h1>Добавить нового клиента</h1>
+        <div class="form-container">
+            <form method="post" action="{% url 'add_client' %}" id="add-client-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="client-name-input">Имя клиента</label>
+                    <input type="text" class="form-control" id="client-name-input" name="client_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="client-notes-input">Заметки</label>
+                    <textarea class="form-control" id="client-notes-input" name="notes"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Применить</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        $(document).ready(function() {
+            $("#add-client-form").submit(function(event) {
+                // Отменяем стандартное поведение формы
+                event.preventDefault();
+                
+                // Получаем данные формы
+                var formData = $(this).serialize();
+
+                // Отправляем данные на сервер с помощью AJAX-запроса
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        window.location.href = "{% url 'get_client' 0 %}".replace('0', response.id);
+                    },
+                    error: function(xhr, status, error) {
+                        // Выводим сообщение об ошибке
+                        alert("Ошибка при добавлении клиента: " + xhr.responseJSON.detail);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
