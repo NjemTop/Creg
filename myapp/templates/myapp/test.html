@@ -1,0 +1,60 @@
+{% extends "myapp/base.html" %}
+
+{% block content %}
+<!-- ... -->
+<div class="form-container">
+    <form method="post" action="{% url 'add_client_web' %}" id="add-client-form">
+        {% csrf_token %}
+        <!-- ... -->
+        <div class="form-group" id="contacts-container">
+            <h3>Контакты</h3>
+            <div id="contact-template" style="display:none;">
+                <hr>
+                <div class="form-group">
+                    <label for="">Имя контакта</label>
+                    <input type="text" class="form-control contact-name-input" name="contact_name[]" >
+                </div>
+                <div class="form-group">
+                    <label for="">Должность контакта</label>
+                    <select class="form-control" name="contact_position[]">
+                        <option value="Руководитель">Руководитель</option>
+                        <option value="Администратор">Администратор</option>
+                        <option value="Секретарь">Секретарь</option>
+                        <option value="Сотрудник">Сотрудник</option>
+                        <option value="Сотрудник ИБ">Сотрудник ИБ</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="">Телефон контакта</label>
+                    <input type="text" class="form-control" name="contact_phone[]">
+                </div>
+                <div class="form-group">
+                    <label for="">Электронная почта контакта</label>
+                    <input type="email" class="form-control" name="contact_email[]">
+                </div>
+                <div class="form-group">
+                    <label for="">Рассылка обновлений</label>
+                    <select class="form-control" name="notification_update[]">
+                        <option value="Основной контакт">Основной контакт</option>
+                        <option value="Копия рассылки">Копия рассылки</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary" id="add-contact-button">Добавить контакт</button>
+        <!-- ... -->
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ...
+    $("#add-contact-button").click(function () {
+        var newContact = $("#contact-template").clone().removeAttr("id");
+        newContact.css("display", "");
+        $("#contacts-container").append(newContact);
+    });
+    // ...
+</script>
+{% endblock %}
