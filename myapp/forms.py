@@ -1,6 +1,5 @@
 from django import forms
-from .models import BMInfoOnClient
-from .models import ContactsCard
+from .models import BMInfoOnClient, ContactsCard
 
 class AddClientForm(forms.ModelForm):
     class Meta:

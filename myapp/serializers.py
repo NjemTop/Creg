@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from .models import BMInfoOnClient, ClientsCard
 
-class ClientsCardSerializer(serializers.ModelSerializer):
+class ContactsCardSerializer(serializers.ModelSerializer):  # Измените название класса на ContactsCardSerializer
     class Meta:
         model = ClientsCard
         fields = '__all__'
 
 class ClientSerializer(serializers.ModelSerializer):
-    clients_card = ClientsCardSerializer(required=False)
+    clients_card = ContactsCardSerializer(required=False)
 
     class Meta:
         model = BMInfoOnClient
@@ -26,7 +26,7 @@ class ClientSerializer(serializers.ModelSerializer):
             clients_card = ClientsCard.objects.create(client_info=bm_info_on_client)
         else:
             clients_card_data['client_info'] = bm_info_on_client
-            clients_card = ClientsCardSerializer.create(ClientsCardSerializer(), validated_data=clients_card_data)
+            clients_card = ContactsCardSerializer.create(ContactsCardSerializer(), validated_data=clients_card_data)  # Измените ClientsCardSerializer на ContactsCardSerializer
             
         bm_info_on_client.clients_card = clients_card
         bm_info_on_client.save()

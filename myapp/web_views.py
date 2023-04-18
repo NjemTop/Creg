@@ -44,7 +44,7 @@ def add_contact(request, client_card_id):
             new_contact = form.save(commit=False)
             new_contact.client_card = client_card
             new_contact.save()
-            return redirect('get_client', client_card.client_info.id) # или другой URL, куда вы хотите вернуться после добавления контакта
+            return redirect('get_client', client_card.client_info.id)
     else:
         form = ContactsCardForm()
 
