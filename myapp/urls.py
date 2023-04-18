@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/add_client/', api_views.api_add_client, name='api_add_client'),
     path('add_client/', web_views.add_client, name='add_client'),
     path('add_client_web/', api_views.add_client_web, name='add_client_web'),
+    path('add_contact/<int:client_card_id>/', web_views.add_contact, name='add_contact'),
 ]
 
 if settings.DEBUG:

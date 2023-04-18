@@ -42,3 +42,18 @@ class ClientsCard(models.Model):
 
     def __str__(self):
         return f"Client {self.client_info.id}"
+
+class ContactsCard(models.Model):
+    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='contacts_cards', verbose_name="Client Card")
+    contact_name = models.CharField(verbose_name="contact_name", max_length=255)
+    contact_position = models.CharField(verbose_name="contact_position", max_length=255, null=True, blank=True)
+    contact_email = models.EmailField(verbose_name="contact_email", max_length=255)
+    notification_update = models.CharField(verbose_name="notification_update", max_length=255, null=True, blank=True)
+    contact_notes = models.TextField(verbose_name="contact_notes", null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Contacts Cards"
+        db_table = 'contacts_card'
+
+    def __str__(self):
+        return f"{self.contact_name} ({self.client_card.client_info.client_name})"
