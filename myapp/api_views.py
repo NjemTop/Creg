@@ -37,5 +37,5 @@ def add_client_web(request):
     serializer = ClientSerializer(data=request.POST)
     if serializer.is_valid():
         new_client = serializer.save()
-        return Response({'id': new_client.id})
+        return Response({'id': new_client.id}, status=201)
     return Response(serializer.errors, status=400)
