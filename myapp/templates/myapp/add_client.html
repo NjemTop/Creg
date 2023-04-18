@@ -4,7 +4,7 @@
 <div class="content-container">
     <h1>Добавить нового клиента</h1>
         <div class="form-container">
-            <form method="post" action="{% url 'add_client' %}" id="add-client-form">
+            <form method="post" action="{% url 'add_client_web' %}" id="add-client-form">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="client-name-input">Имя клиента</label>
@@ -41,7 +41,7 @@
                     },
                     error: function(xhr, status, error) {
                         // Выводим сообщение об ошибке
-                        alert("Ошибка при добавлении клиента: " + xhr.responseJSON.detail);
+                        alert("Ошибка при добавлении клиента: " + xhr.responseText);
                     }
                 });
             });

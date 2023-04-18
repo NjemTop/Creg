@@ -12,7 +12,7 @@ urlpatterns = [
     path('api/get_clients/', api_views.api_get_clients, name='api_get_clients'),
     path('api/add_client/', api_views.api_add_client, name='api_add_client'),
     path('add_client/', web_views.add_client, name='add_client'),
-    path('add_client_web/', api_views.add_client_web, name='add_client_web')
+    path('add_client_web/', api_views.add_client_web, name='add_client_web'),
 ]
 
 if settings.DEBUG:
