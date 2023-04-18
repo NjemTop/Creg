@@ -1,12 +1,15 @@
+/* Стили для элемента body */
 body {
     display: block;
     margin: 0;
 }
 
+/* Стили для контейнера с основным содержимым */
 .content-container {
     text-align: center;
 }
 
+/* Общие стили для группы кнопок */
 .buttons {
     margin-top: 2rem;
     display: flex;
@@ -14,22 +17,26 @@ body {
     align-items: center;
 }
 
+/* Стиль для кнопки администратора (позиция в верхнем правом углу) */
 .admin-button {
     position: absolute;
     top: 10px;
     right: 10px;
 }
 
+/* Отступ между кнопками */
 .button {
     margin-bottom: 1rem;
 }
 
+/* Позиция и отображение выпадающего меню */
 .dropdown {
     position: relative;
     display: inline-block;
     margin-top: 2rem;
 }
 
+/* Стили для контента выпадающего меню */
 .dropdown-content {
     display: none;
     position: absolute;
@@ -40,6 +47,7 @@ body {
     z-index: 1;
 }
 
+/* Стили для ссылок внутри выпадающего меню */
 .dropdown-content a {
     color: black;
     padding: 12px 16px;
@@ -47,36 +55,26 @@ body {
     display: block;
 }
 
+/* Стили для ссылок внутри выпадающего меню при наведении курсора */
 .dropdown a:hover {
     background-color: #f1f1f1;
 }
 
+/* Отображение выпадающего меню при активации */
 .show {
     display: block;
 }
 
+/* Стили для таблицы (растягивание на всю ширину и фиксированный макет таблицы) */
 .table {
     width: 100%;
     table-layout: fixed;
 }
 
+/* Стили для контейнера (растягивание на всю ширину и отступы по краям) */
 .container {
     width: 100%;
     max-width: 100%;
     padding-left: 15px;
     padding-right: 15px;
-}
-
-@media (max-width: 991.98px) {
-    .container {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-}
-
-@media (max-width: 767.98px) {
-    .container {
-        padding-left: 5px;
-        padding-right: 5px;
-    }
 }
