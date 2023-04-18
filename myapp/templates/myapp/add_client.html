@@ -3,27 +3,50 @@
 {% block content %}
 <div class="content-container">
     <h1>Добавить нового клиента</h1>
-        <div class="form-container">
-            <form method="post" action="{% url 'add_client_web' %}" id="add-client-form">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="client-name-input">Имя клиента</label>
-                    <input type="text" class="form-control" id="client-name-input" name="client_name" required>
-                </div>
-                <div class="form-group">
-                    <label for="client-notes-input">Заметки</label>
-                    <textarea class="form-control" id="client-notes-input" name="notes"></textarea>
-                </div>
+    <div class="form-container">
+        <form method="post" action="{% url 'add_client_web' %}" id="add-client-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="client-name-input">Имя клиента <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="client-name-input" name="client_name" required>
+            </div>
+            <div class="form-group">
+                <label for="client-notes-input">Заметки</label>
+                <textarea class="form-control" id="client-notes-input" name="notes"></textarea>
+            </div>
+            <div>
+                <button type="button" class="btn btn-secondary mr-2" id="back-button">Назад</button>
                 <button type="submit" class="btn btn-primary">Применить</button>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
+        // Функция для проверки заполнения обязательных полей
+        function checkRequiredFields() {
+            var clientNameInput = $("#client-name-input");
+            if (clientNameInput.val().trim() !== "") {
+                $("button[type='submit']").prop("disabled", false);
+            } else {
+                $("button[type='submit']").prop("disabled", true);
+            }
+        }
+
+        $(document).ready(function () {
+            // Проверяем заполнение обязательных полей при загрузке страницы
+            checkRequiredFields();
+
+            // Проверяем заполнение обязательных полей при вводе текста
+            $("#client-name-input").on("input", function () {
+                checkRequiredFields();
+            });
+            $("#back-button").click(function () {
+                window.location.href = "{% url 'index' %}";
+            });
             $("#add-client-form").submit(function(event) {
                 // Отменяем стандартное поведение формы
                 event.preventDefault();

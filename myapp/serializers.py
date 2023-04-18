@@ -15,6 +15,8 @@ class ClientSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         clients_card_data = validated_data.pop('clients_card', None)
+
+        validated_data['contact_status'] = True  # Установите значение по умолчанию для contact_status
         
         # Создайте объект BMInfoOnClient сначала, чтобы получить его ID
         bm_info_on_client = BMInfoOnClient.objects.create(**validated_data)
