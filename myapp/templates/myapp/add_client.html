@@ -13,8 +13,11 @@
                     <a class="nav-link" href="{% url 'index' %}">Главная</a>
                 </li>
             </ul>
+            <div class="ml-auto">
+                <img src="/media/favicons/banner.png" alt="Banner" class="navbar-banner">
+            </div>
         </div>
-    </nav>
+    </nav>    
     <h1>Добавить нового клиента</h1>
     <div class="form-container">
         <form method="post" action="{% url 'add_client_web' %}" id="add-client-form">
