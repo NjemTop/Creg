@@ -1,0 +1,117 @@
+/* Стили для элемента body */
+body {
+    display: block;
+    margin: 0;
+}
+
+/* Стили для контейнера с основным содержимым */
+.content-container {
+    text-align: center;
+}
+
+/* Общие стили для группы кнопок */
+.buttons {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Стиль для кнопки администратора (позиция в верхнем правом углу) */
+.admin-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Отступ между кнопками */
+.button {
+    margin-bottom: 1rem;
+}
+
+/* Позиция и отображение выпадающего меню */
+.dropdown {
+    position: relative;
+    display: inline-block;
+    margin-top: 2rem;
+}
+
+/* Стили для контента выпадающего меню */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Стили для ссылок внутри выпадающего меню */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Стили для ссылок внутри выпадающего меню при наведении курсора */
+.dropdown a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Отображение выпадающего меню при активации */
+.show {
+    display: block;
+}
+
+/* Стили для таблицы (растягивание на всю ширину и фиксированный макет таблицы) */
+.table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+/* Стили для контейнера (растягивание на всю ширину и отступы по краям) */
+.container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Стили для формы */
+.form-container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Стили для поля с меткой */
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* Стили для текстового поля */
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+/* Стили для кнопки "Применить" */
+.btn-primary {
+    margin-top: 1rem;
+}
+
+.navbar-banner {
+    max-height: 50px; /* Установите максимальную высоту изображения баннера */
+    max-width: 200px; /* Установите максимальную ширину изображения баннера */
+}

@@ -1,0 +1,14 @@
+{% extends 'main/base.html' %}
+
+{% block tite %}
+    Создать клиента
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.client_name }}<br>
+        <button type="submit" class="btn btn-success">Добавить</button>
+        <span>{{ error }}</span>
+    </form>
+{% endblock %}

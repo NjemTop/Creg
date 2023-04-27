@@ -1,0 +1,35 @@
+{% extends "main/base.html" %}
+
+{% block tittle %}
+{{title}}
+{% endblock %}
+
+{% block content %}
+    <h2>Информация о клиенте</h2>
+    <p>Имя: {{ client.client_name }}</p>
+    <p>Статус контакта: {{ client.contact_status }}</p>
+    <p>Заметки: {{ client.notes }}</p>
+    <h3>Контакты</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Имя</th>
+                <th scope="col">Должность</th>
+                <th scope="col">Телефон</th>
+                <th scope="col">Email</th>
+                <th scope="col">Рассылка обновлений</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contact in contacts %}
+                <tr>
+                    <td>{{ contact.contact_name }}</td>
+                    <td>{{ contact.contact_position }}</td>
+                    <td>{{ contact.contact_phone }}</td>
+                    <td>{{ contact.contact_email }}</td>
+                    <td>{{ contact.notification_update }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
