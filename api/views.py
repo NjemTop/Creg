@@ -1,11 +1,10 @@
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from .serializers import ClientsListSerializer, ContactsSerializer, СonnectInfoCardSerializer
-from main.models import ClientsList, ContactsCard, СonnectInfoCard, ClientsCard
+from main.models import ClientsList, ClientsCard, ContactsCard, СonnectInfoCard
 from rest_framework import status
 from rest_framework import filters
 from rest_framework import generics
-
 
 class ClientIdFilter(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
@@ -13,7 +12,6 @@ class ClientIdFilter(filters.BaseFilterBackend):
         if client_id is not None:
             queryset = queryset.filter(client_id__client_info__id=client_id)
         return queryset
-
 
 class ClientsViewSet(viewsets.ModelViewSet):
     """
@@ -33,7 +31,6 @@ class ClientsViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 class ContactsViewSet(viewsets.ModelViewSet):
     """
@@ -68,7 +65,6 @@ class ContactsViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)  # Сериализация всех данных
         return Response(serializer.data)  # Возвращение всех сериализованных данных
-
 
 class ConnectInfoViewSet(viewsets.ModelViewSet):
     queryset = СonnectInfoCard.objects.all()
@@ -147,17 +143,6 @@ class ConnectInfoViewSet(viewsets.ModelViewSet):
         else:
             return Response({"error": "ConnectInfo ID not provided"}, status=status.HTTP_400_BAD_REQUEST)
 
-    def partial_update(self, request, *args, **kwargs):
-        try:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Http404:
-            return Response({"error": "ConnectInfo not found"}, status=status.HTTP_404_NOT_FOUND)
-
     def destroy(self, request, *args, **kwargs):
         # Получение ID записи из URL
         connect_info_id = kwargs.get('pk', None)
@@ -176,3 +161,4 @@ class ConnectInfoViewSet(viewsets.ModelViewSet):
                 return Response({"error": "ConnectInfo not found"}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response({"error": "ConnectInfo ID not provided"}, status=status.HTTP_400_BAD_REQUEST)
+        

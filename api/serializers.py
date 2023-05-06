@@ -3,18 +3,19 @@ from main.models import ClientsList, ClientsCard, ContactsCard, СonnectInfoCard
 from rest_framework.exceptions import ValidationError
 from django.db import transaction
 
-
 class ClientsCardSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели ClientsCard. 
+    Здесь определены поля, которые будут сериализованы для этой модели.
+    """
     class Meta:
         model = ClientsCard
         fields = ('contacts', 'tech_notes', 'connect_info', 'rdp', 'tech_account', 'bm_servers')
-
 
 class ContactsCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactsCard
         fields = ('contact_name', 'contact_position', 'contact_email', 'notification_update', 'contact_notes')
-
 
 class СonnectInfoCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
@@ -22,8 +23,13 @@ class СonnectInfoCardSerializer(serializers.ModelSerializer):
         model = СonnectInfoCard
         fields = ('id', 'client_id', 'contact_info_name', 'contact_info_account', 'contact_info_password')
 
-
 class ClientsListSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели ClientsList.
+    Здесь определены дополнительные сериализаторы ClientsCardSerializer, ContactsCardSerializer
+    и СonnectInfoCardSerializer для связанных полей. 
+    В методе create реализована логика создания клиента и связанных с ним объектов.
+    """
     clients_card = ClientsCardSerializer(read_only=True)
     contacts_card = ContactsCardSerializer(many=True, source='clients_card.contact_cards')
     connect_info_card = СonnectInfoCardSerializer(many=True, source='clients_card.connect_info_card')
@@ -74,7 +80,6 @@ class ClientsListSerializer(serializers.ModelSerializer):
 
         # Возвращаем созданный экземпляр ClientsList
         return clients_list
-
 
 class ContactsSerializer(serializers.ModelSerializer):
     class Meta:
