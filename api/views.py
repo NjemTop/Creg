@@ -1,18 +1,54 @@
-from rest_framework import viewsets
+from rest_framework import generics, mixins, viewsets, status
+from rest_framework.response import Response
 from main.models import ClientsList, ClientsCard, ContactsCard, СonnectInfoCard
-from .serializers import ClientSerializer, ContactsSerializer, СonnectInfoCardSerializer
+from .serializers import ClientSerializer, ContactsSerializer, СonnectInfoCardSerializer, ClientContactsSerializer
 
 class ClientViewSet(viewsets.ModelViewSet):
     queryset = ClientsList.objects.all()
     serializer_class = ClientSerializer
 
 class ContactsViewSet(viewsets.ModelViewSet):
-    queryset = ContactsCard.objects.all()
+    queryset = ClientsList.objects.all()
+    serializer_class = ClientContactsSerializer
+
+class ContactsByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
     serializer_class = ContactsSerializer
+
+    def get_queryset(self):
+        client_id = self.kwargs['client_id']
+        return ContactsCard.objects.filter(client_card__client_info__id=client_id)
+
+    def post(self, request, *args, **kwargs):
+        request.data["client_card"] = self.kwargs['client_id']
+        return self.create(request, *args, **kwargs)
 
 class ConnectInfoViewSet(viewsets.ModelViewSet):
     queryset = СonnectInfoCard.objects.all()
     serializer_class = СonnectInfoCardSerializer
+
+class ContactDetailsView(mixins.UpdateModelMixin,
+                         mixins.DestroyModelMixin,
+                         generics.GenericAPIView):
+    queryset = ContactsCard.objects.all()
+    serializer_class = ContactsSerializer
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        contact_name = instance.contact_name
+        client_name = instance.client.name
+        self.perform_destroy(instance)
+        return Response(
+            {"detail": f"Контакт {contact_name} клиента {client_name} с ID {instance.id} удалён"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
+
 
 
 

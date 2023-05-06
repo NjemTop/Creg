@@ -54,6 +54,12 @@ class ContactsSerializer(serializers.ModelSerializer):
         model = ContactsCard
         fields = '__all__'
 
+class ClientContactsSerializer(serializers.ModelSerializer):
+    contacts_card = ContactsSerializer(many=True, read_only=True, source='clients_card.contact_cards')
+
+    class Meta:
+        model = ClientsList
+        fields = ('id', 'client_name', 'contacts_card')
 
 
 

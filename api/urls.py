@@ -9,6 +9,8 @@ router.register(r'connect_info', views.ConnectInfoViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('contacts/client/<int:client_id>', views.ContactsByClientIdView.as_view(), name='contacts_by_client'),
+    path('contacts/detail/<int:pk>', views.ContactDetailsView.as_view(), name='contact_details'),
 ]
 
 app_name = 'rest_api'
