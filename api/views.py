@@ -29,8 +29,8 @@ class ConnectInfoViewSet(viewsets.ModelViewSet):
 class ContactDetailsView(mixins.UpdateModelMixin,
                          mixins.DestroyModelMixin,
                          generics.GenericAPIView):
-    queryset = ContactsCard.objects.all()
-    serializer_class = ContactsSerializer
+    queryset = ContactsCard.objects.select_related('client_card__client_info')
+    serializer_class = ClientContactsSerializer
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
@@ -38,15 +38,30 @@ class ContactDetailsView(mixins.UpdateModelMixin,
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        contact_name = instance.contact_name
+        client_name = instance.client_card.client_info.client_name
+        contact_id = instance.id
+        self.perform_destroy(instance)
+        return Response(
+            {"message": f"Контакт '{contact_name}' клиента '{client_name}' с ID '{contact_id}' обновлён"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
+    
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         contact_name = instance.contact_name
-        client_name = instance.client.name
+        client_name = instance.client_card.client_info.client_name
+        # Сохраняем ID контакта перед его удалением
+        contact_id = instance.id
         self.perform_destroy(instance)
         return Response(
-            {"detail": f"Контакт {contact_name} клиента {client_name} с ID {instance.id} удалён"},
+            {"message": f"Контакт '{contact_name}' клиента '{client_name}' с ID '{contact_id}' удалён"},
             status=status.HTTP_204_NO_CONTENT,
         )
+
+
 
 
 

@@ -50,15 +50,25 @@ class ClientSerializer(serializers.ModelSerializer):
         return instance
 
 class ContactsSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор со всей информацией о контактах в таблицы
+    """
     class Meta:
         model = ContactsCard
         fields = '__all__'
 
 class ClientContactsSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для вывода структурированной информации.
+    Информация об айди клиента и название этого клиента,
+    а также вложенный массив с контактами этого клиента
+    """
+    # Записываем в аргумент всю информацию о контактах
     contacts_card = ContactsSerializer(many=True, read_only=True, source='clients_card.contact_cards')
 
     class Meta:
         model = ClientsList
+        # Создаём филд, в который записываем информацию о клиенте и вкладываем внутрь массив контактов
         fields = ('id', 'client_name', 'contacts_card')
 
 
