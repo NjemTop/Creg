@@ -1,7 +1,7 @@
 from rest_framework import serializers
+from django.db import transaction
 from main.models import ClientsList, ClientsCard, ContactsCard, СonnectInfoCard
 from rest_framework.exceptions import ValidationError
-from django.db import transaction
 
 class ClientsCardSerializer(serializers.ModelSerializer):
     """
