@@ -76,7 +76,7 @@ class ContactsCard(models.Model):
         return f"{self.contact_name} ({self.client_card.client_info.client_name})"
 
 
-class СonnectInfoCard(models.Model):
+class ConnectInfoCard(models.Model):
     client_id = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='connect_info_card',
                                   verbose_name="Client Card")
     contact_info_name = models.TextField(verbose_name='ФИО')

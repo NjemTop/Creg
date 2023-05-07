@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ClientsList, ClientsCard, ContactsCard, СonnectInfoCard, Favicon
+from .models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, Favicon
 
 
 class ClientsCardAdmin(admin.ModelAdmin):
@@ -23,7 +23,7 @@ class ContactsCardAdmin(admin.ModelAdmin):
 admin.site.register(ClientsList)
 admin.site.register(ClientsCard, ClientsCardAdmin)
 admin.site.register(ContactsCard, ContactsCardAdmin)
-admin.site.register(СonnectInfoCard)
+admin.site.register(ConnectInfoCard)
 
 @admin.register(Favicon)
 class FaviconAdmin(admin.ModelAdmin):

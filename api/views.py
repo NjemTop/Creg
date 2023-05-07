@@ -1,11 +1,12 @@
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.response import Response
-from main.models import ClientsList, ClientsCard, ContactsCard, СonnectInfoCard
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard
 from .serializers import (
     ClientSerializer,
     ContactsSerializer,
     ClientContactsSerializer,
     ConnectInfoSerializer,
+    ConnectInfoCardSerializer,
     ClientConnectInfoSerializer,
 )
 
@@ -99,7 +100,7 @@ class ConnectInfoByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
 
     def get_queryset(self):
         client_id = self.kwargs['client_id']
-        return СonnectInfoCard.objects.filter(client_id__client_info__id=client_id)
+        return ConnectInfoCard.objects.filter(client_id__client_info__id=client_id)
 
     def post(self, request, *args, **kwargs):
         request.data["client_id"] = self.kwargs['client_id']
@@ -108,9 +109,9 @@ class ConnectInfoByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
 class ConnectInfoDetailsView(mixins.UpdateModelMixin,
                               mixins.DestroyModelMixin,
                               generics.GenericAPIView):
-    # Выбираем все объекты СonnectInfoCard с использованием select_related
+    # Выбираем все объекты ConnectInfoCard с использованием select_related
     # для оптимизации запроса к базе данных
-    queryset = СonnectInfoCard.objects.select_related('client_id__client_info')
+    queryset = ConnectInfoCard.objects.select_related('client_id__client_info')
     serializer_class = ConnectInfoSerializer
 
     def patch(self, request, *args, **kwargs):

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db import transaction
-from main.models import ClientsList, ClientsCard, ContactsCard, СonnectInfoCard
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard
 from rest_framework.exceptions import ValidationError
 
 class ClientsCardSerializer(serializers.ModelSerializer):
@@ -17,22 +17,22 @@ class ContactsCardSerializer(serializers.ModelSerializer):
         model = ContactsCard
         fields = ('contact_name', 'contact_position', 'contact_email', 'notification_update', 'contact_notes')
 
-class СonnectInfoCardSerializer(serializers.ModelSerializer):
+class ConnectInfoCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
     class Meta:
-        model = СonnectInfoCard
+        model = ConnectInfoCard
         fields = ('id', 'client_id', 'contact_info_name', 'contact_info_account', 'contact_info_password')
 
 class ClientSerializer(serializers.ModelSerializer):
     """
     Сериализатор для клиентов с вложенными сериализаторами для связанных сущностей:
-    ClientsCard, ContactsCard и СonnectInfoCard.
+    ClientsCard, ContactsCard и ConnectInfoCard.
     """
 
     # Вложенные сериализаторы для связанных объектов
     clients_card = ClientsCardSerializer(read_only=True)
     contacts_card = ContactsCardSerializer(many=True, read_only=True, source='clients_card.contact_cards')
-    connect_info_card = СonnectInfoCardSerializer(many=True, read_only=True, source='clients_card.connect_info_card')
+    connect_info_card = ConnectInfoCardSerializer(many=True, read_only=True, source='clients_card.connect_info_card')
 
     class Meta:
         model = ClientsList
@@ -104,7 +104,7 @@ class ConnectInfoSerializer(serializers.ModelSerializer):
     Сериализатор со всей информацией о контактах в таблицы
     """
     class Meta:
-        model = СonnectInfoCard
+        model = ConnectInfoCard
         fields = '__all__'
 
 class ClientConnectInfoSerializer(serializers.ModelSerializer):
