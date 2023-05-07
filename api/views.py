@@ -1,7 +1,14 @@
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.response import Response
 from main.models import ClientsList, ClientsCard, ContactsCard, СonnectInfoCard
-from .serializers import ClientSerializer, ContactsSerializer, СonnectInfoCardSerializer, ClientContactsSerializer, ClientConnectInfoSerializer
+from .serializers import (
+    ClientSerializer,
+    ContactsSerializer,
+    ClientContactsSerializer,
+    ConnectInfoSerializer,
+    ClientConnectInfoSerializer,
+)
+
 
 class ClientViewSet(viewsets.ModelViewSet):
     queryset = ClientsList.objects.all()
@@ -10,6 +17,10 @@ class ClientViewSet(viewsets.ModelViewSet):
 class ContactsViewSet(viewsets.ModelViewSet):
     queryset = ClientsList.objects.all()
     serializer_class = ClientContactsSerializer
+
+class ConnectInfoViewSet(viewsets.ModelViewSet):
+    queryset = ClientsList.objects.all()
+    serializer_class = ClientConnectInfoSerializer
 
 class ContactsByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
     serializer_class = ContactsSerializer
@@ -22,9 +33,6 @@ class ContactsByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
         request.data["client_card"] = self.kwargs['client_id']
         return self.create(request, *args, **kwargs)
 
-class ConnectInfoViewSet(viewsets.ModelViewSet):
-    queryset = СonnectInfoCard.objects.all()
-    serializer_class = СonnectInfoCardSerializer
 
 class ContactDetailsView(mixins.UpdateModelMixin,
                          mixins.DestroyModelMixin,
@@ -85,8 +93,9 @@ class ContactDetailsView(mixins.UpdateModelMixin,
             status=status.HTTP_204_NO_CONTENT,
         )
 
+
 class ConnectInfoByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
-    serializer_class = СonnectInfoCardSerializer
+    serializer_class = ConnectInfoSerializer
 
     def get_queryset(self):
         client_id = self.kwargs['client_id']
@@ -99,14 +108,17 @@ class ConnectInfoByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
 class ConnectInfoDetailsView(mixins.UpdateModelMixin,
                               mixins.DestroyModelMixin,
                               generics.GenericAPIView):
+    # Выбираем все объекты СonnectInfoCard с использованием select_related
+    # для оптимизации запроса к базе данных
     queryset = СonnectInfoCard.objects.select_related('client_id__client_info')
-    serializer_class = ClientConnectInfoSerializer
+    serializer_class = ConnectInfoSerializer
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
 
 
 
