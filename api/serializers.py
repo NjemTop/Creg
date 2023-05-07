@@ -83,7 +83,7 @@ class ContactsSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = ContactsCard
-        fields = '__all__'
+        fields = ('id', 'contact_name', 'contact_position', 'contact_email', 'notification_update', 'contact_notes')
 
 class ClientContactsSerializer(serializers.ModelSerializer):
     """
@@ -105,7 +105,8 @@ class ConnectInfoSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = ConnectInfoCard
-        fields = '__all__'
+        # Создаём массив данных из таблицы ConnectInfoCard, который будет выводиться в ответ
+        fields = ('id', 'contact_info_name', 'contact_info_account', 'contact_info_password')
 
 class ClientConnectInfoSerializer(serializers.ModelSerializer):
     """
