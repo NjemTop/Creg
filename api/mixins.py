@@ -13,5 +13,6 @@ class CustomResponseMixin:
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        instance_id = instance.id
         self.perform_destroy(instance)
-        return custom_delete_response(instance, 'id', 'bm_servers_servers_name', 'client_card')
+        return custom_delete_response(instance, instance_id, 'bm_servers_servers_name', 'client_card')
