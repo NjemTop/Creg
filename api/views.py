@@ -1,6 +1,6 @@
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.response import Response
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard
 from .serializers import (
     ClientSerializer,
     ContactsSerializer,
@@ -8,7 +8,8 @@ from .serializers import (
     ConnectInfoSerializer,
     ConnectInfoCardSerializer,
     ClientConnectInfoSerializer,
-    ClientBMServersCardSerializer,
+    BMServersSerializer,
+    ClientBMServersSerializer,
 )
 
 
@@ -26,7 +27,7 @@ class ConnectInfoViewSet(viewsets.ModelViewSet):
 
 class BMServersCardViewSet(viewsets.ModelViewSet):
     queryset = ClientsList.objects.all()
-    serializer_class = ClientBMServersCardSerializer
+    serializer_class = ClientBMServersSerializer
 
 
 class ContactsByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
@@ -39,7 +40,6 @@ class ContactsByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
     def post(self, request, *args, **kwargs):
         request.data["client_card"] = self.kwargs['client_id']
         return self.create(request, *args, **kwargs)
-
 
 class ContactDetailsView(mixins.UpdateModelMixin,
                          mixins.DestroyModelMixin,
@@ -125,6 +125,36 @@ class ConnectInfoDetailsView(mixins.UpdateModelMixin,
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+
+class BMServersCardByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
+    serializer_class = BMServersSerializer
+
+    def get_queryset(self):
+        client_id = self.kwargs['client_id']
+        return BMServersCard.objects.filter(client_card__client_info__id=client_id)
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        client_id = self.kwargs['client_id']
+        
+        if isinstance(data, list):
+            for item in data:
+                item["client_id"] = client_id
+            serializer = self.get_serializer(data=data, many=True)
+        elif isinstance(data, dict):
+            data["client_id"] = client_id
+            serializer = self.get_serializer(data=data)
+        else:
+            return Response({"error": "Недопустимый формат данных. Ожидался список или словарь."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 
 
