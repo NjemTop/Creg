@@ -184,6 +184,8 @@ class BMServersByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
         # В случае невалидности возвращаем ошибку 400 с сообщениями об ошибках
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# views.py
+
 class BMServersDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
     queryset = BMServersCard.objects.select_related('client_card__client_info')
     serializer_class = BMServersSerializer
@@ -193,6 +195,7 @@ class BMServersDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
 
 
 
