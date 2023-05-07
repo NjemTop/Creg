@@ -1,6 +1,7 @@
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.response import Response
 from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard
+from .mixins import CustomResponseMixin
 from .serializers import (
     ClientSerializer,
     ContactsSerializer,
@@ -127,7 +128,7 @@ class ConnectInfoDetailsView(mixins.UpdateModelMixin,
         return self.destroy(request, *args, **kwargs)
 
 
-class BMServersCardByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
+class BMServersByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
     """
     Класс BMServersCardByClientIdView обрабатывает HTTP-запросы к связанным данным BMServersCard и ClientsCard.
     Он наследует mixins.CreateModelMixin и generics.ListAPIView для обработки операций создания и получения списка.
@@ -143,6 +144,11 @@ class BMServersCardByClientIdView(mixins.CreateModelMixin, generics.ListAPIView)
         # Фильтруем объекты BMServersCard, связанные с указанным client_id
         return BMServersCard.objects.filter(client_card__client_info__id=client_id)
 
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, pk=self.kwargs['pk'])
+        return obj
+        
     def post(self, request, *args, **kwargs):
         """
         Функция post обрабатывает создание новых объектов BMServersCard, связанных с указанным client_id.
@@ -177,6 +183,16 @@ class BMServersCardByClientIdView(mixins.CreateModelMixin, generics.ListAPIView)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         # В случае невалидности возвращаем ошибку 400 с сообщениями об ошибках
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class BMServersDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+    queryset = BMServersCard.objects.select_related('client_card__client_info')
+    serializer_class = BMServersSerializer
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 
