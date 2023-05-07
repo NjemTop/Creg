@@ -99,6 +99,19 @@ class ClientContactsSerializer(serializers.ModelSerializer):
         # Создаём филд, в который записываем информацию о клиенте и вкладываем внутрь массив контактов
         fields = ('id', 'client_name', 'contacts_card')
 
+class ClientConnectInfoSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для вывода структурированной информации.
+    Информация об айди клиента и название этого клиента,
+    а также вложенный массив с информацией о подключении для этого клиента
+    """
+    # Записываем в аргумент всю информацию о подключении
+    connect_info_card = СonnectInfoCardSerializer(many=True, read_only=True, source='clients_card.connect_info_card')
+
+    class Meta:
+        model = ClientsList
+        # Создаём филд, в который записываем информацию о клиенте и вкладываем внутрь массив информации о подключении
+        fields = ('id', 'client_name', 'connect_info_card')
 
 
 

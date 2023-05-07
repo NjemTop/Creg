@@ -1,7 +1,7 @@
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.response import Response
 from main.models import ClientsList, ClientsCard, ContactsCard, СonnectInfoCard
-from .serializers import ClientSerializer, ContactsSerializer, СonnectInfoCardSerializer, ClientContactsSerializer
+from .serializers import ClientSerializer, ContactsSerializer, СonnectInfoCardSerializer, ClientContactsSerializer, ClientConnectInfoSerializer
 
 class ClientViewSet(viewsets.ModelViewSet):
     queryset = ClientsList.objects.all()
@@ -85,6 +85,28 @@ class ContactDetailsView(mixins.UpdateModelMixin,
             status=status.HTTP_204_NO_CONTENT,
         )
 
+class ConnectInfoByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
+    serializer_class = СonnectInfoCardSerializer
+
+    def get_queryset(self):
+        client_id = self.kwargs['client_id']
+        return СonnectInfoCard.objects.filter(client_id__client_info__id=client_id)
+
+    def post(self, request, *args, **kwargs):
+        request.data["client_id"] = self.kwargs['client_id']
+        return self.create(request, *args, **kwargs)
+
+class ConnectInfoDetailsView(mixins.UpdateModelMixin,
+                              mixins.DestroyModelMixin,
+                              generics.GenericAPIView):
+    queryset = СonnectInfoCard.objects.select_related('client_id__client_info')
+    serializer_class = ClientConnectInfoSerializer
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 
