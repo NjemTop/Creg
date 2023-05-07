@@ -149,14 +149,23 @@ class BMServersSerializer(serializers.ModelSerializer):
             'bm_servers_operation_system',
             'bm_servers_url',
             'bm_servers_role',
-            'client_id',  # Временно добавьте здесь, чтобы убедиться, что client_id передается
+            'client_id',
         )
         
     def create(self, validated_data):
+        # Извлекаем client_id из validated_data и удаляем его из словаря
         client_id = validated_data.pop('client_id')
+
+        # Используя client_id, получаем объект ClientsCard, соответствующий этому клиенту
         client_card = ClientsCard.objects.get(client_info_id=client_id)
+
+        # Создаем новый объект BMServersCard, передавая client_card и остальные данные из validated_data
         bm_server = BMServersCard(client_card=client_card, **validated_data)
+
+        # Сохраняем новый объект BMServersCard в базе данных
         bm_server.save()
+
+        # Возвращаем новый объект BMServersCard
         return bm_server
 
 class ClientBMServersSerializer(serializers.ModelSerializer):
