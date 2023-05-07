@@ -113,11 +113,10 @@ class ConnectInfoByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
         request.data["client_id"] = self.kwargs['client_id']
         return self.create(request, *args, **kwargs)
 
-class ConnectInfoDetailsView(mixins.UpdateModelMixin,
-                              mixins.DestroyModelMixin,
-                              generics.GenericAPIView):
-    # Выбираем все объекты ConnectInfoCard с использованием select_related
-    # для оптимизации запроса к базе данных
+class ConnectInfoDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+    def __init__(self, *args, **kwargs):
+        super().__init__('connect_info_name', 'client_id', *args, **kwargs)
+
     queryset = ConnectInfoCard.objects.select_related('client_id__client_info')
     serializer_class = ConnectInfoSerializer
 
@@ -187,6 +186,9 @@ class BMServersByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
 # views.py
 
 class BMServersDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+    def __init__(self, *args, **kwargs):
+        super().__init__('bm_servers_servers_name', 'client_card', *args, **kwargs)
+
     queryset = BMServersCard.objects.select_related('client_card__client_info')
     serializer_class = BMServersSerializer
 
@@ -195,6 +197,7 @@ class BMServersDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
 
 
 

@@ -8,6 +8,11 @@ class CustomResponseMixin:
     Миксин для создания пользовательских ответов при частичном обновлении (PATCH) и удалении (DELETE) объектов модели.
     """
 
+    def __init__(self, obj_name_field, client_name_field, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.obj_name_field = obj_name_field
+        self.client_name_field = client_name_field
+
     def partial_update(self, request, *args, **kwargs):
         """
         Частичное обновление объекта модели с пользовательским ответом.
@@ -25,7 +30,7 @@ class CustomResponseMixin:
 
         # Если статус ответа 200, то заменяем ответ на пользовательский
         if response.status_code == 200:
-            response = custom_update_response(instance, request, 'id', 'bm_servers_servers_name', 'client_card')
+            response = custom_update_response(instance, request, 'id', self.obj_name_field, self.client_name_field)
         
         # Возвращаем ответ
         return response
@@ -49,4 +54,4 @@ class CustomResponseMixin:
         self.perform_destroy(instance)
 
         # Возвращаем пользовательский ответ с сохраненным ID объекта
-        return custom_delete_response(instance, instance_id, 'bm_servers_servers_name', 'client_card')
+        return custom_delete_response(instance, instance_id, self.obj_name_field, self.client_name_field)
