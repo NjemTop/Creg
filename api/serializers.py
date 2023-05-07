@@ -24,6 +24,12 @@ class СonnectInfoCardSerializer(serializers.ModelSerializer):
         fields = ('id', 'client_id', 'contact_info_name', 'contact_info_account', 'contact_info_password')
 
 class ClientSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для клиентов с вложенными сериализаторами для связанных сущностей:
+    ClientsCard, ContactsCard и СonnectInfoCard.
+    """
+
+    # Вложенные сериализаторы для связанных объектов
     clients_card = ClientsCardSerializer(read_only=True)
     contacts_card = ContactsCardSerializer(many=True, read_only=True, source='clients_card.contact_cards')
     connect_info_card = СonnectInfoCardSerializer(many=True, read_only=True, source='clients_card.connect_info_card')
@@ -33,20 +39,42 @@ class ClientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
+        """
+        Переопределенный метод для создания нового объекта клиента.
+        Он также создает связанный объект ClientsCard.
+        Использует транзакцию для обеспечения консистентности данных.
+        """
         with transaction.atomic():
             clients_list = ClientsList.objects.create(**validated_data)
             clients_card = ClientsCard.objects.create(client_info=clients_list)
         return clients_list
 
     def update(self, instance, validated_data):
+        """
+        Переопределенный метод для обновления существующего объекта клиента.
+        Он также обновляет связанный объект ClientsCard при наличии данных.
+        Использует транзакцию для обеспечения консистентности данных.
+        """
         with transaction.atomic():
+            # Вызываем метод обновления родительского класса для обновления основной информации о клиенте
             instance = super().update(instance, validated_data)
+
+            # Извлекаем данные о связанной карточке клиента (clients_card) из запроса
             clients_card_data = self.context['request'].data.get('clients_card', {})
+
+            # Если данные по clients_card присутствуют, то выполняем их обновление
             if clients_card_data:
+                # Получаем связанный объект clients_card с текущим объектом клиента
                 clients_card = instance.clients_card
+
+                # Создаем сериализатор с новыми данными для clients_card и указываем partial=True для частичного обновления
                 clients_card_serializer = ClientsCardSerializer(clients_card, data=clients_card_data, partial=True)
+
+                # Проверяем, являются ли данные сериализатора валидными, и в случае ошибок вызываем исключение
                 if clients_card_serializer.is_valid(raise_exception=True):
+                    # Сохраняем обновленный объект clients_card
                     clients_card_serializer.save()
+
         return instance
 
 class ContactsSerializer(serializers.ModelSerializer):
