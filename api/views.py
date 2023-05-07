@@ -8,6 +8,7 @@ from .serializers import (
     ConnectInfoSerializer,
     ConnectInfoCardSerializer,
     ClientConnectInfoSerializer,
+    ClientBMServersCardSerializer,
 )
 
 
@@ -22,6 +23,11 @@ class ContactsViewSet(viewsets.ModelViewSet):
 class ConnectInfoViewSet(viewsets.ModelViewSet):
     queryset = ClientsList.objects.all()
     serializer_class = ClientConnectInfoSerializer
+
+class BMServersCardViewSet(viewsets.ModelViewSet):
+    queryset = ClientsList.objects.all()
+    serializer_class = ClientBMServersCardSerializer
+
 
 class ContactsByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
     serializer_class = ContactsSerializer
@@ -119,6 +125,8 @@ class ConnectInfoDetailsView(mixins.UpdateModelMixin,
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+
 
 
 

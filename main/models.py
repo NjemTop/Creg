@@ -96,3 +96,21 @@ class ConnectInfoCard(models.Model):
 
     def check_password(self, raw_password):
         return check_password(raw_password, self.contact_info_password)
+
+class BMServersCard(models.Model):
+    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name="bm_servers_cards",
+                                    verbose_name="Client Card")
+    bm_servers_circuit = models.CharField(verbose_name="Circuit", max_length=100)
+    bm_servers_servers_name = models.CharField(verbose_name="Server_name", max_length=100)
+    bm_servers_servers_adress = models.CharField(verbose_name="Server_ip_adress", max_length=100)
+    bm_servers_operation_system = models.CharField(verbose_name="OS", null=True, blank=True, max_length=100)
+    bm_servers_url = models.CharField(verbose_name="URL", null=True, blank=True, max_length=100)
+    bm_servers_role = models.CharField(verbose_name="Role", max_length=100)
+
+    class Meta:
+        verbose_name = "Сервер ВМ"
+        verbose_name_plural = "Серверы ВМ"
+        db_table = "bm_servers_card"
+
+    def __str__(self):
+        return f"{self.bm_servers_servers_name} ({self.client_card.client_info.client_name})"

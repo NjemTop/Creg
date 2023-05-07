@@ -6,6 +6,7 @@ router = routers.DefaultRouter()
 router.register(r'clients', views.ClientViewSet)
 router.register(r'contacts', views.ContactsViewSet)
 router.register(r'connect_info', views.ConnectInfoViewSet)
+router.register(r'bm_servers', views.BMServersCardViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -13,7 +14,6 @@ urlpatterns = [
     path('contacts/detail/<int:pk>', views.ContactDetailsView.as_view(), name='contact_details'),
     path('connect_info/client/<int:client_id>', views.ConnectInfoByClientIdView.as_view(), name='connect_info_by_client'),
     path('connect_info/detail/<int:pk>', views.ConnectInfoDetailsView.as_view(), name='connect_info_details'),
-
 ]
 
 app_name = 'rest_api'

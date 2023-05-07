@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db import transaction
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard
 from rest_framework.exceptions import ValidationError
 
 class ClientsCardSerializer(serializers.ModelSerializer):
@@ -22,6 +22,13 @@ class ConnectInfoCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConnectInfoCard
         fields = ('id', 'client_id', 'contact_info_name', 'contact_info_account', 'contact_info_password')
+
+class BMServersCardSerializer(serializers.ModelSerializer):
+    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
+    class Meta:
+        model = BMServersCard
+        fields = ('id', 'client_id', 'bm_servers_circuit', 'bm_servers_servers_name', 'bm_servers_servers_adress', 'bm_servers_operation_system', 'bm_servers_url', 'bm_servers_role')
+
 
 class ClientSerializer(serializers.ModelSerializer):
     """
@@ -77,6 +84,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
         return instance
 
+
 class ContactsSerializer(serializers.ModelSerializer):
     """
     Сериализатор со всей информацией о контактах в таблицы
@@ -98,6 +106,7 @@ class ClientContactsSerializer(serializers.ModelSerializer):
         model = ClientsList
         # Создаём филд, в который записываем информацию о клиенте и вкладываем внутрь массив контактов
         fields = ('id', 'client_name', 'contacts_card')
+
 
 class ConnectInfoSerializer(serializers.ModelSerializer):
     """
@@ -122,6 +131,28 @@ class ClientConnectInfoSerializer(serializers.ModelSerializer):
         # Создаём филд, в который записываем информацию о клиенте и вкладываем внутрь массив информации о подключении
         fields = ('id', 'client_name', 'connect_info_card')
 
+class BMServersSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор со всей информацией о контактах в таблицы
+    """
+    class Meta:
+        model = BMServersCard
+        # Создаём массив данных из таблицы BMServersCard, который будет выводиться в ответ
+        fields = ('id', 'bm_servers_circuit', 'bm_servers_servers_name', 'bm_servers_servers_adress', 'bm_servers_operation_system', 'bm_servers_url', 'bm_servers_role')
+
+class ClientBMServersCardSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для вывода структурированной информации.
+    Информация об айди клиента и название этого клиента,
+    а также вложенный массив с информацией о серверах BoardMaps для этого клиента
+    """
+    # Записываем в аргумент всю информацию о серверах BoardMaps
+    bm_servers = BMServersSerializer(many=True, read_only=True, source='clients_card.bm_servers_card')
+
+    class Meta:
+        model = ClientsList
+        # Создаём филд, в который записываем информацию о клиенте и вкладываем внутрь массив информации о серверах BoardMaps
+        fields = ('id', 'client_name', 'bm_servers')
 
 
 
