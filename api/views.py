@@ -1,3 +1,5 @@
+# views.py
+
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.response import Response
 from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard
@@ -42,9 +44,7 @@ class ContactsByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
         request.data["client_card"] = self.kwargs['client_id']
         return self.create(request, *args, **kwargs)
 
-class ContactDetailsView(mixins.UpdateModelMixin,
-                         mixins.DestroyModelMixin,
-                         generics.GenericAPIView):
+class ContactDetailsView(mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
     """
     Класс представления для обновления и удаления контактов.
     Использует методы UpdateModelMixin и DestroyModelMixin для выполнения операций.
@@ -182,8 +182,6 @@ class BMServersByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         # В случае невалидности возвращаем ошибку 400 с сообщениями об ошибках
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# views.py
 
 class BMServersDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
     def __init__(self, *args, **kwargs):
