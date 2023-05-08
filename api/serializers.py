@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db import transaction
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration
 from rest_framework.exceptions import ValidationError
 
 class ClientsCardSerializer(serializers.ModelSerializer):
@@ -40,6 +40,7 @@ class ClientSerializer(serializers.ModelSerializer):
     clients_card = ClientsCardSerializer(read_only=True)
     contacts_card = ContactsCardSerializer(many=True, read_only=True, source='clients_card.contact_cards')
     connect_info_card = ConnectInfoCardSerializer(many=True, read_only=True, source='clients_card.connect_info_card')
+    bm_servers = BMServersCardSerializer(many=True, read_only=True, source='clients_card.bm_servers_card')
 
     class Meta:
         model = ClientsList
@@ -137,7 +138,6 @@ class BMServersSerializer(serializers.ModelSerializer):
     Сериализатор со всей информацией о контактах в таблицы
     """
     client_id = serializers.IntegerField(write_only=True)
-    #client_id = serializers.PrimaryKeyRelatedField(source='client_card.client_info', queryset=ClientsList.objects.all(), required=False)
     class Meta:
         model = BMServersCard
         # Создаём массив данных из таблицы BMServersCard, который будет выводиться в ответ
@@ -168,6 +168,23 @@ class BMServersSerializer(serializers.ModelSerializer):
         # Возвращаем новый объект BMServersCard
         return bm_server
 
+class BMServersTestSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор со всей информацией о контактах в таблицы
+    """
+    class Meta:
+        model = BMServersCard
+        # Создаём массив данных из таблицы ConnectInfoCard, который будет выводиться в ответ
+        fields = fields = (
+            'id',
+            'bm_servers_circuit',
+            'bm_servers_servers_name',
+            'bm_servers_servers_adress',
+            'bm_servers_operation_system',
+            'bm_servers_url',
+            'bm_servers_role',
+        )
+
 class ClientBMServersSerializer(serializers.ModelSerializer):
     """
     Сериализатор для вывода структурированной информации.
@@ -175,7 +192,7 @@ class ClientBMServersSerializer(serializers.ModelSerializer):
     а также вложенный массив с информацией о серверах BoardMaps для этого клиента
     """
     # Записываем в аргумент всю информацию о серверах BoardMaps
-    bm_servers = BMServersSerializer(many=True, read_only=True, source='clients_card.bm_servers_card')
+    bm_servers = BMServersTestSerializer(many=True, read_only=True, source='clients_card.bm_servers_card')
 
     class Meta:
         model = ClientsList

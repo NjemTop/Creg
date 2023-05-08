@@ -2,7 +2,7 @@
 
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.response import Response
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration
 from .mixins import CustomResponseMixin
 from .serializers import (
     ClientSerializer,
@@ -114,6 +114,13 @@ class ConnectInfoByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
         return self.create(request, *args, **kwargs)
 
 class ConnectInfoDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+    """
+    Класс представления для обновления и удаления объектов ConnectInfoCard.
+
+    Наследует CustomResponseMixin для настройки пользовательских ответов,
+    а также UpdateModelMixin и DestroyModelMixin для выполнения операций обновления и удаления.
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__('connect_info_name', 'client_id', *args, **kwargs)
 
@@ -121,9 +128,15 @@ class ConnectInfoDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
     serializer_class = ConnectInfoSerializer
 
     def patch(self, request, *args, **kwargs):
+        """
+        Обновление объекта ConnectInfoCard с использованием метода PATCH.
+        """
         return self.partial_update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
+        """
+        Удаление объекта ConnectInfoCard.
+        """
         return self.destroy(request, *args, **kwargs)
 
 
@@ -184,6 +197,13 @@ class BMServersByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class BMServersDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+    """
+    Класс представления для обновления и удаления объектов BMServersCard.
+
+    Наследует CustomResponseMixin для настройки пользовательских ответов,
+    а также UpdateModelMixin и DestroyModelMixin для выполнения операций обновления и удаления.
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__('bm_servers_servers_name', 'client_card', *args, **kwargs)
 
@@ -191,9 +211,15 @@ class BMServersDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.
     serializer_class = BMServersSerializer
 
     def patch(self, request, *args, **kwargs):
+        """
+        Обновление объекта BMServersCard с использованием метода PATCH.
+        """
         return self.partial_update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
+        """
+        Удаление объекта BMServersCard.
+        """
         return self.destroy(request, *args, **kwargs)
 
 

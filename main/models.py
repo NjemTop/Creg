@@ -97,7 +97,9 @@ class ConnectInfoCard(models.Model):
     def check_password(self, raw_password):
         return check_password(raw_password, self.contact_info_password)
 
+
 class BMServersCard(models.Model):
+    """Серверы ВМ"""
     client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name="bm_servers_cards",
                                     verbose_name="Client Card")
     bm_servers_circuit = models.CharField(verbose_name="Circuit", max_length=100)
@@ -114,3 +116,33 @@ class BMServersCard(models.Model):
 
     def __str__(self):
         return f"{self.bm_servers_servers_name} ({self.client_card.client_info.client_name})"
+
+
+class Integration(models.Model):
+    """Класс наименований интеграций в БД"""
+    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name="integration",
+                                    verbose_name="Client Card")
+    elasticsearch = models.BooleanField(verbose_name='Elasticsearch', null=True, blank=True)
+    ad = models.BooleanField(verbose_name='AD', null=True, blank=True)
+    adfs = models.BooleanField(verbose_name='ADFS', null=True, blank=True)
+    oauth_2 = models.BooleanField(verbose_name='OAuth_2.0', null=True, blank=True)
+    module_translate = models.BooleanField(verbose_name='Модуль_трансляции', null=True, blank=True)
+    ms_oos = models.BooleanField(verbose_name='MS OOS', null=True, blank=True)
+    exchange = models.BooleanField(verbose_name='Exchange', null=True, blank=True)
+    office_365 = models.BooleanField(verbose_name='Office_365', null=True, blank=True)
+    sfb = models.BooleanField(verbose_name='Skype_For_Business', null=True, blank=True)
+    zoom = models.BooleanField(verbose_name='Zoom', null=True, blank=True)
+    teams = models.BooleanField(verbose_name='Teams', null=True, blank=True)
+    smtp = models.BooleanField(verbose_name='SMTP', null=True, blank=True)
+    cryptopro_dss = models.BooleanField(verbose_name='Cripto_DSS', null=True, blank=True)
+    cryptopro_csp = models.BooleanField(verbose_name='Cripto_CSP', null=True, blank=True)
+    smpp = models.BooleanField(verbose_name='SMPP', null=True, blank=True)
+    limesurvey = models.BooleanField(verbose_name='Анкетирование', null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Интеграция"
+        verbose_name_plural = "Интеграции"
+        db_table = "integration"
+
+    def __str__(self):
+        return f"{self.client_card} ({self.client_card.client_info.client_name})"
