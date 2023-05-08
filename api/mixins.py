@@ -29,7 +29,7 @@ class CustomCreateModelMixin:
 class CustomQuerySetFilterMixin:
     def get_queryset(self):
         client_id = self.kwargs['client_id']
-        return self.queryset.filter(client_card__client_info__id=client_id)
+        return self.queryset.filter(clients_card__client_info__id=client_id)
 
 class CustomResponseMixin:
     """
