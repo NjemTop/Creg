@@ -16,6 +16,8 @@ urlpatterns = [
     path('connect_info/detail/<int:pk>', views.ConnectInfoDetailsView.as_view(), name='connect_info_details'),
     path('bm_servers/client/<int:client_id>', views.BMServersByClientIdView.as_view(), name='bm_servers_by_client_id'),
     path('bm_servers/detail/<int:pk>', views.BMServersDetailsView.as_view(), name='bm_servers_details'),
+    path('integration/client/<int:client_id>', views.IntegrationByClientIdView.as_view(), name='integration_by_client'),
+    path('integration/detail/<int:pk>', views.IntegrationDetailsView.as_view(), name='integration_details'),
 ]
 
 app_name = 'rest_api'

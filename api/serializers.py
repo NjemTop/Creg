@@ -13,6 +13,7 @@ class ClientsCardSerializer(serializers.ModelSerializer):
         fields = ('contacts', 'tech_notes', 'connect_info', 'rdp', 'tech_account', 'bm_servers')
 
 class ContactsCardSerializer(serializers.ModelSerializer):
+    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
     class Meta:
         model = ContactsCard
         fields = ('contact_name', 'contact_position', 'contact_email', 'notification_update', 'contact_notes')
@@ -28,6 +29,12 @@ class BMServersCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = BMServersCard
         fields = ('id', 'client_id', 'bm_servers_circuit', 'bm_servers_servers_name', 'bm_servers_servers_adress', 'bm_servers_operation_system', 'bm_servers_url', 'bm_servers_role')
+
+class IntegrationCardSerializer(serializers.ModelSerializer):
+    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
+    class Meta:
+        model = Integration
+        fields = ('id', 'client_id', 'integration')
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -198,6 +205,58 @@ class ClientBMServersSerializer(serializers.ModelSerializer):
         model = ClientsList
         # Создаём филд, в который записываем информацию о клиенте и вкладываем внутрь массив информации о серверах BoardMaps
         fields = ('id', 'client_name', 'bm_servers')
+
+class IntegrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Integration
+        fields = (
+            'id', 'elasticsearch', 'ad', 'adfs', 'oauth_2', 'module_translate', 'ms_oos', 'exchange', 'office_365',
+            'sfb', 'zoom', 'teams', 'smtp', 'cryptopro_dss', 'cryptopro_csp', 'smpp', 'limesurvey'
+        )
+
+class ClientIntegrationSerializer(serializers.ModelSerializer):
+    integration = IntegrationSerializer(many=True, read_only=True, source='clients_card.integration')
+
+    class Meta:
+        model = ClientsList
+        fields = ('id', 'client_name', 'integration')
+
+class IntegrationCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Integration
+        fields = (
+            'elasticsearch',
+            'ad',
+            'adfs',
+            'oauth_2',
+            'module_translate',
+            'ms_oos',
+            'exchange',
+            'office_365',
+            'sfb',
+            'zoom',
+            'teams',
+            'smtp',
+            'cryptopro_dss',
+            'cryptopro_csp',
+            'smpp',
+            'limesurvey',
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

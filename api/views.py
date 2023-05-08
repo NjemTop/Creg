@@ -3,7 +3,7 @@
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.response import Response
 from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration
-from .mixins import CustomResponseMixin
+from .mixins import CustomResponseMixin, CustomCreateModelMixin, CustomQuerySetFilterMixin
 from .serializers import (
     ClientSerializer,
     ContactsSerializer,
@@ -13,6 +13,9 @@ from .serializers import (
     ClientConnectInfoSerializer,
     BMServersSerializer,
     ClientBMServersSerializer,
+    IntegrationSerializer,
+    ClientIntegrationSerializer,
+    IntegrationCreateSerializer,
 )
 
 
@@ -106,58 +109,16 @@ class ConnectInfoDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
         return self.destroy(request, *args, **kwargs)
 
 
-class BMServersByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
+class BMServersByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, generics.ListAPIView):
     """
     Класс BMServersCardByClientIdView обрабатывает HTTP-запросы к связанным данным BMServersCard и ClientsCard.
     Он наследует mixins.CreateModelMixin и generics.ListAPIView для обработки операций создания и получения списка.
     """
-    ### !!! serializer_class = ClientBMServersSerializer
     serializer_class = BMServersSerializer
+    queryset = BMServersCard.objects.all()
 
-    def get_queryset(self):
-        """
-        Функция get_queryset возвращает queryset BMServersCard, связанный с указанным client_id.
-        """
-        # Извлекаем client_id из аргументов URL
-        client_id = self.kwargs['client_id']
-        # Фильтруем объекты BMServersCard, связанные с указанным client_id
-        ### !!! return ClientsList.objects.filter(id=client_id)
-        return BMServersCard.objects.filter(client_card__client_info__id=client_id)
-        
-    def post(self, request, *args, **kwargs):
-        """
-        Функция post обрабатывает создание новых объектов BMServersCard, связанных с указанным client_id.
-        Ожидает в request.data список или словарь с данными для создания новых объектов.
-        """
-        # Извлекаем данные из запроса
-        data = request.data
-        # Извлекаем client_id из аргументов URL
-        client_id = self.kwargs['client_id']
-
-        # Проверяем, является ли переданный объект списком
-        if isinstance(data, list):
-            # Если это список, добавляем client_id ко всем элементам списка
-            for item in data:
-                item["client_id"] = client_id
-            # Создаем сериализатор с переданными данными и указанием many=True
-            serializer = self.get_serializer(data=data, many=True)
-        # Проверяем, является ли переданный объект словарем
-        elif isinstance(data, dict):
-            # Если это словарь, добавляем client_id
-            data["client_id"] = client_id
-            # Создаем сериализатор с переданными данными
-            serializer = self.get_serializer(data=data)
-        else:
-            # В случае недопустимого формата данных возвращаем ошибку 400
-            return Response({"error": "Недопустимый формат данных. Ожидался список или словарь."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Проверяем валидность сериализатора
-        if serializer.is_valid():
-            # Если валиден, сохраняем данные и возвращаем успешный ответ с созданными данными
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # В случае невалидности возвращаем ошибку 400 с сообщениями об ошибках
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get_client_card(self, client_id):
+        return ClientsCard.objects.get(client_info_id=client_id)
 
 class BMServersDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
     """
@@ -187,6 +148,33 @@ class BMServersDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.
         """
         return self.destroy(request, *args, **kwargs)
 
+
+class IntegrationByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, generics.ListAPIView):
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return IntegrationCreateSerializer
+        else:
+            return ClientIntegrationSerializer
+
+    queryset = ClientsList.objects.all()
+
+    def get_client_card(self, client_id):
+        return ClientsCard.objects.get(client_info_id=client_id)
+
+
+class IntegrationDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__('client_card', 'client_card', *args, **kwargs)
+
+    queryset = Integration.objects.select_related('client_card__client_info')
+    serializer_class = IntegrationSerializer
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 

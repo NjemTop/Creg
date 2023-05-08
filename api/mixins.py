@@ -2,6 +2,34 @@
 
 from rest_framework import status
 from .response_helpers import custom_update_response, custom_delete_response
+from rest_framework.response import Response
+
+class CustomCreateModelMixin:
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        client_id = self.kwargs['client_id']
+        client_card = self.get_client_card(client_id)
+
+        if isinstance(data, list):
+            serializer = self.get_serializer(data=data, many=True)
+        elif isinstance(data, dict):
+            serializer = self.get_serializer(data=data)
+        else:
+            return Response({"error": "Недопустимый формат данных. Ожидался список или словарь."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if serializer.is_valid():
+            serializer.save(client_card=client_card)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_client_card(self, client_id):
+        raise NotImplementedError("Метод `get_client_card` должен быть реализован.")
+
+
+class CustomQuerySetFilterMixin:
+    def get_queryset(self):
+        client_id = self.kwargs['client_id']
+        return self.queryset.filter(client_card__client_info__id=client_id)
 
 class CustomResponseMixin:
     """

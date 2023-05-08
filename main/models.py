@@ -119,7 +119,7 @@ class BMServersCard(models.Model):
 
 
 class Integration(models.Model):
-    """Класс наименований интеграций в БД"""
+    """Класс имеющихся интеграций у клиентов в системе BoardMaps"""
     client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name="integration",
                                     verbose_name="Client Card")
     elasticsearch = models.BooleanField(verbose_name='Elasticsearch', null=True, blank=True)
