@@ -44,16 +44,12 @@ class ContactsByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
         request.data["client_card"] = self.kwargs['client_id']
         return self.create(request, *args, **kwargs)
 
-class ContactDetailsView(mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
-    """
-    Класс представления для обновления и удаления контактов.
-    Использует методы UpdateModelMixin и DestroyModelMixin для выполнения операций.
-    """
-
-    # Выбираем все объекты ContactsCard с использованием select_related
-    # для оптимизации запроса к базе данных
+class ContactDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
     queryset = ContactsCard.objects.select_related('client_card__client_info')
-    serializer_class = ClientContactsSerializer
+    serializer_class = ContactsSerializer
+
+    def __init__(self, *args, **kwargs):
+        super().__init__('contact_name', 'client_card', *args, **kwargs)
 
     def patch(self, request, *args, **kwargs):
         """
@@ -68,38 +64,6 @@ class ContactDetailsView(mixins.UpdateModelMixin, mixins.DestroyModelMixin, gene
         Удаляет контакт.
         """
         return self.destroy(request, *args, **kwargs)
-
-    def partial_update(self, request, *args, **kwargs):
-        """
-        Метод для выполнения частичного обновления контакта.
-        Возвращает сообщение об успешном обновлении.
-        """
-        instance = self.get_object()
-        contact_name = instance.contact_name
-        client_name = instance.client_card.client_info.client_name
-        contact_id = instance.id
-        self.perform_destroy(instance)
-        return Response(
-            {"message": f"Контакт '{contact_name}' клиента '{client_name}' с ID '{contact_id}' обновлён"},
-            status=status.HTTP_204_NO_CONTENT,
-        )
-    
-    def destroy(self, request, *args, **kwargs):
-        """
-        Метод для удаления контакта.
-        Сохраняет имя контакта, имя клиента и ID контакта перед удалением,
-        затем удаляет контакт и возвращает сообщение об успешном удалении.
-        """
-        instance = self.get_object()
-        contact_name = instance.contact_name
-        client_name = instance.client_card.client_info.client_name
-        # Сохраняем ID контакта перед его удалением
-        contact_id = instance.id
-        self.perform_destroy(instance)
-        return Response(
-            {"message": f"Контакт '{contact_name}' клиента '{client_name}' с ID '{contact_id}' удалён"},
-            status=status.HTTP_204_NO_CONTENT,
-        )
 
 
 class ConnectInfoByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
@@ -122,19 +86,21 @@ class ConnectInfoDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
     """
 
     def __init__(self, *args, **kwargs):
-        super().__init__('connect_info_name', 'client_id', *args, **kwargs)
+        super().__init__('contact_info_name', 'client_id', *args, **kwargs)
 
     queryset = ConnectInfoCard.objects.select_related('client_id__client_info')
     serializer_class = ConnectInfoSerializer
 
     def patch(self, request, *args, **kwargs):
         """
+        Метод для обработки PATCH-запроса.
         Обновление объекта ConnectInfoCard с использованием метода PATCH.
         """
         return self.partial_update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         """
+        Метод для обработки DELETE-запроса.
         Удаление объекта ConnectInfoCard.
         """
         return self.destroy(request, *args, **kwargs)
@@ -218,6 +184,8 @@ class BMServersDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.
 
     def delete(self, request, *args, **kwargs):
         """
+        Метод для обработки PATCH-запроса.
+        Метод для обработки DELETE-запроса.
         Удаление объекта BMServersCard.
         """
         return self.destroy(request, *args, **kwargs)
