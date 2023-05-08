@@ -34,11 +34,11 @@ class BMServersCardViewSet(viewsets.ModelViewSet):
 
 
 class ContactsByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
-    serializer_class = ContactsSerializer
+    serializer_class = ClientContactsSerializer
 
     def get_queryset(self):
         client_id = self.kwargs['client_id']
-        return ContactsCard.objects.filter(client_card__client_info__id=client_id)
+        return ClientsList.objects.filter(id=client_id)
 
     def post(self, request, *args, **kwargs):
         request.data["client_card"] = self.kwargs['client_id']
@@ -67,11 +67,11 @@ class ContactDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.De
 
 
 class ConnectInfoByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
-    serializer_class = ConnectInfoSerializer
+    serializer_class = ClientConnectInfoSerializer
 
     def get_queryset(self):
         client_id = self.kwargs['client_id']
-        return ConnectInfoCard.objects.filter(client_id__client_info__id=client_id)
+        return ClientsList.objects.filter(id=client_id)
 
     def post(self, request, *args, **kwargs):
         request.data["client_id"] = self.kwargs['client_id']
@@ -111,6 +111,7 @@ class BMServersByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
     Класс BMServersCardByClientIdView обрабатывает HTTP-запросы к связанным данным BMServersCard и ClientsCard.
     Он наследует mixins.CreateModelMixin и generics.ListAPIView для обработки операций создания и получения списка.
     """
+    ### !!! serializer_class = ClientBMServersSerializer
     serializer_class = BMServersSerializer
 
     def get_queryset(self):
@@ -120,12 +121,8 @@ class BMServersByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
         # Извлекаем client_id из аргументов URL
         client_id = self.kwargs['client_id']
         # Фильтруем объекты BMServersCard, связанные с указанным client_id
+        ### !!! return ClientsList.objects.filter(id=client_id)
         return BMServersCard.objects.filter(client_card__client_info__id=client_id)
-
-    def get_object(self):
-        queryset = self.get_queryset()
-        obj = get_object_or_404(queryset, pk=self.kwargs['pk'])
-        return obj
         
     def post(self, request, *args, **kwargs):
         """
