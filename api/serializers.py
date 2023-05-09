@@ -179,11 +179,13 @@ class BMServersTestSerializer(serializers.ModelSerializer):
     """
     Сериализатор со всей информацией о контактах в таблицы
     """
+    client_name = serializers.CharField(source='client_card.client_info.client_name')
+
     class Meta:
         model = BMServersCard
-        # Создаём массив данных из таблицы ConnectInfoCard, который будет выводиться в ответ
-        fields = fields = (
+        fields = (
             'id',
+            'client_name',
             'bm_servers_circuit',
             'bm_servers_servers_name',
             'bm_servers_servers_adress',

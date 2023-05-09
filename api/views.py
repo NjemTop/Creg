@@ -13,6 +13,7 @@ from .serializers import (
     ClientConnectInfoSerializer,
     BMServersSerializer,
     ClientBMServersSerializer,
+    BMServersTestSerializer,
     IntegrationSerializer,
     ClientIntegrationSerializer,
     IntegrationCreateSerializer,
@@ -114,7 +115,7 @@ class BMServersByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin,
     Класс BMServersCardByClientIdView обрабатывает HTTP-запросы к связанным данным BMServersCard и ClientsCard.
     Он наследует mixins.CreateModelMixin и generics.ListAPIView для обработки операций создания и получения списка.
     """
-    serializer_class = BMServersSerializer
+    serializer_class = BMServersTestSerializer
     
     queryset = BMServersCard.objects.all()
     related_name = "client_card"
