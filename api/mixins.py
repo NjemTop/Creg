@@ -27,9 +27,21 @@ class CustomCreateModelMixin:
 
 
 class CustomQuerySetFilterMixin:
+    """
+    Универсальный миксин для фильтрации QuerySet на основе клиентского идентификатора и related_name.
+    related_name - это атрибут, который связывает модель с другой моделью через ForeignKey.
+    """
+    related_name = None  # Устанавливаем related_name как None по умолчанию
+
     def get_queryset(self):
-        client_id = self.kwargs['client_id']
-        return self.queryset.filter(clients_card__client_info__id=client_id)
+        # Если related_name не установлен, вызываем ошибку с указанием на необходимость его установки
+        if self.related_name is None:
+            raise ValueError("Необходимо установить 'related_name' для CustomQuerySetFilterMixin.")
+
+        client_id = self.kwargs['client_id']  # Получаем идентификатор клиента из аргументов запроса
+
+        # Фильтруем QuerySet, используя переданный related_name и идентификатор клиента, и возвращаем результат
+        return self.queryset.filter(**{f"{self.related_name}__client_info__id": client_id})
 
 class CustomResponseMixin:
     """

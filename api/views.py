@@ -115,8 +115,9 @@ class BMServersByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin,
     Он наследует mixins.CreateModelMixin и generics.ListAPIView для обработки операций создания и получения списка.
     """
     serializer_class = BMServersSerializer
+    
     queryset = BMServersCard.objects.all()
-
+    related_name = "client_card"
     def get_client_card(self, client_id):
         return ClientsCard.objects.get(client_info_id=client_id)
 
@@ -157,7 +158,7 @@ class IntegrationByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixi
             return ClientIntegrationSerializer
 
     queryset = ClientsList.objects.all()
-
+    related_name = "clients_card"
     def get_client_card(self, client_id):
         return ClientsCard.objects.get(client_info_id=client_id)
 
