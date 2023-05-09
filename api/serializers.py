@@ -147,45 +147,8 @@ class ClientConnectInfoSerializer(serializers.ModelSerializer):
 
 
 class BMServersSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор со всей информацией о контактах в таблицы
-    """
-    client_id = serializers.IntegerField(write_only=True)
-    class Meta:
-        model = BMServersCard
-        # Создаём массив данных из таблицы BMServersCard, который будет выводиться в ответ
-        fields = (
-            'id',
-            'bm_servers_circuit',
-            'bm_servers_servers_name',
-            'bm_servers_servers_adress',
-            'bm_servers_operation_system',
-            'bm_servers_url',
-            'bm_servers_role',
-            'client_id',
-        )
-        
-    def create(self, validated_data):
-        # Извлекаем client_id из validated_data и удаляем его из словаря
-        client_id = validated_data.pop('client_id')
-
-        # Используя client_id, получаем объект ClientsCard, соответствующий этому клиенту
-        client_card = ClientsCard.objects.get(client_info_id=client_id)
-
-        # Создаем новый объект BMServersCard, передавая client_card и остальные данные из validated_data
-        bm_server = BMServersCard(client_card=client_card, **validated_data)
-
-        # Сохраняем новый объект BMServersCard в базе данных
-        bm_server.save()
-
-        # Возвращаем новый объект BMServersCard
-        return bm_server
-
-class BMServersTestSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор со всей информацией о контактах в таблицы
-    """
-    client_name = serializers.CharField(source='client_card.client_info.client_name')
+    # Добавляем поле client_name для вывода имени клиента
+    client_name = serializers.CharField(source='client_card.client_info.client_name', read_only=True)
 
     class Meta:
         model = BMServersCard
@@ -200,19 +163,33 @@ class BMServersTestSerializer(serializers.ModelSerializer):
             'bm_servers_role',
         )
 
-class ClientBMServersSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для вывода структурированной информации.
-    Информация об айди клиента и название этого клиента,
-    а также вложенный массив с информацией о серверах BoardMaps для этого клиента
-    """
-    # Записываем в аргумент всю информацию о серверах BoardMaps
-    bm_servers = BMServersTestSerializer(many=True, read_only=True, source='clients_card.bm_servers_card')
+    def create(self, validated_data):
+        # Получаем client_id из контекста запроса
+        client_id = self.context['request'].parser_context['kwargs']['client_id']
+        # Используя client_id, получаем объект ClientsCard, соответствующий этому клиенту
+        client_card = ClientsCard.objects.get(client_info_id=client_id)
+        # Создаем новый объект BMServersCard, передавая остальные данные из validated_data
+        bm_server = BMServersCard(**validated_data)
+        # Устанавливаем client_card для нового объекта BMServersCard
+        bm_server.client_card = client_card
+        # Сохраняем новый объект BMServersCard в базе данных
+        bm_server.save()
+        # Возвращаем новый объект BMServersCard
+        return bm_server
 
-    class Meta:
-        model = ClientsList
-        # Создаём филд, в который записываем информацию о клиенте и вкладываем внутрь массив информации о серверах BoardMaps
-        fields = ('id', 'client_name', 'bm_servers')
+    def to_representation(self, instance):
+        if isinstance(instance, ClientsList):
+            # Записываем в аргумент всю информацию о серверах BoardMaps
+            bm_servers = BMServersSerializer(instance.clients_card.bm_servers_card.all(), many=True).data
+            return {
+                # Создаём филд, в который записываем информацию о клиенте и вкладываем внутрь массив информации о серверах BoardMaps
+                'id': instance.id,
+                'client_name': instance.client_name,
+                'bm_servers': bm_servers
+            }
+        else:
+            return super().to_representation(instance)
+
 
 class IntegrationSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()

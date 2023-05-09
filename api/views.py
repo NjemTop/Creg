@@ -12,8 +12,6 @@ from .serializers import (
     ConnectInfoCardSerializer,
     ClientConnectInfoSerializer,
     BMServersSerializer,
-    ClientBMServersSerializer,
-    BMServersTestSerializer,
     IntegrationSerializer,
     TechAccountSerializer,
 )
@@ -30,10 +28,6 @@ class ContactsViewSet(viewsets.ModelViewSet):
 class ConnectInfoViewSet(viewsets.ModelViewSet):
     queryset = ClientsList.objects.all()
     serializer_class = ClientConnectInfoSerializer
-
-class BMServersCardViewSet(viewsets.ModelViewSet):
-    queryset = ClientsList.objects.all()
-    serializer_class = ClientBMServersSerializer
 
 
 class ContactsByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
@@ -114,10 +108,11 @@ class BMServersByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin,
     Класс BMServersCardByClientIdView обрабатывает HTTP-запросы к связанным данным BMServersCard и ClientsCard.
     Он наследует mixins.CreateModelMixin и generics.ListAPIView для обработки операций создания и получения списка.
     """
-    serializer_class = BMServersTestSerializer
-    
+    serializer_class = BMServersSerializer
+
     queryset = BMServersCard.objects.all()
     related_name = "client_card"
+
     def get_client_card(self, client_id):
         return ClientsCard.objects.get(client_info_id=client_id)
 
@@ -128,7 +123,6 @@ class BMServersDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.
     Наследует CustomResponseMixin для настройки пользовательских ответов,
     а также UpdateModelMixin и DestroyModelMixin для выполнения операций обновления и удаления.
     """
-
     def __init__(self, *args, **kwargs):
         super().__init__('bm_servers_servers_name', 'client_card', *args, **kwargs)
 
@@ -169,9 +163,17 @@ class IntegrationDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
     serializer_class = IntegrationSerializer
 
     def patch(self, request, *args, **kwargs):
+        """
+        Обновление объекта Integration с использованием метода PATCH.
+        """
         return self.partial_update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
+        """
+        Метод для обработки PATCH-запроса.
+        Метод для обработки DELETE-запроса.
+        Удаление объекта BMServersCard.
+        """
         return self.destroy(request, *args, **kwargs)
 
 
@@ -192,9 +194,17 @@ class TechAccountDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
     serializer_class = TechAccountSerializer
 
     def patch(self, request, *args, **kwargs):
+        """
+        Обновление объекта TechAccountCard с использованием метода PATCH.
+        """
         return self.partial_update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
+        """
+        Метод для обработки PATCH-запроса.
+        Метод для обработки DELETE-запроса.
+        Удаление объекта BMServersCard.
+        """
         return self.destroy(request, *args, **kwargs)
 
 
