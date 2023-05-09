@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db import transaction
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo
 from rest_framework.exceptions import ValidationError
 
 class ClientsCardSerializer(serializers.ModelSerializer):
@@ -255,6 +255,11 @@ class TechAccountSerializer(serializers.ModelSerializer):
         else:
             return super().to_representation(instance)
 
+
+class ConnectionInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConnectionInfo
+        fields = ['id', 'file_path', 'text']
 
 
 

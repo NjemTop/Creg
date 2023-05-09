@@ -27,3 +27,7 @@ def create_client(request):
         'error': error
     }
     return render(request, 'main/create_client.html', context)
+
+def upload_file(request):
+    clients = ClientsList.objects.all()
+    return render(request, 'main/upload_file.html', {'clients': clients})

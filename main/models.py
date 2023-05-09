@@ -174,3 +174,11 @@ class TechAccountCard(models.Model):
 
     def check_password(self, raw_password):
         return check_password(raw_password, self.contact_info_password)
+
+class ConnectionInfo(models.Model):
+    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='connection_info', null=True)
+    file_path = models.FileField(upload_to='uploaded_files/')
+    text = models.TextField(null=True)
+
+    def __str__(self):
+        return f"File {self.file_path} for client {self.client_card.client_info.client_name}"

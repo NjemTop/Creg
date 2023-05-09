@@ -18,6 +18,8 @@ urlpatterns = [
     path('integration/detail/<int:pk>', views.IntegrationDetailsView.as_view(), name='integration_details'),
     path('tech_account/client/<int:client_id>', views.TechAccountByClientIdView.as_view(), name='tech_account_by_client'),
     path('tech_account/detail/<int:pk>', views.TechAccountDetailsView.as_view(), name='tech_account_details'),
+    path('upload_file/<int:client_id>', views.FileUploadView.as_view(), name='upload_file'),
+    path('client_files/<int:client_id>', views.ClientFilesView.as_view(), name='client_files'),
 ]
 
 app_name = 'rest_api'

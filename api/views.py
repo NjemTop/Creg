@@ -2,8 +2,11 @@
 
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.response import Response
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard
+from rest_framework.parsers import MultiPartParser
+from rest_framework.views import APIView
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo
 from .mixins import CustomResponseMixin, CustomCreateModelMixin, CustomQuerySetFilterMixin
+from .response_helpers import file_upload_error_response
 from .serializers import (
     ClientSerializer,
     ContactsSerializer,
@@ -12,7 +15,9 @@ from .serializers import (
     BMServersSerializer,
     IntegrationSerializer,
     TechAccountSerializer,
+    ConnectionInfoSerializer,
 )
+from django.shortcuts import get_object_or_404
 
 
 class ClientViewSet(viewsets.ModelViewSet):
@@ -202,7 +207,45 @@ class TechAccountDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
         return self.destroy(request, *args, **kwargs)
 
 
+class FileUploadView(APIView):
+    parser_classes = [MultiPartParser]
 
+    def post(self, request, client_id):
+        """
+        Метод для обработки POST-запроса на загрузку файла.
+        Загружает файл и сохраняет информацию о файле в базе данных.
+        :param request: Объект HTTP запроса
+        :param client_id: ID клиента
+        :return: Response объект с результатом загрузки файла
+        """
+        client_card = get_object_or_404(ClientsCard, id=client_id)
+
+        if 'file' not in request.FILES:
+            return file_upload_error_response(
+                "Файл не найден",
+                "Пожалуйста, убедитесь, что вы включили файл в запрос с ключом 'file'."
+            )
+
+        file = request.FILES['file']
+        text = request.data.get('text', None)
+
+        connection_info = ConnectionInfo(client_card=client_card, file_path=file, text=text)
+        connection_info.save()
+
+        return Response(
+            {
+                'сообщение': 'Файл успешно загружен и сохранен в базе данных',
+                'имя файла': connection_info.file_path.name
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+class ClientFilesView(generics.ListAPIView):
+    serializer_class = ConnectionInfoSerializer
+
+    def get_queryset(self):
+        client_id = self.kwargs['client_id']
+        return ConnectionInfo.objects.filter(client_card__id=client_id)
 
 
 

@@ -1,6 +1,7 @@
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from django.contrib.auth import views as auth_views
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework.permissions import AllowAny
@@ -21,10 +22,13 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('', views.index, name='home'),
-    path('clients', views.clients, name='clients'),
-    path('create_client', views.create_client, name='create'),
+    path('login/', auth_views.LoginView.as_view(), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('clients/', views.clients, name='clients'),
+    path('create_client/', views.create_client, name='create'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('upload_file/', views.upload_file, name='upload_file'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

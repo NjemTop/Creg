@@ -72,3 +72,18 @@ def custom_delete_response(instance, instance_id, name_field, client_field):
 
     # Возвращаем Response объект с данными и кодом статуса
     return Response(response_data, status=status.HTTP_200_OK)
+
+def file_upload_error_response(error, detail, status_code=status.HTTP_400_BAD_REQUEST):
+    """
+    Функция для создания пользовательского ответа в случае ошибки при загрузке файла.
+    :param error: Краткое описание ошибки
+    :param detail: Подробное описание ошибки
+    :param status_code: Код статуса ошибки (по умолчанию 400)
+    :return: Response объект с пользовательским сообщением об ошибке и кодом статуса
+    """
+    response_data = {
+        "ошибка": error,
+        "подробности": detail
+    }
+
+    return Response(response_data, status=status_code)
