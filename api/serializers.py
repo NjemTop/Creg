@@ -16,7 +16,7 @@ class ContactsCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
     class Meta:
         model = ContactsCard
-        fields = ('contact_name', 'contact_position', 'contact_email', 'notification_update', 'contact_notes')
+        fields = ('client_id', 'contact_name', 'contact_position', 'contact_email', 'notification_update', 'contact_notes')
 
 class ConnectInfoCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')

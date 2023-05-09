@@ -100,7 +100,7 @@ class ConnectInfoCard(models.Model):
 
 class BMServersCard(models.Model):
     """Серверы ВМ"""
-    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name="bm_servers_cards",
+    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name="bm_servers_card",
                                     verbose_name="Client Card")
     bm_servers_circuit = models.CharField(verbose_name="Circuit", max_length=100)
     bm_servers_servers_name = models.CharField(verbose_name="Server_name", max_length=100)
