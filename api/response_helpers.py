@@ -3,6 +3,29 @@
 from rest_framework.response import Response
 from rest_framework import status
 
+
+def custom_create_response(instance, client_id, client_card, success_status=status.HTTP_201_CREATED):
+    """
+    Функция для создания пользовательского ответа после успешного создания объекта.
+    :param instance: Созданный объект модели
+    :param client_id: ID клиента
+    :param client_card: Экземпляр объекта ClientsCard
+    :param success_status: Код статуса успешного ответа (по умолчанию 201)
+    :return: Response объект с пользовательским сообщением и кодом статуса
+    """
+
+    # Получаем имя клиента
+    client_name = client_card.client_info.client_name
+
+    # Создаем словарь с данными для ответа
+    response_data = {
+        "message": f"Запись для клиента {client_name} успешно создалась"
+    }
+
+    # Возвращаем Response объект с данными и кодом статуса
+    return Response(response_data, status=success_status)
+
+
 def custom_update_response(instance, request, pk_field, obj_name_field, client_name_field, success_status=status.HTTP_200_OK):
     """
     Функция для создания пользовательского ответа после успешного обновления объекта.

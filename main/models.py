@@ -80,7 +80,7 @@ class ConnectInfoCard(models.Model):
     """
     Класс таблицы БД с учётными записями информации о подключении к клиенту
     """
-    client_id = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='connect_info_card',
+    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='connect_info_card',
                                   verbose_name="Client Card")
     contact_info_name = models.TextField(verbose_name='ФИО')
     contact_info_account = models.TextField(verbose_name='Учетная_запись')
@@ -92,7 +92,7 @@ class ConnectInfoCard(models.Model):
         db_table = 'connect_info_card'
 
     def __str__(self):
-        return f"{self.contact_info_name} ({self.client_id.client_info.client_name})"
+        return f"{self.contact_info_name} ({self.client_card.client_info.client_name})"
 
     def set_password(self, raw_password):
         self.contact_info_password = make_password(raw_password)

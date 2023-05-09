@@ -130,13 +130,6 @@ class ConnectInfoSerializer(serializers.ModelSerializer):
         model = ConnectInfoCard
         fields = ('id', 'contact_info_name', 'contact_info_account', 'contact_info_password')
 
-    def create(self, validated_data):
-        client_id = self.context['request'].parser_context['kwargs']['client_id']
-        client_card = ClientsCard.objects.get(client_info_id=client_id)
-        connect_info = ConnectInfoCard(client_id=client_card, **validated_data)
-        connect_info.save()
-        return connect_info
-
     def to_representation(self, instance):
         if isinstance(instance, ClientsList):
             connect_info_card = ConnectInfoSerializer(instance.clients_card.connect_info_card.all(), many=True).data

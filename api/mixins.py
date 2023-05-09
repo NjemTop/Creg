@@ -1,7 +1,7 @@
 # mixins.py
 
 from rest_framework import status
-from .response_helpers import custom_update_response, custom_delete_response
+from .response_helpers import custom_create_response, custom_update_response, custom_delete_response
 from rest_framework.response import Response
 
 class CustomCreateModelMixin:
@@ -18,8 +18,8 @@ class CustomCreateModelMixin:
             return Response({"error": "Недопустимый формат данных. Ожидался список или словарь."}, status=status.HTTP_400_BAD_REQUEST)
 
         if serializer.is_valid():
-            serializer.save(client_card=client_card)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            instance = serializer.save(client_card=client_card)
+            return custom_create_response(instance, client_id, client_card)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_client_card(self, client_id):

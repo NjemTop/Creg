@@ -57,16 +57,16 @@ class ContactDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.De
         return self.destroy(request, *args, **kwargs)
 
 
-class ConnectInfoByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
+class ConnectInfoByClientIdView(CustomCreateModelMixin, generics.ListAPIView):
     serializer_class = ConnectInfoSerializer
 
     def get_queryset(self):
         client_id = self.kwargs['client_id']
         return ClientsList.objects.filter(id=client_id)
 
-    def post(self, request, *args, **kwargs):
-        request.data["client_id"] = self.kwargs['client_id']
-        return self.create(request, *args, **kwargs)
+    def get_client_card(self, client_id):
+        return ClientsCard.objects.get(client_info_id=client_id)
+
 
 class ConnectInfoDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
     """
