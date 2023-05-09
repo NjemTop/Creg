@@ -123,12 +123,18 @@ class ClientContactsSerializer(serializers.ModelSerializer):
 
 
 class ConnectInfoSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
     """
     Сериализатор со всей информацией о контактах в таблицы
     """
     class Meta:
         model = ConnectInfoCard
         fields = ('id', 'contact_info_name', 'contact_info_account', 'contact_info_password')
+
+    def get_id(self, obj):
+        if self.context.get('request', None) and self.context['request'].method == 'POST':
+            return None
+        return obj.id
 
     def to_representation(self, instance):
         if isinstance(instance, ClientsList):
