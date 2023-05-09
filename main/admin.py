@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Favicon
+from .models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, Favicon
 
 
 class ClientsCardAdmin(admin.ModelAdmin):
@@ -25,6 +25,8 @@ admin.site.register(ClientsCard, ClientsCardAdmin)
 admin.site.register(ContactsCard, ContactsCardAdmin)
 admin.site.register(ConnectInfoCard)
 admin.site.register(BMServersCard)
+admin.site.register(Integration)
+admin.site.register(TechAccountCard)
 
 @admin.register(Favicon)
 class FaviconAdmin(admin.ModelAdmin):

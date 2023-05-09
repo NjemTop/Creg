@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db import transaction
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard
 from rest_framework.exceptions import ValidationError
 
 class ClientsCardSerializer(serializers.ModelSerializer):
@@ -35,6 +35,12 @@ class IntegrationCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Integration
         fields = ('id', 'client_id', 'integration')
+
+class TechAccountCardSerializer(serializers.ModelSerializer):
+    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
+    class Meta:
+        model = TechAccountCard
+        fields = ('id', 'client_id', 'contact_info_disc', 'contact_info_account', 'contact_info_password')
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -246,6 +252,32 @@ class IntegrationCreateSerializer(serializers.ModelSerializer):
         )
 
 
+class TechAccountSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TechAccountCard
+        fields = ('id', 'contact_info_disc', 'contact_info_account', 'contact_info_password')
+
+    def get_id(self, obj):
+        # Если это POST-запрос, не возвращаем поле id
+        if self.context['request'].method == 'POST':
+            return None
+        return obj.id
+
+class ClientTechAccountSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для вывода структурированной информации.
+    Информация об айди клиента и название этого клиента,
+    а также вложенный массив с информацией о технических УЗ для этого клиента
+    """
+    # Записываем в аргумент всю информацию о тех. УЗ клиента
+    tech_account_card = TechAccountSerializer(many=True, read_only=True, source='clients_card.tech_account_card')
+
+    class Meta:
+        model = ClientsList
+        # Создаём филд, в который записываем информацию о клиенте и вкладываем внутрь массив информации о подключении
+        fields = ('id', 'client_name', 'tech_account_card')
 
 
 

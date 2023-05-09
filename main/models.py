@@ -77,6 +77,9 @@ class ContactsCard(models.Model):
 
 
 class ConnectInfoCard(models.Model):
+    """
+    Класс таблицы БД с учётными записями информации о подключении к клиенту
+    """
     client_id = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='connect_info_card',
                                   verbose_name="Client Card")
     contact_info_name = models.TextField(verbose_name='ФИО')
@@ -146,3 +149,28 @@ class Integration(models.Model):
 
     def __str__(self):
         return f"{self.client_card} ({self.client_card.client_info.client_name})"
+
+
+class TechAccountCard(models.Model):
+    """
+    Класс таблицы БД с техническими учётными записями клиента
+    """
+    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='tech_account_card',
+                                  verbose_name="Client Card")
+    contact_info_disc = models.TextField(verbose_name='Описание')
+    contact_info_account = models.TextField(verbose_name='Учетная_запись')
+    contact_info_password = models.TextField(verbose_name='Пароль')
+
+    class Meta:
+        verbose_name = "Тех. УЗ клиента"
+        verbose_name_plural = "Список тех. УЗ клиентов"
+        db_table = 'tech_account_card'
+
+    def __str__(self):
+        return f"{self.contact_info_disc} ({self.client_card.client_info.client_name})"
+
+    def set_password(self, raw_password):
+        self.contact_info_password = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        return check_password(raw_password, self.contact_info_password)

@@ -2,7 +2,7 @@
 
 from rest_framework import generics, mixins, viewsets, status
 from rest_framework.response import Response
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard
 from .mixins import CustomResponseMixin, CustomCreateModelMixin, CustomQuerySetFilterMixin
 from .serializers import (
     ClientSerializer,
@@ -17,6 +17,8 @@ from .serializers import (
     IntegrationSerializer,
     ClientIntegrationSerializer,
     IntegrationCreateSerializer,
+    TechAccountSerializer,
+    ClientTechAccountSerializer,
 )
 
 
@@ -178,6 +180,34 @@ class IntegrationDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
+
+class TechAccountByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, generics.ListAPIView):
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return TechAccountSerializer
+        else:
+            return ClientTechAccountSerializer
+
+    queryset = ClientsList.objects.all()
+    related_name = "clients_card"
+    
+    def get_client_card(self, client_id):
+        return ClientsCard.objects.get(client_info_id=client_id)
+
+
+class TechAccountDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__('client_card', 'client_card', *args, **kwargs)
+
+    queryset = Integration.objects.select_related('client_card__client_info')
+    serializer_class = TechAccountSerializer
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # python3 manage.py makemigrations
 # python3 manage.py migrate
+# python3 manage.py migrate --database=default main zero
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
