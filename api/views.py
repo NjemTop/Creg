@@ -9,8 +9,6 @@ from .serializers import (
     ContactsSerializer,
     ClientContactsSerializer,
     ConnectInfoSerializer,
-    ConnectInfoCardSerializer,
-    ClientConnectInfoSerializer,
     BMServersSerializer,
     IntegrationSerializer,
     TechAccountSerializer,
@@ -24,10 +22,6 @@ class ClientViewSet(viewsets.ModelViewSet):
 class ContactsViewSet(viewsets.ModelViewSet):
     queryset = ClientsList.objects.all()
     serializer_class = ClientContactsSerializer
-
-class ConnectInfoViewSet(viewsets.ModelViewSet):
-    queryset = ClientsList.objects.all()
-    serializer_class = ClientConnectInfoSerializer
 
 
 class ContactsByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
@@ -64,7 +58,7 @@ class ContactDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.De
 
 
 class ConnectInfoByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
-    serializer_class = ClientConnectInfoSerializer
+    serializer_class = ConnectInfoSerializer
 
     def get_queryset(self):
         client_id = self.kwargs['client_id']

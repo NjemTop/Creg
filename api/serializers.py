@@ -128,22 +128,25 @@ class ConnectInfoSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = ConnectInfoCard
-        # Создаём массив данных из таблицы ConnectInfoCard, который будет выводиться в ответ
         fields = ('id', 'contact_info_name', 'contact_info_account', 'contact_info_password')
 
-class ClientConnectInfoSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для вывода структурированной информации.
-    Информация об айди клиента и название этого клиента,
-    а также вложенный массив с информацией о подключении для этого клиента
-    """
-    # Записываем в аргумент всю информацию о подключении
-    connect_info_card = ConnectInfoSerializer(many=True, read_only=True, source='clients_card.connect_info_card')
+    def create(self, validated_data):
+        client_id = self.context['request'].parser_context['kwargs']['client_id']
+        client_card = ClientsCard.objects.get(client_info_id=client_id)
+        connect_info = ConnectInfoCard(client_id=client_card, **validated_data)
+        connect_info.save()
+        return connect_info
 
-    class Meta:
-        model = ClientsList
-        # Создаём филд, в который записываем информацию о клиенте и вкладываем внутрь массив информации о подключении
-        fields = ('id', 'client_name', 'connect_info_card')
+    def to_representation(self, instance):
+        if isinstance(instance, ClientsList):
+            connect_info_card = ConnectInfoSerializer(instance.clients_card.connect_info_card.all(), many=True).data
+            return {
+                'id': instance.id,
+                'client_name': instance.client_name,
+                'connect_info_card': connect_info_card
+            }
+        else:
+            return super().to_representation(instance)
 
 
 class BMServersSerializer(serializers.ModelSerializer):
