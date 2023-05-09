@@ -15,8 +15,6 @@ from .serializers import (
     ClientBMServersSerializer,
     BMServersTestSerializer,
     IntegrationSerializer,
-    ClientIntegrationSerializer,
-    IntegrationCreateSerializer,
     TechAccountSerializer,
 )
 
@@ -154,16 +152,13 @@ class BMServersDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.
 
 class IntegrationByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, generics.ListAPIView):
     def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return IntegrationCreateSerializer
-        else:
-            return ClientIntegrationSerializer
+        return IntegrationSerializer
 
     queryset = ClientsList.objects.all()
     related_name = "clients_card"
+
     def get_client_card(self, client_id):
         return ClientsCard.objects.get(client_info_id=client_id)
-
 
 class IntegrationDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
 

@@ -215,6 +215,8 @@ class ClientBMServersSerializer(serializers.ModelSerializer):
         fields = ('id', 'client_name', 'bm_servers')
 
 class IntegrationSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
+
     class Meta:
         model = Integration
         fields = (
@@ -222,34 +224,21 @@ class IntegrationSerializer(serializers.ModelSerializer):
             'sfb', 'zoom', 'teams', 'smtp', 'cryptopro_dss', 'cryptopro_csp', 'smpp', 'limesurvey'
         )
 
-class ClientIntegrationSerializer(serializers.ModelSerializer):
-    integration = IntegrationSerializer(many=True, read_only=True, source='clients_card.integration')
+    def get_id(self, obj):
+        if self.context.get('request', None) and self.context['request'].method == 'POST':
+            return None
+        return obj.id
 
-    class Meta:
-        model = ClientsList
-        fields = ('id', 'client_name', 'integration')
-
-class IntegrationCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Integration
-        fields = (
-            'elasticsearch',
-            'ad',
-            'adfs',
-            'oauth_2',
-            'module_translate',
-            'ms_oos',
-            'exchange',
-            'office_365',
-            'sfb',
-            'zoom',
-            'teams',
-            'smtp',
-            'cryptopro_dss',
-            'cryptopro_csp',
-            'smpp',
-            'limesurvey',
-        )
+    def to_representation(self, instance):
+        if isinstance(instance, ClientsList):
+            integration = IntegrationSerializer(instance.clients_card.integration.all(), many=True).data
+            return {
+                'id': instance.id,
+                'client_name': instance.client_name,
+                'integration': integration
+            }
+        else:
+            return super().to_representation(instance)
 
 
 class TechAccountSerializer(serializers.ModelSerializer):
