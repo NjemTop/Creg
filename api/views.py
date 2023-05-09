@@ -18,7 +18,6 @@ from .serializers import (
     ClientIntegrationSerializer,
     IntegrationCreateSerializer,
     TechAccountSerializer,
-    ClientTechAccountSerializer,
 )
 
 
@@ -182,25 +181,19 @@ class IntegrationDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
 
 
 class TechAccountByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, generics.ListAPIView):
-    def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return TechAccountSerializer
-        else:
-            return ClientTechAccountSerializer
-
+    serializer_class = TechAccountSerializer
     queryset = ClientsList.objects.all()
     related_name = "clients_card"
-    
+
     def get_client_card(self, client_id):
         return ClientsCard.objects.get(client_info_id=client_id)
-
 
 class TechAccountDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
 
     def __init__(self, *args, **kwargs):
         super().__init__('client_card', 'client_card', *args, **kwargs)
 
-    queryset = Integration.objects.select_related('client_card__client_info')
+    queryset = TechAccountCard.objects.select_related('client_card__client_info')
     serializer_class = TechAccountSerializer
 
     def patch(self, request, *args, **kwargs):
@@ -208,6 +201,7 @@ class TechAccountDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
 
 
 

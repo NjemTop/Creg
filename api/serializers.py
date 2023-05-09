@@ -253,31 +253,42 @@ class IntegrationCreateSerializer(serializers.ModelSerializer):
 
 
 class TechAccountSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор с информацией о технических УЗ для клиентов.
+    """
+    # Добавляем поле id, которое будет сериализовано с помощью метода get_id
     id = serializers.SerializerMethodField()
 
     class Meta:
         model = TechAccountCard
         fields = ('id', 'contact_info_disc', 'contact_info_account', 'contact_info_password')
 
+    # Метод для определения значения поля id в сериализаторе
     def get_id(self, obj):
         # Если это POST-запрос, не возвращаем поле id
-        if self.context['request'].method == 'POST':
+        if self.context.get('request', None) and self.context['request'].method == 'POST':
             return None
+        # В противном случае возвращаем значение поля id
         return obj.id
 
-class ClientTechAccountSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для вывода структурированной информации.
-    Информация об айди клиента и название этого клиента,
-    а также вложенный массив с информацией о технических УЗ для этого клиента
-    """
-    # Записываем в аргумент всю информацию о тех. УЗ клиента
-    tech_account_card = TechAccountSerializer(many=True, read_only=True, source='clients_card.tech_account_card')
+    # Метод для представления данных в сериализаторе
+    def to_representation(self, instance):
+        # Если экземпляр относится к модели ClientsList
+        if isinstance(instance, ClientsList):
+            # Создаем сериализатор для связанных технических учетных записей с опцией many=True
+            tech_account_card = TechAccountSerializer(instance.clients_card.tech_account_card, many=True).data
+            # Возвращаем представление данных, включающее id, client_name и список технических учетных записей
+            return {
+                'id': instance.id,
+                'client_name': instance.client_name,
+                'tech_account_card': tech_account_card
+            }
+        # Если экземпляр относится к другой модели, используем стандартное представление
+        else:
+            return super().to_representation(instance)
 
-    class Meta:
-        model = ClientsList
-        # Создаём филд, в который записываем информацию о клиенте и вкладываем внутрь массив информации о подключении
-        fields = ('id', 'client_name', 'tech_account_card')
+
+
 
 
 
