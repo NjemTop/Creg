@@ -21,6 +21,8 @@ urlpatterns = [
     path('upload_file/<int:client_id>', views.FileUploadView.as_view(), name='upload_file'),
     path('client_files/<int:client_id>', views.ClientFilesView.as_view(), name='client_files'),
     path('client_files/detail/<int:pk>', views.FileUploadView.as_view(), name='client_files_detail'),
+    path('servise/client/<int:client_id>', views.ServiseByClientIdView.as_view(), name='servise_by_client'),
+    path('servise/detail/<int:pk>', views.ServiseDetailsView.as_view(), name='servise_details'),
 ]
 
 app_name = 'rest_api'

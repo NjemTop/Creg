@@ -4,7 +4,7 @@ from rest_framework import generics, mixins, viewsets, status
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
 from rest_framework.views import APIView
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo, ServiseCard
 from .mixins import CustomResponseMixin, CustomCreateModelMixin, CustomQuerySetFilterMixin
 from .response_helpers import file_upload_error_response, custom_update_response, custom_delete_response
 from .serializers import (
@@ -16,6 +16,7 @@ from .serializers import (
     IntegrationSerializer,
     TechAccountSerializer,
     ConnectionInfoSerializer,
+    ServiseSerializer,
 )
 from django.shortcuts import get_object_or_404
 
@@ -171,7 +172,7 @@ class IntegrationDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
         """
         Метод для обработки PATCH-запроса.
         Метод для обработки DELETE-запроса.
-        Удаление объекта BMServersCard.
+        Удаление объекта Integration.
         """
         return self.destroy(request, *args, **kwargs)
 
@@ -202,7 +203,7 @@ class TechAccountDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
         """
         Метод для обработки PATCH-запроса.
         Метод для обработки DELETE-запроса.
-        Удаление объекта BMServersCard.
+        Удаление объекта TechAccountCard.
         """
         return self.destroy(request, *args, **kwargs)
 
@@ -283,7 +284,35 @@ class ClientFilesView(generics.ListAPIView):
         return ConnectionInfo.objects.filter(client_card__id=client_id)
 
 
+class ServiseByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, generics.ListAPIView):
+    serializer_class = ServiseSerializer
+    queryset = ClientsList.objects.all()
+    related_name = "clients_card"
 
+    def get_client_card(self, client_id):
+        return ClientsCard.objects.get(client_info_id=client_id)
+
+class ServiseDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__('client_card', 'client_card', *args, **kwargs)
+
+    queryset = ServiseCard.objects.select_related('client_card__client_info')
+    serializer_class = ServiseSerializer
+
+    def patch(self, request, *args, **kwargs):
+        """
+        Обновление объекта ServiseCard с использованием метода PATCH.
+        """
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Метод для обработки PATCH-запроса.
+        Метод для обработки DELETE-запроса.
+        Удаление объекта ServiseCard.
+        """
+        return self.destroy(request, *args, **kwargs)
 
 
 

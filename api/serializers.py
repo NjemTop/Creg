@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db import transaction
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo, ServiseCard
 from rest_framework.exceptions import ValidationError
 
 class ClientsCardSerializer(serializers.ModelSerializer):
@@ -262,6 +262,40 @@ class ConnectionInfoSerializer(serializers.ModelSerializer):
         fields = ['id', 'file_path', 'text']
 
 
+class ServiseSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор с информацией о технических УЗ для клиентов.
+    """
+    # Добавляем поле id, которое будет сериализовано с помощью метода get_id
+    id = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ServiseCard
+        fields = ('id', 'service_pack', 'manager', 'loyal')
+
+    # Метод для определения значения поля id в сериализаторе
+    def get_id(self, obj):
+        # Если это POST-запрос, не возвращаем поле id
+        if self.context.get('request', None) and self.context['request'].method == 'POST':
+            return None
+        # В противном случае возвращаем значение поля id
+        return obj.id
+
+    # Метод для представления данных в сериализаторе
+    def to_representation(self, instance):
+        # Если экземпляр относится к модели ClientsList
+        if isinstance(instance, ClientsList):
+            # Создаем сериализатор для связанных технических учетных записей с опцией many=True
+            servise_card = ServiseSerializer(instance.clients_card.servise_card, many=True).data
+            # Возвращаем представление данных, включающее id, client_name и список технических учетных записей
+            return {
+                'id': instance.id,
+                'client_name': instance.client_name,
+                'servise_card': servise_card
+            }
+        # Если экземпляр относится к другой модели, используем стандартное представление
+        else:
+            return super().to_representation(instance)
 
 
 
