@@ -152,9 +152,9 @@ class ConnectInfoDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
     """
 
     def __init__(self, *args, **kwargs):
-        super().__init__('contact_info_name', 'client_id', *args, **kwargs)
+        super().__init__('contact_info_name', 'client_card', *args, **kwargs)
 
-    queryset = ConnectInfoCard.objects.select_related('client_id__client_info')
+    queryset = ConnectInfoCard.objects.select_related('client_card__client_info')
     serializer_class = ConnectInfoSerializer
 
     def patch(self, request, *args, **kwargs):
