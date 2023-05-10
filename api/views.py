@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
 from rest_framework.views import APIView
 import datetime
+from django.shortcuts import get_object_or_404
 from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard
 from .mixins import CustomResponseMixin, CustomCreateModelMixin, CustomQuerySetFilterMixin
 from .response_helpers import file_upload_error_response, custom_update_response, custom_delete_response
@@ -21,7 +22,6 @@ from .serializers import (
     ServiseSerializer,
     TechInformationSerializer,
 )
-from django.shortcuts import get_object_or_404
 
 
 class ClientViewSet(viewsets.ModelViewSet):
