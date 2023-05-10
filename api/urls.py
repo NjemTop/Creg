@@ -25,6 +25,6 @@ urlpatterns = [
     path('servise/detail/<int:pk>', views.ServiseDetailsView.as_view(), name='servise_details'),
     path('tech_information/client/<int:client_id>', views.TechInformationByClientIdView.as_view(), name='tech_information_by_client'),
     path('tech_information/detail/<int:pk>', views.TechInformationDetailsView.as_view(), name='tech_information_details'),
-]
+] + router.urls
 
 app_name = 'rest_api'
