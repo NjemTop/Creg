@@ -4,10 +4,10 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r'clients', views.ClientViewSet)
-router.register(r'contacts', views.ContactsViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('add_client', views.add_client, name='add_client'),
     path('contacts/client/<int:client_id>', views.ContactsByClientIdView.as_view(), name='contacts_by_client'),
     path('contacts/detail/<int:pk>', views.ContactDetailsView.as_view(), name='contact_details'),
     path('connect_info/client/<int:client_id>', views.ConnectInfoByClientIdView.as_view(), name='connect_info_by_client'),

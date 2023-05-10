@@ -28,19 +28,55 @@ class BMServersCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
     class Meta:
         model = BMServersCard
-        fields = ('id', 'client_id', 'bm_servers_circuit', 'bm_servers_servers_name', 'bm_servers_servers_adress', 'bm_servers_operation_system', 'bm_servers_url', 'bm_servers_role')
-
+        fields = (
+            'id',
+            'client_id',
+            'bm_servers_circuit',
+            'bm_servers_servers_name',
+            'bm_servers_servers_adress',
+            'bm_servers_operation_system',
+            'bm_servers_url',
+            'bm_servers_role',
+        )
 class IntegrationCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
     class Meta:
         model = Integration
-        fields = ('id', 'client_id', 'integration')
+        fields = (
+            'id', 'client_id', 'elasticsearch', 'ad', 'adfs', 'oauth_2', 'module_translate', 'ms_oos', 'exchange', 'office_365',
+            'sfb', 'zoom', 'teams', 'smtp', 'cryptopro_dss', 'cryptopro_csp', 'smpp', 'limesurvey'
+        )
 
 class TechAccountCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
     class Meta:
         model = TechAccountCard
         fields = ('id', 'client_id', 'contact_info_disc', 'contact_info_account', 'contact_info_password')
+
+class ServiseCardSerializer(serializers.ModelSerializer):
+    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
+    class Meta:
+        model = ServiseCard
+        fields = ('id', 'client_id', 'service_pack', 'manager', 'loyal')
+
+class TechInformationCardSerializer(serializers.ModelSerializer):
+    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
+    class Meta:
+        model = TechInformationCard
+        fields = (
+            'id',
+            'client_id',
+            'server_version',
+            'update_date',
+            'api',
+            'ipad',
+            'android',
+            'mdm',
+            'localizable_web',
+            'localizable_ios',
+            'skins_web',
+            'skins_ios'
+        )
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -54,6 +90,10 @@ class ClientSerializer(serializers.ModelSerializer):
     contacts_card = ContactsCardSerializer(many=True, read_only=True, source='clients_card.contact_cards')
     connect_info_card = ConnectInfoCardSerializer(many=True, read_only=True, source='clients_card.connect_info_card')
     bm_servers = BMServersCardSerializer(many=True, read_only=True, source='clients_card.bm_servers_card')
+    integration = IntegrationCardSerializer(many=True, read_only=True, source='clients_card.integration')
+    tech_account_card = TechAccountCardSerializer(many=True, read_only=True, source='clients_card.tech_account_card')
+    servise_card = ServiseCardSerializer(many=True, read_only=True, source='clients_card.servise_card')
+    tech_information = TechInformationCardSerializer(many=True, read_only=True, source='clients_card.tech_information')
 
     class Meta:
         model = ClientsList
@@ -100,26 +140,27 @@ class ClientSerializer(serializers.ModelSerializer):
 
 
 class ContactsSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор со всей информацией о контактах в таблицы
-    """
+    id = serializers.SerializerMethodField()
+
     class Meta:
         model = ContactsCard
         fields = ('id', 'contact_name', 'contact_position', 'contact_email', 'notification_update', 'contact_notes')
 
-class ClientContactsSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для вывода структурированной информации.
-    Информация об айди клиента и название этого клиента,
-    а также вложенный массив с контактами этого клиента
-    """
-    # Записываем в аргумент всю информацию о контактах
-    contacts_card = ContactsSerializer(many=True, read_only=True, source='clients_card.contact_cards')
+    def get_id(self, obj):
+        if self.context.get('request', None) and self.context['request'].method == 'POST':
+            return None
+        return obj.id
 
-    class Meta:
-        model = ClientsList
-        # Создаём филд, в который записываем информацию о клиенте и вкладываем внутрь массив контактов
-        fields = ('id', 'client_name', 'contacts_card')
+    def to_representation(self, instance):
+        if isinstance(instance, ClientsList):
+            contacts_card = ContactsSerializer(instance.clients_card.contact_cards.all(), many=True).data
+            return {
+                'id': instance.id,
+                'client_name': instance.client_name,
+                'contacts_card': contacts_card
+            }
+        else:
+            return super().to_representation(instance)
 
 
 class ConnectInfoSerializer(serializers.ModelSerializer):
@@ -164,20 +205,6 @@ class BMServersSerializer(serializers.ModelSerializer):
             'bm_servers_url',
             'bm_servers_role',
         )
-
-    def create(self, validated_data):
-        # Получаем client_id из контекста запроса
-        client_id = self.context['request'].parser_context['kwargs']['client_id']
-        # Используя client_id, получаем объект ClientsCard, соответствующий этому клиенту
-        client_card = ClientsCard.objects.get(client_info_id=client_id)
-        # Создаем новый объект BMServersCard, передавая остальные данные из validated_data
-        bm_server = BMServersCard(**validated_data)
-        # Устанавливаем client_card для нового объекта BMServersCard
-        bm_server.client_card = client_card
-        # Сохраняем новый объект BMServersCard в базе данных
-        bm_server.save()
-        # Возвращаем новый объект BMServersCard
-        return bm_server
 
     def to_representation(self, instance):
         if isinstance(instance, ClientsList):

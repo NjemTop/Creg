@@ -1,6 +1,8 @@
 # views.py
 
 from rest_framework import generics, mixins, viewsets, status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
 from rest_framework.views import APIView
@@ -11,7 +13,6 @@ from .response_helpers import file_upload_error_response, custom_update_response
 from .serializers import (
     ClientSerializer,
     ContactsSerializer,
-    ClientContactsSerializer,
     ConnectInfoSerializer,
     BMServersSerializer,
     IntegrationSerializer,
@@ -27,21 +28,87 @@ class ClientViewSet(viewsets.ModelViewSet):
     queryset = ClientsList.objects.all()
     serializer_class = ClientSerializer
 
-class ContactsViewSet(viewsets.ModelViewSet):
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_client(request):
+    if request.method == 'POST':
+        client_data = request.data.get("client_name")
+        contacts_data = request.data.get("contacts_card")
+        connect_info_data = request.data.get("connect_info_card")
+        bm_servers_data = request.data.get("bm_servers")
+        tech_account_data = request.data.get("tech_account_card")
+
+        if client_data:
+            serializer = ClientSerializer(data=request.data)
+            if serializer.is_valid():
+                client = serializer.save()
+                client_card = client.clients_card  # Получаем объект ClientsCard для созданного клиента
+                contact_serializer = ContactsSerializer(data=request.data.get('contacts_card', []), many=True)
+                if contact_serializer.is_valid():
+                    contact_serializer.save(client_card=client_card)  # Передаем объект ClientsCard
+                else:
+                    client.delete()
+
+                if connect_info_data:
+                    for connect_info in connect_info_data:
+                        connect_info_serializer = ConnectInfoSerializer(data=connect_info)
+                        if connect_info_serializer.is_valid():
+                            connect_info_serializer.save(client_card=client_card)
+                        else:
+                            client.delete()
+
+                if bm_servers_data:
+                    for bm_server in bm_servers_data:
+                        bm_server_serializer = BMServersSerializer(data=bm_server, context={'request': request})
+                        if bm_server_serializer.is_valid():
+                            bm_server_serializer.save(client_card=client_card)
+                        else:
+                            client.delete()
+
+                if tech_account_data:
+                    for tech_account in tech_account_data:
+                        tech_account_serializer = TechAccountSerializer(data=tech_account)
+                        if tech_account_serializer.is_valid():
+                            tech_account_serializer.save(client_card=client_card)
+                        else:
+                            client.delete()
+
+                integration_data = request.data.get("integration", [])
+                if integration_data:
+                    integration_serializer = IntegrationSerializer(data=integration_data[0])
+                    if integration_serializer.is_valid():
+                        integration_serializer.save(client_card=client_card)
+
+                service_data = request.data.get("servise_card", [])
+                if service_data:
+                    service_serializer = ServiseSerializer(data=service_data[0])
+                    if service_serializer.is_valid():
+                        service_serializer.save(client_card=client_card)
+
+                tech_information_data = request.data.get("tech_information", [])
+                if tech_information_data:
+                    tech_information_serializer = TechInformationSerializer(data=tech_information_data[0])
+                    if tech_information_serializer.is_valid():
+                        tech_information_serializer.save(client_card=client_card)
+
+                # Выводим информацию о созданном клиенте
+                return Response({"message": f"Клиент {client.client_name} создан в БД! ID клиента {client.pk}."},
+                                status=status.HTTP_201_CREATED)
+            else:
+                return Response(client_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"error": "Не предоставлены данные для создания клиента."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ContactsByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, generics.ListAPIView):
+    serializer_class = ContactsSerializer
     queryset = ClientsList.objects.all()
-    serializer_class = ClientContactsSerializer
+    related_name = "clients_card"
 
+    def get_client_card(self, client_id):
+        return ClientsCard.objects.get(client_info_id=client_id)
 
-class ContactsByClientIdView(mixins.CreateModelMixin, generics.ListAPIView):
-    serializer_class = ClientContactsSerializer
-
-    def get_queryset(self):
-        client_id = self.kwargs['client_id']
-        return ClientsList.objects.filter(id=client_id)
-
-    def post(self, request, *args, **kwargs):
-        request.data["client_card"] = self.kwargs['client_id']
-        return self.create(request, *args, **kwargs)
 
 class ContactDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
     queryset = ContactsCard.objects.select_related('client_card__client_info')
