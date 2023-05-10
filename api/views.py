@@ -76,19 +76,19 @@ def add_client(request):
 
                 integration_data = request.data.get("integration", [])
                 if integration_data:
-                    integration_serializer = IntegrationSerializer(data=integration_data[0])
+                    integration_serializer = IntegrationSerializer(data=integration_data)
                     if integration_serializer.is_valid():
                         integration_serializer.save(client_card=client_card)
 
                 service_data = request.data.get("servise_card", [])
                 if service_data:
-                    service_serializer = ServiseSerializer(data=service_data[0])
+                    service_serializer = ServiseSerializer(data=service_data)
                     if service_serializer.is_valid():
                         service_serializer.save(client_card=client_card)
 
                 tech_information_data = request.data.get("tech_information", [])
                 if tech_information_data:
-                    tech_information_serializer = TechInformationSerializer(data=tech_information_data[0])
+                    tech_information_serializer = TechInformationSerializer(data=tech_information_data)
                     if tech_information_serializer.is_valid():
                         tech_information_serializer.save(client_card=client_card)
 
