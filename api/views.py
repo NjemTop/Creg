@@ -267,6 +267,11 @@ class FileUploadView(generics.RetrieveUpdateDestroyAPIView):
     def delete(self, request, *args, **kwargs):
         instance = self.get_object()
         instance_id = instance.id
+
+        # Удаляем файл в папке перед удалением записи
+        if instance.file_path:
+            instance.file_path.delete(save=False)
+
         self.perform_destroy(instance)
         return custom_delete_response(instance, instance_id, 'file_path', 'client_card')
 
