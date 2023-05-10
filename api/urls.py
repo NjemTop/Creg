@@ -20,6 +20,7 @@ urlpatterns = [
     path('tech_account/detail/<int:pk>', views.TechAccountDetailsView.as_view(), name='tech_account_details'),
     path('upload_file/<int:client_id>', views.FileUploadView.as_view(), name='upload_file'),
     path('client_files/<int:client_id>', views.ClientFilesView.as_view(), name='client_files'),
+    path('client_files/detail/<int:pk>', views.FileUploadView.as_view(), name='client_files_detail'),
 ]
 
 app_name = 'rest_api'

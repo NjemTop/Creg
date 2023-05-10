@@ -6,7 +6,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.views import APIView
 from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo
 from .mixins import CustomResponseMixin, CustomCreateModelMixin, CustomQuerySetFilterMixin
-from .response_helpers import file_upload_error_response
+from .response_helpers import file_upload_error_response, custom_update_response, custom_delete_response
 from .serializers import (
     ClientSerializer,
     ContactsSerializer,
@@ -207,7 +207,9 @@ class TechAccountDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
         return self.destroy(request, *args, **kwargs)
 
 
-class FileUploadView(APIView):
+class FileUploadView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ConnectionInfo.objects.all()
+    serializer_class = ConnectionInfoSerializer
     parser_classes = [MultiPartParser]
 
     def post(self, request, client_id):
@@ -239,6 +241,34 @@ class FileUploadView(APIView):
             },
             status=status.HTTP_201_CREATED
         )
+    
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        instance.delete()
+
+    def patch(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        # Обрабатываем новый файл
+        if 'file' in request.FILES:
+            new_file = request.FILES['file']
+            # Удаляем старый файл
+            instance.file_path.delete(save=False)
+            # Заменяем его на новый файл  
+            instance.file_path = new_file
+
+        self.perform_update(serializer)
+        return custom_update_response(instance, request, 'id', 'file_path', 'client_card')
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance_id = instance.id
+        self.perform_destroy(instance)
+        return custom_delete_response(instance, instance_id, 'file_path', 'client_card')
 
 class ClientFilesView(generics.ListAPIView):
     serializer_class = ConnectionInfoSerializer
