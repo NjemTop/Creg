@@ -206,4 +206,31 @@ class ServiseCard(models.Model):
         db_table = 'servise_card'
 
     def __str__(self):
-        return f"{self.manager} ({self.client_card.client_info.client_name})"
+        return f"{self.service_pack} ({self.client_card.client_info.client_name})"
+
+
+class TechInformationCard(models.Model):
+    """
+    Таблица с технической информацией клиента.
+    """
+    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='tech_information',
+                                    verbose_name="Client Card")
+    server_version = models.CharField(verbose_name="server_version", max_length=255)
+    update_date = models.DateField(verbose_name="update_date", max_length=255)
+    api = models.BooleanField(verbose_name="api", null=True, blank=True)
+    ipad = models.CharField(verbose_name="ipad", max_length=255, null=True, blank=True)
+    android = models.CharField(verbose_name="android", max_length=255, null=True, blank=True)
+    mdm = models.CharField(verbose_name="mdm", max_length=255, null=True, blank=True)
+    localizable_web = models.BooleanField(verbose_name="localizable_web", null=True, blank=True)
+    localizable_ios = models.BooleanField(verbose_name="localizable_ios", null=True, blank=True)
+    skins_web = models.BooleanField(verbose_name="skins_web", null=True, blank=True)
+    skins_ios = models.BooleanField(verbose_name="skins_ios", null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Техническая информация клиента"
+        verbose_name_plural = "Список технической информации клиентов"
+        db_table = 'tech_information'
+
+    def __str__(self):
+        return f"{self.server_version} ({self.client_card.client_info.client_name})"
+

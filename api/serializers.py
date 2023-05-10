@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db import transaction
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo, ServiseCard
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard
 from rest_framework.exceptions import ValidationError
 
 class ClientsCardSerializer(serializers.ModelSerializer):
@@ -264,7 +264,7 @@ class ConnectionInfoSerializer(serializers.ModelSerializer):
 
 class ServiseSerializer(serializers.ModelSerializer):
     """
-    Сериализатор с информацией о технических УЗ для клиентов.
+    Сериализатор с информацией об обслуживании клиентов.
     """
     # Добавляем поле id, которое будет сериализовано с помощью метода get_id
     id = serializers.SerializerMethodField()
@@ -297,6 +297,53 @@ class ServiseSerializer(serializers.ModelSerializer):
         else:
             return super().to_representation(instance)
 
+
+class TechInformationSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор с технической информацией о клиентах.
+    """
+    # Добавляем поле id, которое будет сериализовано с помощью метода get_id
+    id = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TechInformationCard
+        fields = (
+            'id',
+            'server_version',
+            'update_date',
+            'api',
+            'ipad',
+            'android',
+            'mdm',
+            'localizable_web',
+            'localizable_ios',
+            'skins_web',
+            'skins_ios'
+        )
+
+    # Метод для определения значения поля id в сериализаторе
+    def get_id(self, obj):
+        # Если это POST-запрос, не возвращаем поле id
+        if self.context.get('request', None) and self.context['request'].method == 'POST':
+            return None
+        # В противном случае возвращаем значение поля id
+        return obj.id
+
+    # Метод для представления данных в сериализаторе
+    def to_representation(self, instance):
+        # Если экземпляр относится к модели ClientsList
+        if isinstance(instance, ClientsList):
+            # Создаем сериализатор для связанных технических учетных записей с опцией many=True
+            tech_information = TechInformationSerializer(instance.clients_card.tech_information, many=True).data
+            # Возвращаем представление данных, включающее id, client_name и список технических учетных записей
+            return {
+                'id': instance.id,
+                'client_name': instance.client_name,
+                'tech_information': tech_information
+            }
+        # Если экземпляр относится к другой модели, используем стандартное представление
+        else:
+            return super().to_representation(instance)
 
 
 

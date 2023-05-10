@@ -4,7 +4,8 @@ from rest_framework import generics, mixins, viewsets, status
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
 from rest_framework.views import APIView
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo, ServiseCard
+import datetime
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard
 from .mixins import CustomResponseMixin, CustomCreateModelMixin, CustomQuerySetFilterMixin
 from .response_helpers import file_upload_error_response, custom_update_response, custom_delete_response
 from .serializers import (
@@ -17,6 +18,7 @@ from .serializers import (
     TechAccountSerializer,
     ConnectionInfoSerializer,
     ServiseSerializer,
+    TechInformationSerializer,
 )
 from django.shortcuts import get_object_or_404
 
@@ -314,6 +316,43 @@ class ServiseDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.De
         """
         return self.destroy(request, *args, **kwargs)
 
+
+class TechInformationByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, generics.ListAPIView):
+    serializer_class = TechInformationSerializer
+    queryset = ClientsList.objects.all()
+    related_name = "clients_card"
+
+    def get_client_card(self, client_id):
+        return ClientsCard.objects.get(client_info_id=client_id)
+
+    def post(self, request, *args, **kwargs):
+        # Если 'update_date' не предоставлен, устанавливаем сегодняшнюю дату
+        if 'update_date' not in request.data:
+            request.data['update_date'] = datetime.date.today().strftime('%Y-%m-%d')
+
+        return super().post(request, *args, **kwargs)
+
+class TechInformationDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__('client_card', 'client_card', *args, **kwargs)
+
+    queryset = TechInformationCard.objects.select_related('client_card__client_info')
+    serializer_class = TechInformationSerializer
+
+    def patch(self, request, *args, **kwargs):
+        """
+        Обновление объекта TechInformationCard с использованием метода PATCH.
+        """
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Метод для обработки PATCH-запроса.
+        Метод для обработки DELETE-запроса.
+        Удаление объекта TechInformationCard.
+        """
+        return self.destroy(request, *args, **kwargs)
 
 
 
