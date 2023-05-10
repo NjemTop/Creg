@@ -82,9 +82,9 @@ class ConnectInfoCard(models.Model):
     """
     client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='connect_info_card',
                                   verbose_name="Client Card")
-    contact_info_name = models.TextField(verbose_name='ФИО')
-    contact_info_account = models.TextField(verbose_name='Учетная_запись')
-    contact_info_password = models.TextField(verbose_name='Пароль')
+    contact_info_name = models.CharField(verbose_name='ФИО', max_length=255)
+    contact_info_account = models.CharField(verbose_name='Учетная_запись', max_length=255)
+    contact_info_password = models.CharField(verbose_name='Пароль', max_length=100)
 
     class Meta:
         verbose_name = "УЗ для подключения"
@@ -157,9 +157,9 @@ class TechAccountCard(models.Model):
     """
     client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='tech_account_card',
                                   verbose_name="Client Card")
-    contact_info_disc = models.TextField(verbose_name='Описание')
-    contact_info_account = models.TextField(verbose_name='Учетная_запись')
-    contact_info_password = models.TextField(verbose_name='Пароль')
+    contact_info_disc = models.CharField(verbose_name='Описание', max_length=255)
+    contact_info_account = models.CharField(verbose_name='Учетная_запись', max_length=255)
+    contact_info_password = models.CharField(verbose_name='Пароль', max_length=255)
 
     class Meta:
         verbose_name = "Тех. УЗ клиента"
@@ -175,10 +175,35 @@ class TechAccountCard(models.Model):
     def check_password(self, raw_password):
         return check_password(raw_password, self.contact_info_password)
 
+
 class ConnectionInfo(models.Model):
     client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='connection_info', null=True)
     file_path = models.FileField(upload_to='uploaded_files/')
     text = models.TextField(null=True)
 
+    class Meta:
+        verbose_name = "Документы"
+        verbose_name_plural = "Документы по подключению к клиенту"
+        db_table = 'connection_info'
+
     def __str__(self):
         return f"File {self.file_path} for client {self.client_card.client_info.client_name}"
+
+
+class ServiseCard(models.Model):
+    """
+    Таблица с информацией обслуживания клиента.
+    """
+    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='servise_card',
+                                    verbose_name="Client Card")
+    service_pack = models.CharField(verbose_name="service_pack", max_length=255)
+    manager = models.CharField(verbose_name="manager", max_length=255)
+    loyal = models.CharField(verbose_name="loyal", max_length=255, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Обслуживание клиента"
+        verbose_name_plural = "Список обслуживание клиентов"
+        db_table = 'servise_card'
+
+    def __str__(self):
+        return f"{self.manager} ({self.client_card.client_info.client_name})"
