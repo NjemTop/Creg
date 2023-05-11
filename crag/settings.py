@@ -183,26 +183,29 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/logs/debug.log',
+            'filename': './logs/debug.log',
         },
         'error_file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': '/logs/error.log',
+            'filename': './logs/error.log',
         },
         'critical_file': {
             'level': 'CRITICAL',
             'class': 'logging.FileHandler',
-            'filename': '/logs/critical.log',
+            'filename': './logs/critical.log',
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
         },
     },
     'root': {
-        'handlers': ['file'],
+        'handlers': ['file', 'console'],
         'level': 'DEBUG',
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'error_file', 'critical_file'],
+            'handlers': ['file', 'error_file', 'critical_file', 'console'],
             'level': 'DEBUG',
             'propagate': True,
         },
