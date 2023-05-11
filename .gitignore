@@ -1,7 +1,3 @@
 database_1_TEST.db
-debug.log
-info.log
-error.log
-critical.log
 **/migrations/*
 **/__pycache__/*
