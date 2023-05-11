@@ -10,6 +10,7 @@ import django_filters.rest_framework as filters
 import datetime
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard
 from .mixins import CustomResponseMixin, CustomCreateModelMixin, CustomQuerySetFilterMixin
 from .response_helpers import file_upload_error_response, custom_update_response, custom_delete_response
@@ -93,6 +94,28 @@ class ClientViewSet(viewsets.ModelViewSet):
         return super().retrieve(request, *args, **kwargs)
 
 
+response_schema = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        'message': openapi.Schema(type=openapi.TYPE_STRING, description='Сообщение о создании записи для клиента'),
+    }
+)
+
+request_schema = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    properties={
+        'client_name': openapi.Schema(type=openapi.TYPE_STRING, description='Имя клиента'),
+        'contacts_card': openapi.Schema(type=openapi.TYPE_OBJECT, description='Контакты'),
+        'connect_info_card': openapi.Schema(type=openapi.TYPE_OBJECT, description='Информация о подключении'),
+        'bm_servers': openapi.Schema(type=openapi.TYPE_ARRAY, description='Список серверов'),
+        'tech_account_card': openapi.Schema(type=openapi.TYPE_OBJECT, description='Технические учётные записи'),
+        'integration_card': openapi.Schema(type=openapi.TYPE_OBJECT, description='Интеграции'),
+        'service_card': openapi.Schema(type=openapi.TYPE_OBJECT, description='Обслуживание'),
+        'tech_account_card': openapi.Schema(type=openapi.TYPE_OBJECT, description='Техническая информация'),
+    }
+)
+
+@swagger_auto_schema(request_body=request_schema, responses={201: openapi.Response("Клиент 'Имя клиента' создан в БД! ID клиента 'id клиента'", response_schema)})
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def add_client(request):
