@@ -86,7 +86,7 @@ class ClientSerializer(serializers.ModelSerializer):
     """
 
     # Вложенные сериализаторы для связанных объектов
-    clients_card = ClientsCardSerializer(read_only=True)
+    # clients_card = ClientsCardSerializer(read_only=True)
     contacts_card = ContactsCardSerializer(many=True, read_only=True, source='clients_card.contact_cards')
     connect_info_card = ConnectInfoCardSerializer(many=True, read_only=True, source='clients_card.connect_info_card')
     bm_servers = BMServersCardSerializer(many=True, read_only=True, source='clients_card.bm_servers_card')
@@ -97,7 +97,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClientsList
-        fields = '__all__'
+        fields = ('id', 'client_name', 'contact_status', 'contacts_card', 'connect_info_card', 'bm_servers', 'integration', 'tech_account_card', 'servise_card', 'tech_information')
 
     def create(self, validated_data):
         """
