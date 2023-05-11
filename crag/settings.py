@@ -193,6 +193,7 @@ LOGGING = {
             'when': 'midnight',  # Устанавливаем создане нового файла логов на полночь
             'interval': 1,  # Устанавливаем создание файлов на каждый день свой
             'backupCount': 10,  # Устанавливаем количество лог файлов
+            'formatter': 'verbose',  # Применяем форматтер
         },
         'info_file': {
             'level': 'INFO',
@@ -200,6 +201,7 @@ LOGGING = {
             'filename': './logs/info.log',
             'maxBytes': 1024*1024*10,  # Устанавливаем размер файла логов в 10 MB
             'backupCount': 10,  # Устанавливаем количество файлов логов в 10 файлов
+            'formatter': 'verbose',  # Применяем форматтер
         },
         'error_file': {
             'level': 'ERROR',
@@ -207,6 +209,7 @@ LOGGING = {
             'filename': './logs/error.log',
             'maxBytes': 1024*1024*10,  # Устанавливаем размер файла логов в 10 MB
             'backupCount': 3,  # Устанавливаем количество файлов логов в 3 файла
+            'formatter': 'verbose',  # Применяем форматтер
         },
         'critical_file': {
             'level': 'CRITICAL',
@@ -214,9 +217,11 @@ LOGGING = {
             'filename': './logs/critical.log',
             'maxBytes': 1024*1024*10,  # Устанавливаем размер файла логов в 10 MB
             'backupCount': 3,  # Устанавливаем количество файлов логов в 3 файла
+            'formatter': 'verbose',  # Применяем форматтер
         },
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'verbose',  # Применяем форматтер
         },
     },
     'root': {
