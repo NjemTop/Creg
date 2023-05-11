@@ -26,13 +26,48 @@ from .serializers import (
 
 
 class ClientFilter(filters.FilterSet):
+    """
+    Класс фильтрации по клиентам
+    """
     client_name = filters.CharFilter(field_name="client_name", lookup_expr='iexact')
+    contact_status = filters.BooleanFilter(field_name="contact_status")
+
+    elasticsearch = filters.BooleanFilter(field_name="clients_card__integration__elasticsearch")
+    ad = filters.BooleanFilter(field_name="clients_card__integration__ad")
+    adfs = filters.BooleanFilter(field_name="clients_card__integration__adfs")
+    oauth_2 = filters.BooleanFilter(field_name="clients_card__integration__oauth_2")
+    module_translate = filters.BooleanFilter(field_name="clients_card__integration__module_translate")
+    ms_oos = filters.BooleanFilter(field_name="clients_card__integration__ms_oos")
+    exchange = filters.BooleanFilter(field_name="clients_card__integration__exchange")
+    office_365 = filters.BooleanFilter(field_name="clients_card__integration__office_365")
+    sfb = filters.BooleanFilter(field_name="clients_card__integration__sfb")
+    zoom = filters.BooleanFilter(field_name="clients_card__integration__zoom")
+    teams = filters.BooleanFilter(field_name="clients_card__integration__teams")
+    smtp = filters.BooleanFilter(field_name="clients_card__integration__smtp")
+    cryptopro_dss = filters.BooleanFilter(field_name="clients_card__integration__cryptopro_dss")
+    cryptopro_csp = filters.BooleanFilter(field_name="clients_card__integration__cryptopro_csp")
+    smpp = filters.BooleanFilter(field_name="clients_card__integration__smpp")
+    limesurvey = filters.BooleanFilter(field_name="clients_card__integration__limesurvey")
+
+    server_version = filters.CharFilter(field_name="clients_card__tech_information__server_version", lookup_expr='iexact')
+    update_date = filters.DateFilter(field_name="clients_card__tech_information__update_date")
+    api = filters.BooleanFilter(field_name="clients_card__tech_information__api")
+    ipad = filters.CharFilter(field_name="clients_card__tech_information__ipad", lookup_expr='iexact')
+    android = filters.CharFilter(field_name="clients_card__tech_information__android", lookup_expr='iexact')
+    mdm = filters.CharFilter(field_name="clients_card__tech_information__mdm", lookup_expr='iexact')
+    localizable_web = filters.BooleanFilter(field_name="clients_card__tech_information__localizable_web")
+    localizable_ios = filters.BooleanFilter(field_name="clients_card__tech_information__localizable_ios")
+    skins_web = filters.BooleanFilter(field_name="clients_card__tech_information__skins_web")
+    skins_ios = filters.BooleanFilter(field_name="clients_card__tech_information__skins_ios")
 
     class Meta:
         model = ClientsList
-        fields = ['client_name']
+        fields = ['client_name', 'contact_status', 'elasticsearch', 'ad', 'adfs', 'oauth_2', 'module_translate', 'ms_oos', 'exchange', 'office_365', 'sfb', 'zoom', 'teams', 'smtp', 'cryptopro_dss', 'cryptopro_csp', 'smpp', 'limesurvey', 'server_version', 'update_date', 'api', 'ipad', 'android', 'mdm', 'localizable_web', 'localizable_ios', 'skins_web', 'skins_ios']
 
 class ClientViewSet(viewsets.ModelViewSet):
+    """
+    Класс вывода всей информации о клиенте, а также фильтр по клиентам
+    """
     queryset = ClientsList.objects.all()
     serializer_class = ClientSerializer
     filterset_class = ClientFilter
@@ -41,6 +76,9 @@ class ClientViewSet(viewsets.ModelViewSet):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def add_client(request):
+    """
+    Функция создания нового клиента со всей необходимой ему информацией
+    """
     if request.method == 'POST':
         client_data = request.data.get("client_name")
         contacts_data = request.data.get("contacts_card")
@@ -116,6 +154,9 @@ def add_client(request):
 
 
 class ContactsByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, generics.ListAPIView):
+    """
+    Класс вывода, а также создания нового сотрудника для клиента
+    """
     serializer_class = ContactsSerializer
     queryset = ClientsList.objects.all()
     related_name = "clients_card"
@@ -125,6 +166,9 @@ class ContactsByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, 
 
 
 class ContactDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+    """
+    Класс для изменения контактов клиента, а также удаление этого контакта
+    """
     queryset = ContactsCard.objects.select_related('client_card__client_info')
     serializer_class = ContactsSerializer
 
@@ -147,6 +191,10 @@ class ContactDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.De
 
 
 class ConnectInfoByClientIdView(CustomCreateModelMixin, generics.ListAPIView):
+    """
+    Класс вывода учётных записей о подключении к клиенту,
+    а также создание новой УЗ для подключения к этому клиенту
+    """
     serializer_class = ConnectInfoSerializer
 
     def get_queryset(self):
@@ -228,6 +276,10 @@ class BMServersDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.
 
 
 class IntegrationByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, generics.ListAPIView):
+    """
+    Класс вывода информации о интеграциях клиента,
+    а также добавления этой информации если ещё нет
+    """
     def get_serializer_class(self):
         return IntegrationSerializer
 
@@ -238,7 +290,10 @@ class IntegrationByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixi
         return ClientsCard.objects.get(client_info_id=client_id)
 
 class IntegrationDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
-
+    """
+    Класс изменения информации об интеграциях клиента,
+    а также удаления этой информации полностью.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__('client_card', 'client_card', *args, **kwargs)
 
@@ -261,6 +316,10 @@ class IntegrationDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
 
 
 class TechAccountByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, generics.ListAPIView):
+    """
+    Класс вывода тех. информации об УЗ, которые использует клиент для своих сервисов,
+    а также добавлени этих УЗ
+    """
     serializer_class = TechAccountSerializer
     queryset = ClientsList.objects.all()
     related_name = "clients_card"
