@@ -66,11 +66,23 @@ class ClientFilter(filters.FilterSet):
 
 class ClientViewSet(viewsets.ModelViewSet):
     """
-    Класс вывода всей информации о клиенте, а также фильтр по клиентам
+    Класс вывода всей информации о клиенте, а также фильтр по клиентам.
     """
     queryset = ClientsList.objects.all()
     serializer_class = ClientSerializer
     filterset_class = ClientFilter
+
+    def list(self, request, *args, **kwargs):
+        """
+        Получить список всех клиентов.
+        """
+        return super().list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Получить информацию о конкретном клиенте.
+        """
+        return super().retrieve(request, *args, **kwargs)
 
 
 @api_view(['POST'])
