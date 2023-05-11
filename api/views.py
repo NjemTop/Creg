@@ -8,6 +8,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.views import APIView
 import django_filters.rest_framework as filters
 import datetime
+import logging
 from django.shortcuts import get_object_or_404
 from .swagger_schemas import request_schema, response_schema
 from drf_yasg.utils import swagger_auto_schema
@@ -27,6 +28,9 @@ from .serializers import (
     TechInformationSerializer,
 )
 
+
+# Настройка логирования
+logger = logging.getLogger(__name__)
 
 class ClientFilter(filters.FilterSet):
     """
@@ -304,12 +308,14 @@ class IntegrationByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixi
     а также добавления этой информации если ещё нет
     """
     def get_serializer_class(self):
+        logger.info('Получение класса сериализатора')
         return IntegrationSerializer
 
     queryset = ClientsList.objects.all()
     related_name = "clients_card"
 
     def get_client_card(self, client_id):
+        logger.info(f'Получение client card для client ID {client_id}')
         return ClientsCard.objects.get(client_info_id=client_id)
 
 class IntegrationDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):

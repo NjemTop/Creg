@@ -2,7 +2,10 @@
 
 from rest_framework.response import Response
 from rest_framework import status
+import logging
 
+
+logger = logging.getLogger(__name__)
 
 def custom_create_response(instance, client_id, client_card, success_status=status.HTTP_201_CREATED):
     """
@@ -21,6 +24,9 @@ def custom_create_response(instance, client_id, client_card, success_status=stat
     response_data = {
         "message": f"Запись для клиента {client_name} успешно создалась"
     }
+
+    # Записываем информацию в лог файл
+    logger.info(f'Запись для клиента {client_name} успешно создалась')
 
     # Возвращаем Response объект с данными и кодом статуса
     return Response(response_data, status=success_status)
@@ -48,6 +54,9 @@ def custom_update_response(instance, request, pk_field, obj_name_field, client_n
         "message": f"Запись '{obj_name}' клиента '{client_name}' с ID '{obj_id}' обновлена"
     }
 
+    # Записываем информацию в лог файл
+    logger.info(f"Запись '{obj_name}' клиента '{client_name}' с ID '{obj_id}' обновлена")
+
     # Возвращаем Response объект с данными и кодом статуса
     return Response(response_data, status=success_status)
 
@@ -70,6 +79,9 @@ def custom_delete_response(instance, instance_id, name_field, client_field):
         "message": f"Запись '{instance_name}' клиента '{client_name}' с ID '{instance_id}' удалена"
     }
 
+    # Записываем информацию в лог файл
+    logger.info(f"Запись '{instance_name}' клиента '{client_name}' с ID '{instance_id}' удалена")
+
     # Возвращаем Response объект с данными и кодом статуса
     return Response(response_data, status=status.HTTP_200_OK)
 
@@ -85,5 +97,8 @@ def file_upload_error_response(error, detail, status_code=status.HTTP_400_BAD_RE
         "ошибка": error,
         "подробности": detail
     }
+
+    # Записываем ошибку в лог файл
+    logger.error(f"Ошибка при загрузке файла: {error}, подробности: {detail}")
 
     return Response(response_data, status=status_code)
