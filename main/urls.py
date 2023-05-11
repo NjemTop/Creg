@@ -10,7 +10,7 @@ from . import views
 schema_view = get_schema_view(
    openapi.Info(
       title="REST API",
-      default_version='v1',
+      default_version='v2',
       description="Описание REST API",
       terms_of_service="/",
       contact=openapi.Contact(email="oleg.eliseev@boardmaps.ru"),
