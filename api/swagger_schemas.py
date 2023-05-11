@@ -1,3 +1,5 @@
+from drf_yasg import openapi
+
 response_schema = openapi.Schema(
     type=openapi.TYPE_OBJECT,
     properties={
