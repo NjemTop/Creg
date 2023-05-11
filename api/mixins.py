@@ -7,7 +7,14 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 class CustomCreateModelMixin:
-    @swagger_auto_schema(responses={201: openapi.Response('description', 'Здесь описание ответа')})
+    response_schema = openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'message': openapi.Schema(type=openapi.TYPE_STRING, description='Сообщение о создании записи для клиента'),
+        }
+    )
+
+    @swagger_auto_schema(responses={201: openapi.Response('Запись для клиента *Имя* успешно создалась', response_schema)})
     def post(self, request, *args, **kwargs):
         data = request.data
         client_id = self.kwargs['client_id']
