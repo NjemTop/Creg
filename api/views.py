@@ -106,12 +106,36 @@ request_schema = openapi.Schema(
     properties={
         'client_name': openapi.Schema(type=openapi.TYPE_STRING, description='Имя клиента'),
         'contacts_card': openapi.Schema(type=openapi.TYPE_OBJECT, description='Контакты'),
-        'connect_info_card': openapi.Schema(type=openapi.TYPE_OBJECT, description='Информация о подключении'),
-        'bm_servers': openapi.Schema(type=openapi.TYPE_ARRAY, description='Список серверов'),
-        'tech_account_card': openapi.Schema(type=openapi.TYPE_OBJECT, description='Технические учётные записи'),
-        'integration_card': openapi.Schema(type=openapi.TYPE_OBJECT, description='Интеграции'),
-        'service_card': openapi.Schema(type=openapi.TYPE_OBJECT, description='Обслуживание'),
-        'tech_account_card': openapi.Schema(type=openapi.TYPE_OBJECT, description='Техническая информация'),
+        'connect_info_card': openapi.Schema(
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Schema(type=openapi.TYPE_OBJECT),
+            description='Информация о подключении'
+        ),
+        'bm_servers': openapi.Schema(
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Schema(type=openapi.TYPE_OBJECT),
+            description='Список серверов'
+        ),
+        'tech_account_card': openapi.Schema(
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Schema(type=openapi.TYPE_OBJECT),
+            description='Технические учётные записи'
+        ),
+        'integration_card': openapi.Schema(
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Schema(type=openapi.TYPE_OBJECT),
+            description='Интеграции'
+        ),
+        'service_card': openapi.Schema(
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Schema(type=openapi.TYPE_OBJECT),
+            description='Обслуживание'
+        ),
+        'tech_information': openapi.Schema(
+            type=openapi.TYPE_ARRAY,
+            items=openapi.Schema(type=openapi.TYPE_OBJECT),
+            description='Техническая информация'
+        ),
     }
 )
 
