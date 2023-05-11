@@ -203,6 +203,14 @@ LOGGING = {
             'backupCount': 10,  # Устанавливаем количество файлов логов в 10 файлов
             'formatter': 'verbose',  # Применяем форматтер
         },
+        'warning_file': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': './logs/warning.log',
+            'maxBytes': 1024*1024*10, # Устанавливаем размер файла логов в 10 MB
+            'backupCount': 5, # Устанавливаем количество файлов логов в 10 файлов
+            'formatter': 'verbose', # Применяем форматтер
+        },
         'error_file': {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
