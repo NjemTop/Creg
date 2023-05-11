@@ -21,6 +21,7 @@ services:
   db:
     image: postgres:13
     environment:
+      - TZ=Europe/Moscow
       - POSTGRES_DB=database_1.db
       - POSTGRES_USER=sa
       - POSTGRES_PASSWORD=kJGnTXBT
