@@ -184,16 +184,30 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': './logs/debug.log',
+            'when': 'midnight',  # Устанавливаем создане нового файла логов на полночь
+            'interval': 1,  # Устанавливаем создание файлов на каждый день свой
+            'backupCount': 10,  # Устанавливаем количество лог файлов
+        },
+        'info_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': './logs/info.log',
+            'maxBytes': 1024*1024*10,  # Устанавливаем размер файла логов в 10 MB
+            'backupCount': 10,  # Устанавливаем количество файлов логов в 10 файлов
         },
         'error_file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
             'filename': './logs/error.log',
+            'maxBytes': 1024*1024*10,  # Устанавливаем размер файла логов в 10 MB
+            'backupCount': 3,  # Устанавливаем количество файлов логов в 3 файла
         },
         'critical_file': {
             'level': 'CRITICAL',
             'class': 'logging.FileHandler',
             'filename': './logs/critical.log',
+            'maxBytes': 1024*1024*10,  # Устанавливаем размер файла логов в 10 MB
+            'backupCount': 3,  # Устанавливаем количество файлов логов в 3 файла
         },
         'console': {
             'class': 'logging.StreamHandler',
@@ -205,7 +219,7 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'error_file', 'critical_file', 'console'],
+            'handlers': ['file', 'info_file', 'error_file', 'critical_file', 'console'],
             'level': 'INFO',
             'propagate': True,
         },
