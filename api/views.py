@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
 from rest_framework.views import APIView
+import django_filters.rest_framework as filters
 import datetime
 from django.shortcuts import get_object_or_404
 from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard
@@ -24,9 +25,17 @@ from .serializers import (
 )
 
 
+class ClientFilter(filters.FilterSet):
+    client_name = filters.CharFilter(field_name="client_name", lookup_expr='iexact')
+
+    class Meta:
+        model = ClientsList
+        fields = ['client_name']
+
 class ClientViewSet(viewsets.ModelViewSet):
     queryset = ClientsList.objects.all()
     serializer_class = ClientSerializer
+    filterset_class = ClientFilter
 
 
 @api_view(['POST'])
