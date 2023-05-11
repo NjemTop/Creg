@@ -95,8 +95,8 @@ class ClientViewSet(viewsets.ModelViewSet):
         return super().retrieve(request, *args, **kwargs)
 
 
+@swagger_auto_schema(methods=['post'], request_body=request_schema, responses={201: openapi.Response("Клиент 'Имя клиента' создан в БД! ID клиента 'id клиента'", response_schema)})
 @api_view(['POST'])
-@swagger_auto_schema(request_body=request_schema, responses={201: openapi.Response("Клиент 'Имя клиента' создан в БД! ID клиента 'id клиента'", response_schema)})
 @permission_classes([IsAuthenticated])
 def add_client(request):
     """
