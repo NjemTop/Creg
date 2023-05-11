@@ -4,6 +4,9 @@ FROM python:3.9
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
+# Создаем папку logs
+RUN mkdir /logs
+
 # Копируем файлы с зависимостями и устанавливаем их
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
