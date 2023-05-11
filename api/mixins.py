@@ -3,8 +3,11 @@
 from rest_framework import status
 from .response_helpers import custom_create_response, custom_update_response, custom_delete_response
 from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class CustomCreateModelMixin:
+    @swagger_auto_schema(responses={201: openapi.Response('description', 'Здесь описание ответа')})
     def post(self, request, *args, **kwargs):
         data = request.data
         client_id = self.kwargs['client_id']

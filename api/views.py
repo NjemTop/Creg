@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 import django_filters.rest_framework as filters
 import datetime
 from django.shortcuts import get_object_or_404
+from drf_yasg.utils import swagger_auto_schema
 from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard
 from .mixins import CustomResponseMixin, CustomCreateModelMixin, CustomQuerySetFilterMixin
 from .response_helpers import file_upload_error_response, custom_update_response, custom_delete_response
@@ -66,7 +67,9 @@ class ClientFilter(filters.FilterSet):
 
 class ClientViewSet(viewsets.ModelViewSet):
     """
-    Класс вывода всей информации о клиенте, а также фильтр по клиентам.
+    tags:
+    - Clients
+    - All_clients
     """
     queryset = ClientsList.objects.all()
     serializer_class = ClientSerializer
