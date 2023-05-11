@@ -183,17 +183,17 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'debug.log',
+            'filename': '/logs/debug.log',
         },
         'error_file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': 'error.log',
+            'filename': '/logs/error.log',
         },
         'critical_file': {
             'level': 'CRITICAL',
             'class': 'logging.FileHandler',
-            'filename': 'critical.log',
+            'filename': '/logs/critical.log',
         },
     },
     'root': {
