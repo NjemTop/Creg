@@ -120,7 +120,7 @@ request_schema = openapi.Schema(
 @permission_classes([IsAuthenticated])
 def add_client(request):
     """
-    Функция создания нового клиента со всей необходимой ему информацией
+    Endpoint для создания нового клиента со всей необходимой ему информацией.
     """
     if request.method == 'POST':
         client_data = request.data.get("client_name")
