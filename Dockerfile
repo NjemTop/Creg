@@ -11,6 +11,9 @@ RUN mkdir /logs
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Установим часовой пояс Москвы, для контейнера
+RUN echo "Europe/Moscow" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
+
 # Копируем остальные файлы проекта
 COPY . .
 
