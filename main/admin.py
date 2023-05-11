@@ -20,6 +20,13 @@ class ContactsCardAdmin(admin.ModelAdmin):
         return obj.client_card.client_info.client_name
     client_name.short_description = 'Клиент'
 
+class ServiseCardAdmin(admin.ModelAdmin):
+    list_display = ('id', 'client_name', 'service_pack', 'manager', 'loyal')
+    list_display_links = ('client_name',)
+
+    def client_name(self, obj):
+        return obj.client_card.client_info.client_name
+    client_name.short_description = 'Клиент'
 
 admin.site.register(ClientsList)
 admin.site.register(ClientsCard, ClientsCardAdmin)
@@ -28,7 +35,7 @@ admin.site.register(ConnectInfoCard)
 admin.site.register(BMServersCard)
 admin.site.register(Integration)
 admin.site.register(TechAccountCard)
-admin.site.register(ServiseCard)
+admin.site.register(ServiseCard, ServiseCardAdmin)
 admin.site.register(TechInformationCard)
 
 @admin.register(Favicon)
