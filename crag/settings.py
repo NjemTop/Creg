@@ -182,7 +182,7 @@ LOGGING = {
     'handlers': {
         'file': {
             'level': 'DEBUG',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': './logs/debug.log',
             'when': 'midnight',  # Устанавливаем создане нового файла логов на полночь
             'interval': 1,  # Устанавливаем создание файлов на каждый день свой
@@ -197,14 +197,14 @@ LOGGING = {
         },
         'error_file': {
             'level': 'ERROR',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': './logs/error.log',
             'maxBytes': 1024*1024*10,  # Устанавливаем размер файла логов в 10 MB
             'backupCount': 3,  # Устанавливаем количество файлов логов в 3 файла
         },
         'critical_file': {
             'level': 'CRITICAL',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': './logs/critical.log',
             'maxBytes': 1024*1024*10,  # Устанавливаем размер файла логов в 10 MB
             'backupCount': 3,  # Устанавливаем количество файлов логов в 3 файла
