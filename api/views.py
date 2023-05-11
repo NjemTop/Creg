@@ -39,6 +39,11 @@ def add_client(request):
         bm_servers_data = request.data.get("bm_servers")
         tech_account_data = request.data.get("tech_account_card")
 
+        # Проверка на существующего клиента
+        existing_client = ClientsList.objects.filter(client_name=client_data).first()
+        if existing_client:
+            return Response({"error": "Клиент уже есть в системе."}, status=status.HTTP_400_BAD_REQUEST)
+
         if client_data:
             serializer = ClientSerializer(data=request.data)
             if serializer.is_valid():
