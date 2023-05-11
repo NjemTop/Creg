@@ -94,12 +94,34 @@ WSGI_APPLICATION = 'crag.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Делаем переменное окружение для определения локального запуска проекта или в докере (production)
+# Перед запуском нужно выполнить команду: export DJANGO_ENV=local
+# Для установки переменного окружения DJANGO_ENV
+DJANGO_ENV = os.environ.get('DJANGO_ENV')
+
+if DJANGO_ENV == 'local':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'database_1_TEST.db',
+            'USER': 'sa',
+            'PASSWORD': 'kJGnTXBT',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'database_1.db',
+            'USER': 'sa',
+            'PASSWORD': 'kJGnTXBT',
+            'HOST': 'db',
+            'PORT': '5432',
+        }
+    }
+
 
 
 # Password validation
@@ -142,7 +164,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # Настройка, которая убирает слэш в конце "/"
-APPEND_SLASH = False
+# APPEND_SLASH = False
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

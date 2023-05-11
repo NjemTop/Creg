@@ -3,12 +3,32 @@ version: '3.9'
 services:
   web:
     build: .
-    command: bash -c "python3.9 manage.py makemigrations && python3.9 manage.py migrate && python3.9 manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python3.9 manage.py makemigrations && python3.9 manage.py migrate && python3.9 manage.py runserver 0.0.0.0:8137"
     volumes:
       - .:/app
+      - mediadata:/app/media
     ports:
-      - "8000:8000"
+      - "8137:8137"
     container_name: Crag
     environment:
       - TZ=Europe/Moscow
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
     restart: always
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=database_1.db
+      - POSTGRES_USER=sa
+      - POSTGRES_PASSWORD=kJGnTXBT
+    container_name: DataBase
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  dbdata:
+  mediadata:
+
