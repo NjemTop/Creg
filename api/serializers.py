@@ -253,6 +253,19 @@ class IntegrationSerializer(serializers.ModelSerializer):
         else:
             return super().to_representation(instance)
 
+    def create(self, validated_data):
+        """
+        Функция проверки при отправке post-запроса,
+        на наличие уже существующей записи
+        """
+        client_card = validated_data.get('client_card')
+        obj, created = Integration.objects.get_or_create(client_card=client_card, defaults=validated_data)
+        
+        if not created:
+            raise serializers.ValidationError(f"Информация для клиента {client_card.client_info.client_name} уже существует")
+        
+        return obj
+
 
 class TechAccountSerializer(serializers.ModelSerializer):
     """
@@ -331,6 +344,19 @@ class ServiseSerializer(serializers.ModelSerializer):
         else:
             return super().to_representation(instance)
 
+    def create(self, validated_data):
+        """
+        Функция проверки при отправке post-запроса,
+        на наличие уже существующей записи
+        """
+        client_card = validated_data.get('client_card')
+        obj, created = ServiseCard.objects.get_or_create(client_card=client_card, defaults=validated_data)
+        
+        if not created:
+            raise serializers.ValidationError(f"Информация для клиента {client_card.client_info.client_name} уже существует")
+        
+        return obj
+
 
 class TechInformationSerializer(serializers.ModelSerializer):
     """
@@ -379,10 +405,23 @@ class TechInformationSerializer(serializers.ModelSerializer):
         else:
             return super().to_representation(instance)
 
+    def create(self, validated_data):
+        """
+        Функция проверки при отправке post-запроса,
+        на наличие уже существующей записи
+        """
+        client_card = validated_data.get('client_card')
+        obj, created = TechInformationCard.objects.get_or_create(client_card=client_card, defaults=validated_data)
+        
+        if not created:
+            raise serializers.ValidationError(f"Информация для клиента {client_card.client_info.client_name} уже существует")
+        
+        return obj
+
 
 class TechNoteSerializer(serializers.ModelSerializer):
     """
-    Сериализатор с информацией об обслуживании клиентов.
+    Сериализатор с техническими заметками клиентов.
     """
     # Добавляем поле id, которое будет сериализовано с помощью метода get_id
     id = serializers.SerializerMethodField()
@@ -414,6 +453,31 @@ class TechNoteSerializer(serializers.ModelSerializer):
         # Если экземпляр относится к другой модели, используем стандартное представление
         else:
             return super().to_representation(instance)
+
+    def create(self, validated_data):
+        """
+        При создании новой технической заметки, 
+        функция проверяет наличие уже существующей записи для данного клиента.
+        """
+        # Получаем client_card из validated_data
+        client_card = validated_data.get('client_card')
+
+        # Пытаемся получить запись TechNote для данного client_card.
+        # Если запись не существует, она будет создана с validated_data.
+        # Если запись существует, она будет возвращена, и флаг created будет False.
+        obj, created = TechNote.objects.get_or_create(client_card=client_card, defaults=validated_data)
+        
+        # Если запись уже существует (т.е., created=False), вызываем ошибку валидации.
+        if not created:
+            # Получаем имя клиента из связанной модели ClientsList
+            client_name = client_card.client_info.client_name
+            # Генерируем сообщение об ошибке с именем клиента
+            error_message = f"Информация для клиента {client_name} уже существует"
+            # Вызываем ошибку валидации с сгенерированным сообщением
+            raise serializers.ValidationError(error_message)
+        
+        # Если записи не существовало и она была создана, возвращаем ее
+        return obj
 
 
 
