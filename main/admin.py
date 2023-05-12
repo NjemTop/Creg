@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote, Favicon
-from django_celery_beat.models import PeriodicTask
 
 
 class ClientsCardAdmin(admin.ModelAdmin):
@@ -29,7 +28,7 @@ class ServiseCardAdmin(admin.ModelAdmin):
         return obj.client_card.client_info.client_name
     client_name.short_description = 'Клиент'
 
-admin.site.register(PeriodicTask)
+
 admin.site.register(ClientsList)
 admin.site.register(ClientsCard, ClientsCardAdmin)
 admin.site.register(ContactsCard, ContactsCardAdmin)
