@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 from .swagger_schemas import request_schema, response_schema
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote
 from .mixins import CustomResponseMixin, CustomCreateModelMixin, CustomQuerySetFilterMixin
 from .response_helpers import file_upload_error_response, custom_update_response, custom_delete_response
 from .serializers import (
@@ -26,6 +26,7 @@ from .serializers import (
     ConnectionInfoSerializer,
     ServiseSerializer,
     TechInformationSerializer,
+    TechNoteSerializer,
 )
 
 
@@ -523,6 +524,36 @@ class TechInformationDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, m
         """
         return self.destroy(request, *args, **kwargs)
 
+
+class TechNoteByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, generics.ListAPIView):
+    serializer_class = TechNoteSerializer
+    queryset = ClientsList.objects.all()
+    related_name = "clients_card"
+
+    def get_client_card(self, client_id):
+        return ClientsCard.objects.get(client_info_id=client_id)
+
+class TechNoteDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__('client_card', 'client_card', *args, **kwargs)
+
+    queryset = TechNote.objects.select_related('client_card__client_info')
+    serializer_class = TechNoteSerializer
+
+    def patch(self, request, *args, **kwargs):
+        """
+        Обновление объекта TechNote с использованием метода PATCH.
+        """
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Метод для обработки PATCH-запроса.
+        Метод для обработки DELETE-запроса.
+        Удаление объекта TechNote.
+        """
+        return self.destroy(request, *args, **kwargs)
 
 
 

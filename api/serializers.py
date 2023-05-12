@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db import transaction
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechNote, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard
 from rest_framework.exceptions import ValidationError
 
 class ClientsCardSerializer(serializers.ModelSerializer):
@@ -78,6 +78,12 @@ class TechInformationCardSerializer(serializers.ModelSerializer):
             'skins_ios'
         )
 
+class TechNoteCardSerializer(serializers.ModelSerializer):
+    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
+    class Meta:
+        model = TechNote
+        fields = ('id', 'client_id', 'tech_notes_text')
+
 
 class ClientSerializer(serializers.ModelSerializer):
     """
@@ -94,10 +100,11 @@ class ClientSerializer(serializers.ModelSerializer):
     tech_account_card = TechAccountCardSerializer(many=True, read_only=True, source='clients_card.tech_account_card')
     servise_card = ServiseCardSerializer(many=True, read_only=True, source='clients_card.servise_card')
     tech_information = TechInformationCardSerializer(many=True, read_only=True, source='clients_card.tech_information')
+    tech_note = TechNoteCardSerializer(many=True, read_only=True, source='clients_card.tech_note')
 
     class Meta:
         model = ClientsList
-        fields = ('id', 'client_name', 'contact_status', 'contacts_card', 'connect_info_card', 'bm_servers', 'integration', 'tech_account_card', 'servise_card', 'tech_information', 'notes')
+        fields = ('id', 'client_name', 'contact_status', 'contacts_card', 'connect_info_card', 'bm_servers', 'integration', 'tech_account_card', 'servise_card', 'tech_information', 'tech_note', 'notes')
 
     def create(self, validated_data):
         """
@@ -373,6 +380,40 @@ class TechInformationSerializer(serializers.ModelSerializer):
             return super().to_representation(instance)
 
 
+class TechNoteSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор с информацией об обслуживании клиентов.
+    """
+    # Добавляем поле id, которое будет сериализовано с помощью метода get_id
+    id = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TechNote
+        fields = ('id', 'tech_notes_text')
+
+    # Метод для определения значения поля id в сериализаторе
+    def get_id(self, obj):
+        # Если это POST-запрос, не возвращаем поле id
+        if self.context.get('request', None) and self.context['request'].method == 'POST':
+            return None
+        # В противном случае возвращаем значение поля id
+        return obj.id
+
+    # Метод для представления данных в сериализаторе
+    def to_representation(self, instance):
+        # Если экземпляр относится к модели ClientsList
+        if isinstance(instance, ClientsList):
+            # Создаем сериализатор для связанных технических учетных записей с опцией many=True
+            tech_notes = TechNoteSerializer(instance.clients_card.tech_notes, many=True).data
+            # Возвращаем представление данных, включающее id, client_name и список технических учетных записей
+            return {
+                'id': instance.id,
+                'client_name': instance.client_name,
+                'tech_notes': tech_notes
+            }
+        # Если экземпляр относится к другой модели, используем стандартное представление
+        else:
+            return super().to_representation(instance)
 
 
 

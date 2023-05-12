@@ -234,3 +234,18 @@ class TechInformationCard(models.Model):
     def __str__(self):
         return f"{self.server_version} ({self.client_card.client_info.client_name})"
 
+class TechNote(models.Model):
+    """
+    Таблица с техническими заметками клиента.
+    """
+    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='tech_note',
+                                    verbose_name="Client Card")
+    tech_notes_text = models.TextField(verbose_name="tech_notes_text", null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Технические заметки клиента"
+        verbose_name_plural = "Список технических заметок клиентов"
+        db_table = 'tech_note'
+
+    def __str__(self):
+        return f"{self.client_card} ({self.client_card.client_info.client_name})"

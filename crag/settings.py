@@ -101,6 +101,7 @@ WSGI_APPLICATION = 'crag.wsgi.application'
 
 # Делаем переменное окружение для определения локального запуска проекта или в докере (production)
 # Перед запуском нужно выполнить команду: export DJANGO_ENV=local
+# Windows set DJANGO_ENV=local
 # Для установки переменного окружения DJANGO_ENV
 DJANGO_ENV = os.environ.get('DJANGO_ENV')
 
