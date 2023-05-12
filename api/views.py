@@ -4,7 +4,7 @@ from rest_framework import generics, mixins, viewsets, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser
+from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.views import APIView
 import django_filters.rest_framework as filters
 import datetime
@@ -447,6 +447,25 @@ class FileUploadView(generics.RetrieveUpdateDestroyAPIView):
 
         self.perform_destroy(instance)
         return custom_delete_response(instance, instance_id, 'file_path', 'client_card')
+
+class TextUploadView(generics.CreateAPIView):
+    queryset = ConnectionInfo.objects.all()
+    serializer_class = ConnectionInfoSerializer
+    parser_classes = [JSONParser]
+
+    def post(self, request, client_id):
+        client_card = get_object_or_404(ClientsCard, id=client_id)
+        text = request.data.get('text', None)
+        connection_info = ConnectionInfo(client_card=client_card, text=text)
+        connection_info.save()
+
+        return Response(
+            {
+                'message': 'Текст успешно загружен и сохранен в базе данных',
+                'text': connection_info.text
+            },
+            status=status.HTTP_201_CREATED
+        )
 
 class ClientFilesView(generics.ListAPIView):
     serializer_class = ConnectionInfoSerializer

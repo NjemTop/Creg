@@ -19,6 +19,7 @@ urlpatterns = [
     path('tech_account/client/<int:client_id>', views.TechAccountByClientIdView.as_view(), name='tech_account_by_client'),
     path('tech_account/detail/<int:pk>', views.TechAccountDetailsView.as_view(), name='tech_account_details'),
     path('upload_file/<int:client_id>', views.FileUploadView.as_view(), name='upload_file'),
+    path('upload_text/<int:client_id>', views.TextUploadView.as_view(), name='upload_text'),
     path('client_files/<int:client_id>', views.ClientFilesView.as_view(), name='client_files'),
     path('client_files/detail/<int:pk>', views.FileUploadView.as_view(), name='client_files_detail'),
     path('servise/client/<int:client_id>', views.ServiseByClientIdView.as_view(), name='servise_by_client'),
