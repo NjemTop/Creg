@@ -84,6 +84,11 @@ class TechNoteCardSerializer(serializers.ModelSerializer):
         model = TechNote
         fields = ('id', 'client_id', 'tech_note_text')
 
+class ConnectionInfoCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConnectionInfo
+        fields = ['id', 'client_id', 'file_path', 'text']
+
 
 class ClientSerializer(serializers.ModelSerializer):
     """
@@ -101,10 +106,11 @@ class ClientSerializer(serializers.ModelSerializer):
     servise_card = ServiseCardSerializer(many=True, read_only=True, source='clients_card.servise_card')
     tech_information = TechInformationCardSerializer(many=True, read_only=True, source='clients_card.tech_information')
     tech_note = TechNoteCardSerializer(many=True, read_only=True, source='clients_card.tech_note')
+    connection_info = ConnectionInfoCardSerializer(many=True, read_only=True, source='clients_card.connection_info')
 
     class Meta:
         model = ClientsList
-        fields = ('id', 'client_name', 'contact_status', 'contacts_card', 'connect_info_card', 'bm_servers', 'integration', 'tech_account_card', 'servise_card', 'tech_information', 'tech_note', 'notes')
+        fields = ('id', 'client_name', 'contact_status', 'contacts_card', 'connect_info_card', 'bm_servers', 'integration', 'tech_account_card', 'connection_info', 'servise_card', 'tech_information', 'tech_note', 'notes')
 
     def create(self, validated_data):
         """
