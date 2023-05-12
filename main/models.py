@@ -177,10 +177,9 @@ class TechAccountCard(models.Model):
 
 
 class ConnectionInfo(models.Model):
-    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='connection_info',
-                                  verbose_name="Client Card")
+    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='connection_info', null=True)
     file_path = models.FileField(upload_to='uploaded_files/')
-    text = models.TextField(verbose_name="Краткий текст подключения", null=True)
+    text = models.TextField(null=True)
 
     class Meta:
         verbose_name = "Документы"
