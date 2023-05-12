@@ -240,7 +240,7 @@ class TechNote(models.Model):
     """
     client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='tech_note',
                                     verbose_name="Client Card")
-    tech_notes_text = models.TextField(verbose_name="tech_notes_text", null=True, blank=True)
+    tech_note_text = models.TextField(verbose_name="tech_note_text", null=True, blank=True)
 
     class Meta:
         verbose_name = "Технические заметки клиента"

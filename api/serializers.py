@@ -82,7 +82,7 @@ class TechNoteCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
     class Meta:
         model = TechNote
-        fields = ('id', 'client_id', 'tech_notes_text')
+        fields = ('id', 'client_id', 'tech_note_text')
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -428,7 +428,7 @@ class TechNoteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TechNote
-        fields = ('id', 'tech_notes_text')
+        fields = ('id', 'tech_note_text')
 
     # Метод для определения значения поля id в сериализаторе
     def get_id(self, obj):
@@ -443,12 +443,12 @@ class TechNoteSerializer(serializers.ModelSerializer):
         # Если экземпляр относится к модели ClientsList
         if isinstance(instance, ClientsList):
             # Создаем сериализатор для связанных технических учетных записей с опцией many=True
-            tech_notes = TechNoteSerializer(instance.clients_card.tech_notes, many=True).data
+            tech_note = TechNoteSerializer(instance.clients_card.tech_note, many=True).data
             # Возвращаем представление данных, включающее id, client_name и список технических учетных записей
             return {
                 'id': instance.id,
                 'client_name': instance.client_name,
-                'tech_notes': tech_notes
+                'tech_note': tech_note
             }
         # Если экземпляр относится к другой модели, используем стандартное представление
         else:
