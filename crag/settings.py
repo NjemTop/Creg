@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'api',
+    'django_celery_beat',
 ]
 
 REST_FRAMEWORK = {
@@ -170,6 +171,11 @@ STATIC_URL = 'static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+CELERY_BROKER_URL = 'amqp://guest:guest@rabbitmq:5672//'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 # Настройка, которая убирает слэш в конце "/"
 # APPEND_SLASH = False

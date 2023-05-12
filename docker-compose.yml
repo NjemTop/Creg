@@ -17,6 +17,7 @@ services:
     restart: always
     depends_on:
       - db
+      - rabbitmq
 
   db:
     image: postgres:13
@@ -29,6 +30,14 @@ services:
     volumes:
       - dbdata:/var/lib/postgresql/data
     restart: always
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: RabbitMQ
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
 volumes:
   dbdata:
