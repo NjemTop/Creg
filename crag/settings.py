@@ -10,8 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from dotenv import load_dotenv
 from pathlib import Path
 import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -109,7 +112,7 @@ if DJANGO_ENV == 'local':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'database_1_TEST.db',
+            'NAME': 'database_1_test',
             'USER': 'sa',
             'PASSWORD': 'kJGnTXBT',
             'HOST': 'localhost',
@@ -127,7 +130,6 @@ else:
             'PORT': '5432',
         }
     }
-
 
 
 # Password validation

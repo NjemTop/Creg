@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db import transaction
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechNote, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechNote, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard
 from rest_framework.exceptions import ValidationError
 
 class ClientsCardSerializer(serializers.ModelSerializer):
@@ -45,6 +45,17 @@ class IntegrationCardSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'client_id', 'elasticsearch', 'ad', 'adfs', 'oauth_2', 'module_translate', 'ms_oos', 'exchange', 'office_365',
             'sfb', 'zoom', 'teams', 'smtp', 'cryptopro_dss', 'cryptopro_csp', 'smpp', 'limesurvey'
+        )
+
+class ModuleCardSerializer(serializers.ModelSerializer):
+    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
+    class Meta:
+        model = ModuleCard
+        fields = (
+            'id', 'client_id', 'translate', 'electronic_signature', 'action_items', 'limesurvey', 'advanced_voting', 
+            'advanced_work_with_documents', 'advanced_access_rights_management', 'visual_improvements', 
+            'third_party_product_integrations', 'microsoft_enterprise_product_integrations', 
+            'microsoft_office_365_integration'
         )
 
 class TechAccountCardSerializer(serializers.ModelSerializer):
@@ -96,15 +107,16 @@ class ClientSerializer(serializers.ModelSerializer):
     contacts_card = ContactsCardSerializer(many=True, read_only=True, source='clients_card.contact_cards')
     connect_info_card = ConnectInfoCardSerializer(many=True, read_only=True, source='clients_card.connect_info_card')
     bm_servers = BMServersCardSerializer(many=True, read_only=True, source='clients_card.bm_servers_card')
-    integration = IntegrationCardSerializer(many=True, read_only=True, source='clients_card.integration')
+    integration = IntegrationCardSerializer(read_only=True, source='clients_card.integration')
+    module = ModuleCardSerializer(read_only=True, source='clients_card.module')
     tech_account_card = TechAccountCardSerializer(many=True, read_only=True, source='clients_card.tech_account_card')
-    servise_card = ServiseCardSerializer(many=True, read_only=True, source='clients_card.servise_card')
-    tech_information = TechInformationCardSerializer(many=True, read_only=True, source='clients_card.tech_information')
-    tech_note = TechNoteCardSerializer(many=True, read_only=True, source='clients_card.tech_note')
+    servise_card = ServiseCardSerializer(read_only=True, source='clients_card.servise_card')
+    tech_information = TechInformationCardSerializer(read_only=True, source='clients_card.tech_information')
+    tech_note = TechNoteCardSerializer(read_only=True, source='clients_card.tech_note')
 
     class Meta:
         model = ClientsList
-        fields = ('id', 'client_name', 'contact_status', 'contacts_card', 'connect_info_card', 'bm_servers', 'integration', 'tech_account_card', 'servise_card', 'tech_information', 'tech_note', 'notes')
+        fields = ('id', 'client_name', 'contact_status', 'contacts_card', 'connect_info_card', 'bm_servers', 'integration', 'module', 'tech_account_card', 'servise_card', 'tech_information', 'tech_note', 'notes')
 
     def create(self, validated_data):
         """
@@ -244,7 +256,11 @@ class IntegrationSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         if isinstance(instance, ClientsList):
-            integration = IntegrationSerializer(instance.clients_card.integration.all(), many=True).data
+            # Делаем проверку, если вдруг нет никаких данных в таблице
+            try:
+                integration = IntegrationSerializer(instance.clients_card.integration).data
+            except ClientsCard.integration.RelatedObjectDoesNotExist:
+                integration = None
             return {
                 'id': instance.id,
                 'client_name': instance.client_name,
@@ -260,6 +276,52 @@ class IntegrationSerializer(serializers.ModelSerializer):
         """
         client_card = validated_data.get('client_card')
         obj, created = Integration.objects.get_or_create(client_card=client_card, defaults=validated_data)
+        
+        if not created:
+            raise serializers.ValidationError(f"Информация для клиента {client_card.client_info.client_name} уже существует")
+        
+        return obj
+
+
+class ModuleSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ModuleCard
+        fields = (
+            'id', 'translate', 'electronic_signature', 'action_items', 'limesurvey', 'advanced_voting', 
+            'advanced_work_with_documents', 'advanced_access_rights_management', 'visual_improvements', 
+            'third_party_product_integrations', 'microsoft_enterprise_product_integrations', 
+            'microsoft_office_365_integration'
+        )
+
+    def get_id(self, obj):
+        if self.context.get('request', None) and self.context['request'].method == 'POST':
+            return None
+        return obj.id
+
+    def to_representation(self, instance):
+        if isinstance(instance, ClientsList):
+            # Делаем проверку, если вдруг нет никаких данных в таблице
+            try:
+                module = ModuleSerializer(instance.clients_card.module).data
+            except ClientsCard.module.RelatedObjectDoesNotExist:
+                module = None
+            return {
+                'id': instance.id,
+                'client_name': instance.client_name,
+                'module': module
+            }
+        else:
+            return super().to_representation(instance)
+
+    def create(self, validated_data):
+        """
+        Функция проверки при отправке post-запроса,
+        на наличие уже существующей записи
+        """
+        client_card = validated_data.get('client_card')
+        obj, created = ModuleCard.objects.get_or_create(client_card=client_card, defaults=validated_data)
         
         if not created:
             raise serializers.ValidationError(f"Информация для клиента {client_card.client_info.client_name} уже существует")
@@ -291,7 +353,7 @@ class TechAccountSerializer(serializers.ModelSerializer):
         # Если экземпляр относится к модели ClientsList
         if isinstance(instance, ClientsList):
             # Создаем сериализатор для связанных технических учетных записей с опцией many=True
-            tech_account_card = TechAccountSerializer(instance.clients_card.tech_account_card, many=True).data
+            tech_account_card = TechAccountSerializer(instance.clients_card.tech_account_card.all(), many=True).data
             # Возвращаем представление данных, включающее id, client_name и список технических учетных записей
             return {
                 'id': instance.id,
@@ -332,8 +394,12 @@ class ServiseSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         # Если экземпляр относится к модели ClientsList
         if isinstance(instance, ClientsList):
-            # Создаем сериализатор для связанных технических учетных записей с опцией many=True
-            servise_card = ServiseSerializer(instance.clients_card.servise_card, many=True).data
+            # Делаем проверку, если вдруг нет никаких данных в таблице
+            try:
+                # Создаем сериализатор для связанных технических учетных записей с опцией many=True
+                servise_card = ServiseSerializer(instance.clients_card.servise_card).data
+            except ClientsCard.servise_card.RelatedObjectDoesNotExist:
+                servise_card = None
             # Возвращаем представление данных, включающее id, client_name и список технических учетных записей
             return {
                 'id': instance.id,
@@ -393,8 +459,12 @@ class TechInformationSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         # Если экземпляр относится к модели ClientsList
         if isinstance(instance, ClientsList):
-            # Создаем сериализатор для связанных технических учетных записей с опцией many=True
-            tech_information = TechInformationSerializer(instance.clients_card.tech_information, many=True).data
+            # Делаем проверку, если вдруг нет никаких данных в таблице
+            try:
+                # Создаем сериализатор для связанных технических учетных записей с опцией many=True
+                tech_information = TechInformationSerializer(instance.clients_card.tech_information).data
+            except ClientsCard.tech_information.RelatedObjectDoesNotExist:
+                tech_information = None
             # Возвращаем представление данных, включающее id, client_name и список технических учетных записей
             return {
                 'id': instance.id,
@@ -442,8 +512,12 @@ class TechNoteSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         # Если экземпляр относится к модели ClientsList
         if isinstance(instance, ClientsList):
-            # Создаем сериализатор для связанных технических учетных записей с опцией many=True
-            tech_note = TechNoteSerializer(instance.clients_card.tech_note, many=True).data
+            # Делаем проверку, если вдруг нет никаких данных в таблице
+            try:
+                # Создаем сериализатор для связанных технических учетных записей с опцией many=True
+                tech_note = TechNoteSerializer(instance.clients_card.tech_note).data
+            except ClientsCard.tech_note.RelatedObjectDoesNotExist:
+                tech_note = None
             # Возвращаем представление данных, включающее id, client_name и список технических учетных записей
             return {
                 'id': instance.id,

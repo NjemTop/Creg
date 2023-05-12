@@ -102,3 +102,19 @@ def file_upload_error_response(error, detail, status_code=status.HTTP_400_BAD_RE
     logger.error(f"Ошибка при загрузке файла: {error}, подробности: {detail}")
 
     return Response(response_data, status=status_code)
+
+def custom_get_response(client_name, status_code=status.HTTP_404_NOT_FOUND):
+    """
+    Функция для создания пользовательского ответа в случае ошибки при загрузке файла.
+    :param client_name: Имя клиента, по которому искали запрос и не нашли
+    :param status_code: Код статуса ошибки (по умолчанию 404)
+    :return: Response объект с пользовательским сообщением об ошибке и кодом статуса
+    """
+    response_data = {
+        "Ответ": client_name
+    }
+
+    # Записываем ошибку в лог файл
+    logger.error(f"Информация для клиента : {client_name} отсутствует")
+
+    return Response(response_data, status=status_code)

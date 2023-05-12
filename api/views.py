@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 from .swagger_schemas import request_schema, response_schema
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote
 from .mixins import CustomResponseMixin, CustomCreateModelMixin, CustomQuerySetFilterMixin
 from .response_helpers import file_upload_error_response, custom_update_response, custom_delete_response
 from .serializers import (
@@ -22,6 +22,7 @@ from .serializers import (
     ConnectInfoSerializer,
     BMServersSerializer,
     IntegrationSerializer,
+    ModuleSerializer,
     TechAccountSerializer,
     ConnectionInfoSerializer,
     ServiseSerializer,
@@ -113,6 +114,10 @@ def add_client(request):
         connect_info_data = request.data.get("connect_info_card")
         bm_servers_data = request.data.get("bm_servers")
         tech_account_data = request.data.get("tech_account_card")
+        integration_data = request.data.get("integration", None)
+        module_data = request.data.get("module", None)
+        service_data = request.data.get("servise_card", None)
+        tech_information_data = request.data.get("tech_information", None)
 
         # Проверка на существующего клиента
         existing_client = ClientsList.objects.filter(client_name=client_data).first()
@@ -154,19 +159,25 @@ def add_client(request):
                         else:
                             client.delete()
 
-                integration_data = request.data.get("integration", [])
                 if integration_data:
                     integration_serializer = IntegrationSerializer(data=integration_data)
                     if integration_serializer.is_valid():
                         integration_serializer.save(client_card=client_card)
+                    else:
+                        print(integration_serializer.errors)
+                
+                if module_data:
+                    module_serializer = ModuleSerializer(data=module_data)
+                    if module_serializer.is_valid():
+                        module_serializer.save(client_card=client_card)
+                    else:
+                        print(module_serializer.errors)
 
-                service_data = request.data.get("servise_card", [])
                 if service_data:
                     service_serializer = ServiseSerializer(data=service_data)
                     if service_serializer.is_valid():
                         service_serializer.save(client_card=client_card)
 
-                tech_information_data = request.data.get("tech_information", [])
                 if tech_information_data:
                     tech_information_serializer = TechInformationSerializer(data=tech_information_data)
                     if tech_information_serializer.is_valid():
@@ -341,6 +352,48 @@ class IntegrationDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
         Метод для обработки PATCH-запроса.
         Метод для обработки DELETE-запроса.
         Удаление объекта Integration.
+        """
+        return self.destroy(request, *args, **kwargs)
+
+
+class ModuleCardByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, generics.ListAPIView):
+    """
+    Класс вывода информации о интеграциях клиента,
+    а также добавления этой информации если ещё нет
+    """
+    def get_serializer_class(self):
+        logger.info('Получение класса сериализатора')
+        return ModuleSerializer
+
+    queryset = ClientsList.objects.all()
+    related_name = "clients_card"
+
+    def get_client_card(self, client_id):
+        logger.info(f'Получение client card для client ID {client_id}')
+        return ClientsCard.objects.get(client_info_id=client_id)
+
+class ModuleCardDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+    """
+    Класс изменения информации об интеграциях клиента,
+    а также удаления этой информации полностью.
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__('client_card', 'client_card', *args, **kwargs)
+
+    queryset = ModuleCard.objects.select_related('client_card__client_info')
+    serializer_class = ModuleSerializer
+
+    def patch(self, request, *args, **kwargs):
+        """
+        Обновление объекта ModuleCard с использованием метода PATCH.
+        """
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Метод для обработки PATCH-запроса.
+        Метод для обработки DELETE-запроса.
+        Удаление объекта ModuleCard.
         """
         return self.destroy(request, *args, **kwargs)
 

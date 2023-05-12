@@ -1,3 +1,4 @@
 database_1_TEST.db
 **/migrations/*
 **/__pycache__/*
+.env

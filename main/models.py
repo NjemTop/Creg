@@ -123,17 +123,17 @@ class BMServersCard(models.Model):
 
 class Integration(models.Model):
     """Класс имеющихся интеграций у клиентов в системе BoardMaps"""
-    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name="integration",
+    client_card = models.OneToOneField(ClientsCard, on_delete=models.CASCADE, related_name="integration",
                                     verbose_name="Client Card")
-    elasticsearch = models.BooleanField(verbose_name='Elasticsearch', null=True, blank=True, default=False)
-    ad = models.BooleanField(verbose_name='AD', null=True, blank=True, default=False)
+    elasticsearch = models.BooleanField(verbose_name='ElasticSearch', null=True, blank=True, default=False)
+    ad = models.BooleanField(verbose_name='Active Directory', null=True, blank=True, default=False)
     adfs = models.BooleanField(verbose_name='ADFS', null=True, blank=True, default=False)
-    oauth_2 = models.BooleanField(verbose_name='OAuth_2.0', null=True, blank=True, default=False)
-    module_translate = models.BooleanField(verbose_name='Модуль_трансляции', null=True, blank=True, default=False)
+    oauth_2 = models.BooleanField(verbose_name='OAuth 2.0', null=True, blank=True, default=False)
+    module_translate = models.BooleanField(verbose_name='Модуль трансляции', null=True, blank=True, default=False)
     ms_oos = models.BooleanField(verbose_name='MS OOS', null=True, blank=True, default=False)
     exchange = models.BooleanField(verbose_name='Exchange', null=True, blank=True, default=False)
-    office_365 = models.BooleanField(verbose_name='Office_365', null=True, blank=True, default=False)
-    sfb = models.BooleanField(verbose_name='Skype_For_Business', null=True, blank=True, default=False)
+    office_365 = models.BooleanField(verbose_name='Office 365', null=True, blank=True, default=False)
+    sfb = models.BooleanField(verbose_name='Skype For Business', null=True, blank=True, default=False)
     zoom = models.BooleanField(verbose_name='Zoom', null=True, blank=True, default=False)
     teams = models.BooleanField(verbose_name='Teams', null=True, blank=True, default=False)
     smtp = models.BooleanField(verbose_name='SMTP', null=True, blank=True, default=False)
@@ -146,6 +146,31 @@ class Integration(models.Model):
         verbose_name = "Интеграция"
         verbose_name_plural = "Интеграции"
         db_table = "integration"
+
+    def __str__(self):
+        return f"{self.client_card} ({self.client_card.client_info.client_name})"
+
+
+class ModuleCard(models.Model):
+    """Класс имеющихся модулей у клиентов в системе BoardMaps"""
+    client_card = models.OneToOneField(ClientsCard, on_delete=models.CASCADE, related_name="module",
+                                    verbose_name="Client Card")
+    translate = models.BooleanField(verbose_name='Трансляция', null=True, blank=True, default=False)
+    electronic_signature = models.BooleanField(verbose_name='Электронная подпись', null=True, blank=True, default=False)
+    action_items = models.BooleanField(verbose_name='Поручения', null=True, blank=True, default=False)
+    limesurvey = models.BooleanField(verbose_name='Анкетирование', null=True, blank=True, default=False)
+    advanced_voting = models.BooleanField(verbose_name='Расширенные сценарии голосования', null=True, blank=True, default=False)
+    advanced_work_with_documents = models.BooleanField(verbose_name='Расширенные сценарии работы с документами', null=True, blank=True, default=False)
+    advanced_access_rights_management = models.BooleanField(verbose_name='Расширенные сценарии управления правами доступа', null=True, blank=True, default=False)
+    visual_improvements = models.BooleanField(verbose_name='Визуальные_улучшения', null=True, blank=True, default=False)
+    third_party_product_integrations = models.BooleanField(verbose_name='Интеграции со сторонними продуктами', null=True, blank=True, default=False)
+    microsoft_enterprise_product_integrations = models.BooleanField(verbose_name='Интеграция с продуктами Microsoft Enterprise', null=True, blank=True, default=False)
+    microsoft_office_365_integration = models.BooleanField(verbose_name='Интеграция с продуктами Microsoft Office 365', null=True, blank=True, default=False)
+
+    class Meta:
+        verbose_name = "Модули"
+        verbose_name_plural = "Список модулей"
+        db_table = "module"
 
     def __str__(self):
         return f"{self.client_card} ({self.client_card.client_info.client_name})"
@@ -177,7 +202,7 @@ class TechAccountCard(models.Model):
 
 
 class ConnectionInfo(models.Model):
-    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='connection_info', null=True)
+    client_card = models.OneToOneField(ClientsCard, on_delete=models.CASCADE, related_name='connection_info', null=True)
     file_path = models.FileField(upload_to='uploaded_files/')
     text = models.TextField(null=True)
 
@@ -194,7 +219,7 @@ class ServiseCard(models.Model):
     """
     Таблица с информацией обслуживания клиента.
     """
-    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='servise_card',
+    client_card = models.OneToOneField(ClientsCard, on_delete=models.CASCADE, related_name='servise_card',
                                     verbose_name="Client Card")
     service_pack = models.CharField(verbose_name="service_pack", max_length=255)
     manager = models.CharField(verbose_name="manager", max_length=255)
@@ -213,7 +238,7 @@ class TechInformationCard(models.Model):
     """
     Таблица с технической информацией клиента.
     """
-    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='tech_information',
+    client_card = models.OneToOneField(ClientsCard, on_delete=models.CASCADE, related_name='tech_information',
                                     verbose_name="Client Card")
     server_version = models.CharField(verbose_name="server_version", max_length=255)
     update_date = models.DateField(verbose_name="update_date", max_length=255)
@@ -238,7 +263,7 @@ class TechNote(models.Model):
     """
     Таблица с техническими заметками клиента.
     """
-    client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='tech_note',
+    client_card = models.OneToOneField(ClientsCard, on_delete=models.CASCADE, related_name='tech_note',
                                     verbose_name="Client Card")
     tech_note_text = models.TextField(verbose_name="tech_note_text", null=True, blank=True)
 
