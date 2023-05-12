@@ -21,14 +21,14 @@ class Favicon(models.Model):
 
 
 class ClientsList(models.Model):
-    client_name = models.CharField(verbose_name="Client_name", max_length=255, db_index=True)
-    contact_status = models.BooleanField(verbose_name='Contact Status', default=True)
-    service = models.CharField(verbose_name="Service", max_length=255, default=generate_unique_id)
-    technical_information = models.CharField(verbose_name="Technical_information", max_length=255,
+    client_name = models.CharField(verbose_name="Название клиента", max_length=255, db_index=True)
+    contact_status = models.BooleanField(verbose_name='Статус клиента', default=True)
+    service = models.CharField(verbose_name="Обслуживание", max_length=255, default=generate_unique_id)
+    technical_information = models.CharField(verbose_name="Техническая информация", max_length=255,
                                              default=generate_unique_id)
-    integration = models.CharField(verbose_name="Integration", max_length=255, default=generate_unique_id)
-    documents = models.CharField(verbose_name="Documents", max_length=255, default=generate_unique_id)
-    notes = models.TextField(verbose_name="Notes", null=True, blank=True)
+    integration = models.CharField(verbose_name="Интеграции", max_length=255, default=generate_unique_id)
+    documents = models.CharField(verbose_name="Документы", max_length=255, default=generate_unique_id)
+    notes = models.TextField(verbose_name="Примечание", null=True, blank=True)
 
     class Meta:
         verbose_name = "Клиент"
@@ -42,12 +42,12 @@ class ClientsList(models.Model):
 class ClientsCard(models.Model):
     client_info = models.OneToOneField(ClientsList, on_delete=models.CASCADE, verbose_name='Client_info',
                                        related_name='clients_card')
-    contacts = models.CharField(verbose_name='Contacts', max_length=255, default=generate_unique_id)
-    tech_notes = models.CharField(verbose_name='Tech_notes', max_length=255, default=generate_unique_id)
-    connect_info = models.CharField(verbose_name='Connect_info', max_length=255, default=generate_unique_id)
-    rdp = models.CharField(verbose_name='RDP', max_length=255, default=generate_unique_id)
-    tech_account = models.CharField(verbose_name='Tech_account', max_length=255, default=generate_unique_id)
-    bm_servers = models.CharField(verbose_name='BM_servers', max_length=255, default=generate_unique_id)
+    contacts = models.CharField(verbose_name='Контакты клиента', max_length=255, default=generate_unique_id)
+    tech_notes = models.CharField(verbose_name='Технические заметки', max_length=255, default=generate_unique_id)
+    connect_info = models.CharField(verbose_name='Информация для подключения', max_length=255, default=generate_unique_id)
+    rdp = models.CharField(verbose_name='Удалённый доступ', max_length=255, default=generate_unique_id)
+    tech_account = models.CharField(verbose_name='Технологическая учётная запись', max_length=255, default=generate_unique_id)
+    bm_servers = models.CharField(verbose_name='Серверы BoardMaps', max_length=255, default=generate_unique_id)
 
     class Meta:
         verbose_name = "Карточка клиента"
@@ -61,11 +61,11 @@ class ClientsCard(models.Model):
 class ContactsCard(models.Model):
     client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='contact_cards',
                                     verbose_name="Client Card")
-    contact_name = models.CharField(verbose_name="contact_name", max_length=255)
-    contact_position = models.CharField(verbose_name="contact_position", max_length=255, null=True, blank=True)
-    contact_email = models.EmailField(verbose_name="contact_email", max_length=255)
-    notification_update = models.CharField(verbose_name="notification_update", max_length=255, null=True, blank=True)
-    contact_notes = models.TextField(verbose_name="contact_notes", null=True, blank=True)
+    contact_name = models.CharField(verbose_name="ФИО", max_length=255)
+    contact_position = models.CharField(verbose_name="Должность", max_length=255, null=True, blank=True)
+    contact_email = models.EmailField(verbose_name="Почта", max_length=255)
+    notification_update = models.CharField(verbose_name="Отправка рассылки", max_length=255, null=True, blank=True)
+    contact_notes = models.TextField(verbose_name="Примечание", null=True, blank=True)
 
     class Meta:
         verbose_name = "Контакт клиента"
@@ -83,7 +83,7 @@ class ConnectInfoCard(models.Model):
     client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='connect_info_card',
                                   verbose_name="Client Card")
     contact_info_name = models.CharField(verbose_name='ФИО', max_length=255)
-    contact_info_account = models.CharField(verbose_name='Учетная_запись', max_length=255)
+    contact_info_account = models.CharField(verbose_name='Учетная запись', max_length=255)
     contact_info_password = models.CharField(verbose_name='Пароль', max_length=100)
 
     class Meta:
@@ -105,12 +105,12 @@ class BMServersCard(models.Model):
     """Серверы ВМ"""
     client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name="bm_servers_card",
                                     verbose_name="Client Card")
-    bm_servers_circuit = models.CharField(verbose_name="Circuit", max_length=100)
-    bm_servers_servers_name = models.CharField(verbose_name="Server_name", max_length=100)
-    bm_servers_servers_adress = models.CharField(verbose_name="Server_ip_adress", max_length=100)
-    bm_servers_operation_system = models.CharField(verbose_name="OS", null=True, blank=True, max_length=100)
+    bm_servers_circuit = models.CharField(verbose_name="Контур", max_length=100)
+    bm_servers_servers_name = models.CharField(verbose_name="Имя сервера", max_length=100)
+    bm_servers_servers_adress = models.CharField(verbose_name="Адрес сервера", max_length=100)
+    bm_servers_operation_system = models.CharField(verbose_name="Операционная система", null=True, blank=True, max_length=100)
     bm_servers_url = models.CharField(verbose_name="URL", null=True, blank=True, max_length=100)
-    bm_servers_role = models.CharField(verbose_name="Role", max_length=100)
+    bm_servers_role = models.CharField(verbose_name="Роль", max_length=100)
 
     class Meta:
         verbose_name = "Сервер ВМ"
@@ -221,9 +221,9 @@ class ServiseCard(models.Model):
     """
     client_card = models.OneToOneField(ClientsCard, on_delete=models.CASCADE, related_name='servise_card',
                                     verbose_name="Client Card")
-    service_pack = models.CharField(verbose_name="service_pack", max_length=255)
-    manager = models.CharField(verbose_name="manager", max_length=255)
-    loyal = models.CharField(verbose_name="loyal", max_length=255, null=True, blank=True)
+    service_pack = models.CharField(verbose_name="Тарифный план", max_length=255)
+    manager = models.CharField(verbose_name="Менеджер", max_length=255)
+    loyal = models.CharField(verbose_name="Лояльность", max_length=255, null=True, blank=True)
 
     class Meta:
         verbose_name = "Обслуживание клиента"
@@ -240,16 +240,16 @@ class TechInformationCard(models.Model):
     """
     client_card = models.OneToOneField(ClientsCard, on_delete=models.CASCADE, related_name='tech_information',
                                     verbose_name="Client Card")
-    server_version = models.CharField(verbose_name="server_version", max_length=255)
-    update_date = models.DateField(verbose_name="update_date", max_length=255)
-    api = models.BooleanField(verbose_name="api", null=True, blank=True, default=False)
-    ipad = models.CharField(verbose_name="ipad", max_length=255, null=True, blank=True)
-    android = models.CharField(verbose_name="android", max_length=255, null=True, blank=True)
-    mdm = models.CharField(verbose_name="mdm", max_length=255, null=True, blank=True)
-    localizable_web = models.BooleanField(verbose_name="localizable_web", null=True, blank=True, default=False)
-    localizable_ios = models.BooleanField(verbose_name="localizable_ios", null=True, blank=True, default=False)
-    skins_web = models.BooleanField(verbose_name="skins_web", null=True, blank=True, default=False)
-    skins_ios = models.BooleanField(verbose_name="skins_ios", null=True, blank=True, default=False)
+    server_version = models.CharField(verbose_name="Версия сервера", max_length=255)
+    update_date = models.DateField(verbose_name="Дата обновления", max_length=255)
+    api = models.BooleanField(verbose_name="API", null=True, blank=True, default=False)
+    ipad = models.CharField(verbose_name="iPad", max_length=255, null=True, blank=True)
+    android = models.CharField(verbose_name="Android", max_length=255, null=True, blank=True)
+    mdm = models.CharField(verbose_name="MDM", max_length=255, null=True, blank=True)
+    localizable_web = models.BooleanField(verbose_name="Локализация Web", null=True, blank=True, default=False)
+    localizable_ios = models.BooleanField(verbose_name="Локализация iOS", null=True, blank=True, default=False)
+    skins_web = models.BooleanField(verbose_name="Скины Web", null=True, blank=True, default=False)
+    skins_ios = models.BooleanField(verbose_name="Скины iOS", null=True, blank=True, default=False)
 
     class Meta:
         verbose_name = "Техническая информация клиента"
@@ -265,7 +265,7 @@ class TechNote(models.Model):
     """
     client_card = models.OneToOneField(ClientsCard, on_delete=models.CASCADE, related_name='tech_note',
                                     verbose_name="Client Card")
-    tech_note_text = models.TextField(verbose_name="tech_note_text", null=True, blank=True)
+    tech_note_text = models.TextField(verbose_name="Технические заметки", null=True, blank=True)
 
     class Meta:
         verbose_name = "Технические заметки клиента"
