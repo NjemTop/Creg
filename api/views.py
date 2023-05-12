@@ -467,6 +467,38 @@ class TextUploadView(generics.CreateAPIView):
             status=status.HTTP_201_CREATED
         )
 
+class TextUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ConnectionInfo.objects.all()
+    serializer_class = ConnectionInfoSerializer
+    parser_classes = [JSONParser]
+
+    def patch(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        
+        instance.text = request.data.get('text', instance.text)
+        instance.save()
+        
+        return Response(
+            {
+                'message': 'Текст успешно обновлен',
+                'text': instance.text
+            },
+            status=status.HTTP_200_OK
+        )
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete()
+
+        return Response(
+            {
+                'message': 'Запись успешно удалена',
+            },
+            status=status.HTTP_204_NO_CONTENT
+        )
+
 class ClientFilesView(generics.ListAPIView):
     serializer_class = ConnectionInfoSerializer
 
