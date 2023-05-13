@@ -1,10 +1,14 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 import os
 from celery import Celery
 
-# set the default Django settings module for the 'celery' program.
+# Устанавливаем переменную окружения DJANGO_SETTINGS_MODULE
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crag.settings')
 
-from django.conf import settings  # noqa
+app = Celery('crag')
 
-app = Celery('crag', broker='amqp://guest:guest@rabbitmq:5672//')
+# Используем настройки Django для конфигурации Celery
+app.config_from_object('django.conf:settings', namespace='CELERY')
+
+# Автоматические загрузка задач из файла tasks.py каждого приложения
+app.autodiscover_tasks()
