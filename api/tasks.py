@@ -1,6 +1,6 @@
 from celery import shared_task
-from .update_module import update_module_info
+from . import update_module
 
 @shared_task
 def update_module_info_task():
-    update_module_info()
+    update_module.update_module_info()

@@ -39,11 +39,11 @@ def update_module_info():
             module_card.save()
 
             if created:
-                logger.info(f"Создана запись модуля для клиента {client_name}")
+                logger.info(f"Создана запись модуля для клиента {client_name_api}")
             else:
-                logger.info(f"Обновлена запись модуля для клиента {client_name}")
+                logger.info(f"Обновлена запись модуля для клиента {client_name_api}")
         else:
-            logger.warning(f"Клиент {client_name} не найден в базе данных")
+            logger.warning(f"Клиент {client_name_api} не найден в базе данных")
 
 
 def clean_client_name(client_name):
