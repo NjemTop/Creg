@@ -55,6 +55,19 @@ services:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
     restart: always
 
+  celerybeat:
+    build: .
+    command: celery -A crag beat -l info
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      - TZ=Europe/Moscow
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+    restart: always
+
 volumes:
   dbdata:
   mediadata:
