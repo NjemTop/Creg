@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'api',
     'django_celery_beat',
+    'django_celery_results',
 ]
 
 REST_FRAMEWORK = {

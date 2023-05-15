@@ -6,3 +6,4 @@ django-filter==23.2
 python-dotenv==1.0.0
 celery==5.2.7
 django-celery-beat==2.5.0
+django-celery-results==2.5.1
