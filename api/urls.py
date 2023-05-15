@@ -31,6 +31,7 @@ urlpatterns = [
     path('tech_information/detail/<int:pk>', views.TechInformationDetailsView.as_view(), name='tech_information_details'),
     path('tech_note/client/<int:client_id>', views.TechNoteByClientIdView.as_view(), name='tech_note_by_client'),
     path('tech_note/detail/<int:pk>', views.TechNoteDetailsView.as_view(), name='tech_note_details'),
+    path('clients_list', views.ForAutomaticEmailView.as_view(), name='clients_list'),
 ] + router.urls
 
 app_name = 'rest_api'

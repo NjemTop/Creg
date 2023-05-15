@@ -28,6 +28,7 @@ from .serializers import (
     ServiseSerializer,
     TechInformationSerializer,
     TechNoteSerializer,
+    ForAutomaticEmailSerializer,
 )
 
 
@@ -660,7 +661,9 @@ class TechNoteDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.D
         return self.destroy(request, *args, **kwargs)
 
 
-
+class ForAutomaticEmailView(generics.ListAPIView):
+    queryset = ClientsList.objects.all()
+    serializer_class = ForAutomaticEmailSerializer
 
 
 
