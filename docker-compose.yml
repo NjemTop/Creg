@@ -35,6 +35,7 @@ services:
     image: rabbitmq:3-management
     container_name: RabbitMQ
     environment:
+      - TZ=Europe/Moscow
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=BfDVBPsNSf
     restart: always

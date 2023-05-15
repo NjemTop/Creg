@@ -180,6 +180,8 @@ CELERY_RESULT_SERIALIZER = 'json'
 
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
+CELERY_RESULT_BACKEND = 'db+postgresql://sa:kJGnTXBT@db/database_1.db'
+
 # Настройка, которая убирает слэш в конце "/"
 # APPEND_SLASH = False
 
