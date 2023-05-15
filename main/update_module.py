@@ -1,6 +1,6 @@
 import requests
 from django.db.models import Q
-from models import ClientsCard, ModuleCard
+from .models import ClientsCard, ModuleCard
 import logging
 
 logger = logging.getLogger(__name__)
