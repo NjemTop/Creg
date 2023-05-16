@@ -7,3 +7,5 @@ python-dotenv==1.0.0
 celery==5.2.7
 django-celery-beat==2.5.0
 django-celery-results==2.5.1
+# выключил проверку на HTTPS
+django-cors-headers==4.0.0

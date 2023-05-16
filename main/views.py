@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import ClientsList
+from .models import ClientsList, ReleaseInfo
 from .forms import ClientListForm
 
 def index(request):
@@ -31,3 +31,7 @@ def create_client(request):
 def upload_file(request):
     clients = ClientsList.objects.all()
     return render(request, 'main/upload_file.html', {'clients': clients})
+
+def release_info(request):
+    release_infos = ReleaseInfo.objects.order_by('-date')
+    return render(request, 'main/release_info.html', {'release_infos': release_infos})

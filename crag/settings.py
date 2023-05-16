@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'api',
+    # выключил проверку на HTTPS
+    'corsheaders',
     'django_celery_beat',
     'django_celery_results',
 ]
@@ -70,6 +72,8 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # выключил проверку на HTTPS
+    'corsheaders.middleware.CorsMiddleware',
     'api.middleware.AppendSlashWithPOSTMiddleware',
     'api.middleware.ExceptionLoggingMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -78,6 +82,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# выключил проверку на HTTPS
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'crag.urls'
 

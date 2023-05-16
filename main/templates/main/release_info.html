@@ -1,0 +1,45 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+    Отчёт по рассылкам
+{% endblock %}
+
+{% block content %}
+    <h1>Отчёт по рассылкам</h1>
+
+    <!-- Добавим выпадающий список для выбора номера релиза -->
+    <select id="release-number-select" class="form-control">
+        <!-- Здесь будут элементы списка -->
+    </select>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Дата рассылки</th>
+                <th>Номер релиза</th>
+                <th>Наименование клиента</th>
+                <th>Основной контакт</th>
+                <th>Копия</th>
+            </tr>
+        </thead>
+        <tbody id="release-info-table-body">
+            {% for release_info in release_infos %}
+                <tr>
+                    <td>{{ release_info.date }}</td>
+                    <td>{{ release_info.release_number }}</td>
+                    <td>{{ release_info.client_name }}</td>
+                    <td>{{ release_info.main_contact }}</td>
+                    <td>{{ release_info.copy_contact }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">Нет данных</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Подключаем файл JavaScript -->
+    <script src="{% static 'js/release_info.js' %}"></script>
+{% endblock %}

@@ -4,6 +4,8 @@ from rest_framework import generics, mixins, viewsets, status
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django.http import JsonResponse
+from django.core import serializers
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.views import APIView
 import django_filters.rest_framework as filters
@@ -685,7 +687,17 @@ class ReleaseInfoViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mix
         release_versions = ReleaseInfo.objects.values('date', 'release_number').distinct()
         return Response(release_versions)
 
+def release_info_api(request):
+    release_number = request.GET.get('release_number', 'all')
 
+    if release_number == 'all':
+        data = Release_info.objects.all()
+    else:
+        data = Release_info.objects.filter(release_number=release_number)
+
+    data_json = serializers.serialize('json', data)
+
+    return JsonResponse(data_json, safe=False)
 
 
 
