@@ -23,9 +23,10 @@ class AppendSlashWithPOSTMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        is_exception_endpoint = request.path.startswith('/api/clients/') and request.path.count('/') == 4
+        is_exception_endpoint_clients = request.path.startswith('/api/clients/') and request.path.count('/') == 4
+        is_exception_endpoint_release = request.path.startswith('/api/data_release/') and request.path.count('/') == 3
 
-        if request.path.startswith('/api/') and request.method in ['POST', 'PATCH'] and request.path.endswith('/') and not is_exception_endpoint:
+        if request.path.startswith('/api/') and request.method in ['POST', 'PATCH'] and request.path.endswith('/') and not (is_exception_endpoint_clients or is_exception_endpoint_release):
             return HttpResponseBadRequest("URL не должен заканчиваться на слэш при отправке POST/PATCH-запроса. Используйте URL без завершающего слэша.")
         response = self.get_response(request)
         return response

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db import transaction
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechNote, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechNote, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, ReleaseInfo
 from rest_framework.exceptions import ValidationError
 
 class ClientsCardSerializer(serializers.ModelSerializer):
@@ -566,7 +566,10 @@ class ForAutomaticEmailSerializer(serializers.ModelSerializer):
         return [{"contact_name": contact.contact_name, "contact_email": contact.contact_email, "notification_update": contact.notification_update} for contact in contacts]
 
 
-
+class ReleaseInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReleaseInfo
+        fields = ['date', 'release_number', 'client_name', 'main_contact', 'copy_contact']
 
 
 

@@ -1,7 +1,7 @@
 # views.py
 
 from rest_framework import generics, mixins, viewsets, status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, JSONParser
@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 from .swagger_schemas import request_schema, response_schema
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote, ReleaseInfo
 from .mixins import CustomResponseMixin, CustomCreateModelMixin, CustomQuerySetFilterMixin
 from .response_helpers import file_upload_error_response, custom_update_response, custom_delete_response
 from .serializers import (
@@ -29,6 +29,7 @@ from .serializers import (
     TechInformationSerializer,
     TechNoteSerializer,
     ForAutomaticEmailSerializer,
+    ReleaseInfoSerializer,
 )
 
 
@@ -665,6 +666,24 @@ class ForAutomaticEmailView(generics.ListAPIView):
     queryset = ClientsList.objects.all()
     serializer_class = ForAutomaticEmailSerializer
 
+
+class ReleaseInfoFilter(filters.FilterSet):
+    release_number = filters.CharFilter(lookup_expr='icontains')
+
+    class Meta:
+        model = ReleaseInfo
+        fields = ['release_number']
+
+class ReleaseInfoViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = ReleaseInfo.objects.all()
+    serializer_class = ReleaseInfoSerializer
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_class = ReleaseInfoFilter
+
+    @action(detail=False, url_path='versions')
+    def get_versions(self, request):
+        release_versions = ReleaseInfo.objects.values('date', 'release_number').distinct()
+        return Response(release_versions)
 
 
 

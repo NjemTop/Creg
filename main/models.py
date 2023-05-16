@@ -274,3 +274,20 @@ class TechNote(models.Model):
 
     def __str__(self):
         return f"{self.client_card} ({self.client_card.client_info.client_name})"
+
+
+class ReleaseInfo(models.Model):
+    """Таблица с информацией о рассылки клиенту"""
+    date = models.DateField(verbose_name="Дата рассылки")
+    release_number = models.CharField(verbose_name="Номер релиза", max_length=10)
+    client_name = models.CharField(verbose_name="Наименование клиента", max_length=100)
+    main_contact = models.CharField(verbose_name="Основной контакт", max_length=100)
+    copy_contact = models.CharField(verbose_name="Копия", max_length=100)
+
+    class Meta:
+        verbose_name = "Отчёт о рассылке"
+        verbose_name_plural = "Отчёты о рассылке"
+        db_table = "release_info"
+
+    def __str__(self):
+        return self.release_number

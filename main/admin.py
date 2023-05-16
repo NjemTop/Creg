@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote, Favicon
+from .models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote, ReleaseInfo, Favicon
 
 
 class ClientsCardAdmin(admin.ModelAdmin):
@@ -40,6 +40,7 @@ admin.site.register(TechAccountCard)
 admin.site.register(ServiseCard, ServiseCardAdmin)
 admin.site.register(TechInformationCard)
 admin.site.register(TechNote)
+admin.site.register(ReleaseInfo)
 
 @admin.register(Favicon)
 class FaviconAdmin(admin.ModelAdmin):
