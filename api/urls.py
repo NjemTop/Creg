@@ -1,5 +1,7 @@
 from django.urls import path, include
 from rest_framework import routers
+from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework_simplejwt.views import TokenObtainPairView
 from . import views
 
 router = routers.DefaultRouter()
@@ -9,6 +11,8 @@ router.register(r'data_release', views.ReleaseInfoViewSet, basename='releaseinfo
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('api-token-auth', obtain_auth_token, name='api_token_auth'),
+    path('token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('add_client', views.add_client, name='add_client'),
     path('contacts/client/<int:client_id>', views.ContactsByClientIdView.as_view(), name='contacts_by_client'),
     path('contacts/detail/<int:pk>', views.ContactDetailsView.as_view(), name='contact_details'),

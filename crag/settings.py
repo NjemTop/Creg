@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django_filters',
     'main',
     'rest_framework',
+    'rest_framework.authtoken',
     'drf_yasg',
     'api',
     # выключил проверку на HTTPS
