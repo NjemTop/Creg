@@ -1,6 +1,9 @@
-$(document).ready(function () {
+$(window).on('load', function () {
     const username = 'admin'; // Переменная для имени пользователя
     const password = 'ekSkaaiWnK'; // Переменная для пароля
+
+    const target = document.getElementById('spinner');
+    const spinner = new Spinner().spin(target); // Создаем экземпляр спиннера и запускаем его
 
     // Получение токена доступа
     $.ajax({
@@ -48,7 +51,9 @@ $(document).ready(function () {
                         `);
                     });
                 }
-            }    
+                // Скрываем спиннер
+                spinner.stop();
+            }
 
             // Когда выбран другой номер релиза
             releaseSelect.on('change', function () {
