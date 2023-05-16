@@ -7,7 +7,7 @@ $(window).on('load', function () {
 
     // Получение токена доступа
     $.ajax({
-        url: 'http://194.37.1.214:3030/api/token',
+        url: 'http://195.2.80.251:8137/api/token',
         method: 'POST',
         data: {
             username: username,
@@ -61,7 +61,7 @@ $(window).on('load', function () {
 
                 // Отправляем запрос на сервер
                 $.ajax({
-                    url: 'http://194.37.1.214:3030/api/data_release/?release_number=' + releaseNumber,
+                    url: 'http://195.2.80.251:8137/api/data_release/?release_number=' + releaseNumber,
                     headers: {
                         'Authorization': 'Bearer ' + accessToken,
                     },
@@ -79,7 +79,7 @@ $(window).on('load', function () {
 
             // Получаем список релизов и выбираем последний
             $.ajax({
-                url: 'http://194.37.1.214:3030/api/data_release/versions',
+                url: 'http://195.2.80.251:8137/api/data_release/versions',
                 headers: {
                     'Authorization': 'Bearer ' + accessToken,
                 },
