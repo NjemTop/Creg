@@ -1,21 +1,29 @@
 $(document).ready(function () {
     const releaseSelect = $('#release-number-select');
-    const dataTable = $('#data-table tbody');
+    const dataTable = $('#release-info-table-body');
 
     function displayData(dataJson) {
         dataTable.empty();
-        dataJson.forEach(item => {
+        if (dataJson.length === 0) {
             dataTable.append(`
                 <tr>
-                    <td>${item['Дата_рассылки']}</td>
-                    <td>${item['Номер_релиза']}</td>
-                    <td>${item['Наименование_клиента']}</td>
-                    <td>${item['Основной_контакт']}</td>
-                    <td>${item['Копия']}</td>
+                    <td colspan="5">Нет данных</td>
                 </tr>
             `);
-        });
-    }
+        } else {
+            dataJson.forEach(item => {
+                dataTable.append(`
+                    <tr>
+                        <td>${item['Дата_рассылки']}</td>
+                        <td>${item['Номер_релиза']}</td>
+                        <td>${item['Наименование_клиента']}</td>
+                        <td>${item['Основной_контакт']}</td>
+                        <td>${item['Копия']}</td>
+                    </tr>
+                `);
+            });
+        }
+    }    
 
     releaseSelect.on('change', function () {
         const releaseNumber = this.value;
@@ -44,10 +52,13 @@ $(document).ready(function () {
         dataType: 'json',
         success: function (data) {
             data.sort((a, b) => new Date(b.date) - new Date(a.date));
+            data.forEach(release => {
+                releaseSelect.append(new Option(release.release_number, release.release_number));
+            });
             const latestRelease = data[0].release_number;
             releaseSelect.val(latestRelease);
             releaseSelect.trigger('change');
-        },
+        },        
         error: function(jqXHR, textStatus, errorThrown) {
             console.error(textStatus, errorThrown);
         }

@@ -24,19 +24,9 @@
             </tr>
         </thead>
         <tbody id="release-info-table-body">
-            {% for release_info in release_infos %}
-                <tr>
-                    <td>{{ release_info.date }}</td>
-                    <td>{{ release_info.release_number }}</td>
-                    <td>{{ release_info.client_name }}</td>
-                    <td>{{ release_info.main_contact }}</td>
-                    <td>{{ release_info.copy_contact }}</td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="5">Нет данных</td>
-                </tr>
-            {% endfor %}
+            <tr id="no-data-row">
+                <td colspan="5">Нет данных</td>
+            </tr>
         </tbody>
     </table>
 
