@@ -56,5 +56,8 @@ class ConnectionInfoAdmin(admin.ModelAdmin):
     client_name.short_description = 'Клиент'
 
     def file_link(self, obj):
-        return format_html('<a href="{}">{}</a>', obj.file_path.url, obj.file_path.name)
+        if obj.file_path and hasattr(obj.file_path, 'url'):
+            return format_html('<a href="{}">{}</a>', obj.file_path.url, obj.file_path.name)
+        else:
+            return "No file"
     file_link.short_description = 'Файл'
