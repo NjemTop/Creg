@@ -7,7 +7,7 @@ $(window).on('load', function () {
 
     // Получение токена доступа
     $.ajax({
-        url: 'http://194.37.1.214:3030/api/token',
+        url: '/api/token',
         method: 'POST',
         data: {
             username: username,
