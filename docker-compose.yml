@@ -116,3 +116,5 @@ volumes:
       type: none
       device: ${PWD}/logs
       o: bind
+  mongodata:
+    driver: local
