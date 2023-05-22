@@ -71,7 +71,7 @@ services:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
     restart: always
   elasticsearch:
-    image: elasticsearch:7.10.1
+    image: elasticsearch:8.7.1
     environment:
       - http.host=0.0.0.0
       - transport.host=localhost
@@ -93,7 +93,7 @@ services:
       - GRAYLOG_PASSWORD_SECRET=hPoyqflbLMYljPyu
       # Password: admin
       - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
-      - GRAYLOG_HTTP_EXTERNAL_URI=http://localhost:9005/
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9005/
     depends_on:
       - mongodb
       - elasticsearch
