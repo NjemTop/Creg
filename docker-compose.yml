@@ -73,7 +73,7 @@ services:
     restart: always
 
   graylog:
-    image: graylog/graylog:5.1
+    image: graylog/graylog:5.0
     container_name: Graylog
     environment:
       - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9000/
