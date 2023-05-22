@@ -257,7 +257,7 @@ LOGGING = {
         'gelf': {
         'level': 'INFO',
         'class': 'graypy.GELFTCPHandler',
-        'host': '195.2.80.251',
+        'host': 'mongo',
         'port': 12201,  # Порт Graylog GELF UDP input
     },
     },
