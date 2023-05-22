@@ -95,6 +95,7 @@ services:
       # Password: admin
       - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
       - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9000/
+      - GRAYLOG_MONGODB_URI=mongodb://admin:BfDVBPsNSf@mongodb:27017/graylog
     depends_on:
       - mongodb
       - elasticsearch
@@ -109,6 +110,9 @@ services:
 
   mongodb:
     image: mongo:4.2
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=BfDVBPsNSf
     volumes:
       - mongodb:/data/db
     container_name: MongoDB
