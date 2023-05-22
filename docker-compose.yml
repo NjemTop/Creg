@@ -70,23 +70,6 @@ services:
       - TZ=Europe/Moscow
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
     restart: always
-  elasticsearch:
-    image: elasticsearch:8.7.1
-    environment:
-      - http.host=0.0.0.0
-      - transport.host=localhost
-      - network.host=0.0.0.0
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    container_name: Elasticsearch
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - esdata:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-    restart: always
 
   graylog:
     image: graylog/graylog:4.1
