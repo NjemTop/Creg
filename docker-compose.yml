@@ -91,7 +91,7 @@ services:
       - mongo
 
   elasticsearch:
-    image: elasticsearch:8.7.1
+    image: elasticsearch:7.12.0
     container_name: Elasticsearch
     environment:
       - discovery.type=single-node
