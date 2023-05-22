@@ -73,16 +73,19 @@ services:
     restart: always
 
   graylog:
-    image: graylog/graylog:5.0
+    image: graylog/graylog:5.1
     container_name: Graylog
     environment:
       - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9000/
       - GRAYLOG_GELF_TCP_INPUT_ENABLED=true  # Включение GELF TCP входа
       - GRAYLOG_MONGODB_URI=mongodb://mongo:27017/graylog  # Указываем URI MongoDB для Graylog
+      - GRAYLOG_PASSWORD_SECRET=hPoyqflbLMYljPyu # Секретная фраза
     restart: always
     ports:
       - "9000:9000"  # Порт Graylog веб-интерфейса
       - "12201:12201/udp"  # Порт Graylog GELF UDP input
+    volumes:
+    - graylogdata:/usr/share/graylog/data
     depends_on:
       - elasticsearch
       - mongo
@@ -117,4 +120,6 @@ volumes:
       device: ${PWD}/logs
       o: bind
   mongodata:
+    driver: local
+  graylogdata:
     driver: local
