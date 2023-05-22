@@ -85,6 +85,9 @@ services:
     ports:
       - "9000:9000"  # Порт Graylog веб-интерфейса
       - "12201:12201/udp"  # Порт Graylog GELF UDP input
+      - "12201:12201" # Порт Graylog GELF TCP input
+      - "514:514" # Порт Graylog Syslog TCP input
+      - "514:514/udp" # Порт Graylog Syslog UDP input
     volumes:
     - graylogdata:/usr/share/graylog/data
     depends_on:
