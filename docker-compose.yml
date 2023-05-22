@@ -89,34 +89,14 @@ services:
     restart: always
 
   graylog:
-    image: graylog/graylog:5.1
-    environment:
-      - GRAYLOG_PASSWORD_SECRET=hPoyqflbLMYljPyu
-      # Password: admin
-      - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
-      - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9000/
-      - GRAYLOG_MONGODB_URI=mongodb://admin:BfDVBPsNSf@mongodb:27017/graylog
-    depends_on:
-      - mongodb
-      - elasticsearch
+    image: graylog/graylog:4.1
     container_name: Graylog
-    ports:
-      - 9000:9000
-      - 514:514
-      - 514:514/udp
-      - 12201:12201
-      - 12201:12201/udp
-    restart: always
-
-  mongodb:
-    image: mongo:4.2
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=BfDVBPsNSf
-    volumes:
-      - mongodb:/data/db
-    container_name: MongoDB
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9000/
     restart: always
+    ports:
+      - "9000:9000"  # Порт Graylog веб-интерфейса
+      - "12201:12201/udp"  # Порт Graylog GELF UDP input
 
 volumes:
   dbdata:
@@ -127,5 +107,3 @@ volumes:
       type: none
       device: ${PWD}/logs
       o: bind
-  esdata:
-  mongodb:

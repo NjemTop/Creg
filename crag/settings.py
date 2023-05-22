@@ -257,8 +257,8 @@ LOGGING = {
         'gelf': {
         'level': 'INFO',
         'class': 'graypy.GELFTCPHandler',
-        'host': 'graylog',  # This should be the hostname of your Graylog server
-        'port': 12201,  # And this should be the GELF input port
+        'host': '195.2.80.251',
+        'port': 12201,  # Порт Graylog GELF UDP input
     },
     },
     'root': {
