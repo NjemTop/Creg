@@ -254,20 +254,20 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',  # Применяем форматтер
         },
-        'gelf': {
+        'graypy': {
         'level': 'INFO',
-        'class': 'graypy.GELFTCPHandler',
+        'class': 'graypy.GELFUDPHandler',
         'host': 'mongo',
         'port': 12201,  # Порт Graylog GELF UDP input
     },
     },
     'root': {
-        'handlers': ['file', 'console', 'gelf'],
+        'handlers': ['file', 'console', 'graypy'],
         'level': 'DEBUG',
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'info_file', 'warning_file', 'error_file', 'critical_file', 'console', 'gelf'],
+            'handlers': ['file', 'info_file', 'warning_file', 'error_file', 'critical_file', 'console', 'graypy' ],
             'level': 'INFO',
             'propagate': True,
         },
