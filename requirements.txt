@@ -12,4 +12,4 @@ celery-once==3.0.1
 sqlalchemy==2.0.13
 # выключил проверку на HTTPS
 django-cors-headers==4.0.0
-python-logstash==0.4.8
+graypy==2.1.0
