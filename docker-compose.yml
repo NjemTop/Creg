@@ -85,7 +85,7 @@ services:
     volumes:
       - esdata:/usr/share/elasticsearch/data
     ports:
-      - "9204:9200"
+      - "9200:9200"
     restart: always
 
   graylog:
@@ -94,13 +94,13 @@ services:
       - GRAYLOG_PASSWORD_SECRET=hPoyqflbLMYljPyu
       # Password: admin
       - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
-      - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9005/
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9000/
     depends_on:
       - mongodb
       - elasticsearch
     container_name: Graylog
     ports:
-      - 9005:9005
+      - 9000:9000
       - 514:514
       - 514:514/udp
       - 12201:12201
