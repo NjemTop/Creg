@@ -80,6 +80,7 @@ services:
       - GRAYLOG_GELF_TCP_INPUT_ENABLED=true  # Включение GELF TCP входа
       - GRAYLOG_MONGODB_URI=mongodb://mongo:27017/graylog  # Указываем URI MongoDB для Graylog
       - GRAYLOG_PASSWORD_SECRET=hPoyqflbLMYljPyu # Секретная фраза
+      - GRAYLOG_ROOT_PASSWORD_SHA2=5a83add1a47a96c12948044990bab61adccfcedae644a96b569cbc2509d6cec5 # L8LxNQ
     restart: always
     ports:
       - "9000:9000"  # Порт Graylog веб-интерфейса
