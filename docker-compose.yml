@@ -76,8 +76,17 @@ services:
     image: graylog/graylog:4.1
     container_name: Graylog
     environment:
-    - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9000/
-    - GRAYLOG_GELF_TCP_INPUT_ENABLED=true  # Включение GELF TCP входа
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9000/
+      - GRAYLOG_ELASTICSEARCH_HOSTS=http://elasticsearch:9200  # Указываем хост Elasticsearch
+      - GRAYLOG_ELASTICSEARCH_VERSION=7  # Указываем версию Elasticsearch
+      - GRAYLOG_ELASTICSEARCH_REQUEST_TIMEOUT=1m  # Устанавливаем таймаут запросов к Elasticsearch
+      - GRAYLOG_ELASTICSEARCH_MAX_RETRIES=3  # Максимальное количество повторных попыток при запросах к Elasticsearch
+      - GRAYLOG_ELASTICSEARCH_DISCOVERY_ENABLED=false  # Отключаем автоматическое обнаружение Elasticsearch
+      - GRAYLOG_ELASTICSEARCH_INDEX_PREFIX=graylog  # Префикс индексов Elasticsearch
+      - GRAYLOG_JOURNAL_ENABLED=true  # Включаем Graylog Journal
+      - GRAYLOG_JOURNAL_MAX_SIZE=1gb  # Устанавливаем максимальный размер Graylog Journal
+      - GRAYLOG_JOURNAL_MAX_AGE=12h  # Устанавливаем максимальный возраст записей в Graylog Journal
+      - GRAYLOG_JOURNAL_FLUSH_INTERVAL=1m  # Устанавливаем интервал сброса записей в Graylog Journal
     restart: always
     ports:
       - "9000:9000"  # Порт Graylog веб-интерфейса
@@ -89,8 +98,15 @@ services:
     image: elasticsearch:7.12.0
     container_name: Elasticsearch
     environment:
-      - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  # Опционально: ограничение памяти для Elasticsearch
+      - node.name=elasticsearch
+      - cluster.name=graylog
+      - cluster.initial_master_nodes=elasticsearch
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     restart: always
     ports:
       - "9200:9200"  # Порт Elasticsearch REST API
