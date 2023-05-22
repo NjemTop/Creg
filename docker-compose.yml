@@ -71,13 +71,11 @@ services:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
     restart: always
   elasticsearch:
-    image: elasticsearch:7.12.0
-    container_name: elasticsearch
+    image: elasticsearch:7.10.1
     environment:
-      - node.name=elasticsearch
-      - cluster.name=es-docker-cluster
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
+      - http.host=0.0.0.0
+      - transport.host=localhost
+      - network.host=0.0.0.0
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
       memlock:
@@ -86,32 +84,31 @@ services:
     volumes:
       - esdata:/usr/share/elasticsearch/data
     ports:
-      - "9200:9200"
+      - "9204:9200"
     restart: always
 
-  kibana:
-    image: kibana:7.12.0
-    container_name: kibana
-    ports:
-      - "5601:5601"
+  graylog:
+    image: graylog/graylog:5.1
     environment:
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      - GRAYLOG_PASSWORD_SECRET=hPoyqflbLMYljPyu
+      # Password: admin
+      - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://localhost:9005/
     depends_on:
+      - mongodb
       - elasticsearch
+    ports:
+      - 9005:9005
+      - 514:514
+      - 514:514/udp
+      - 12201:12201
+      - 12201:12201/udp
     restart: always
 
-  logstash:
-    image: logstash:7.12.0
-    container_name: logstash
-    command: logstash -f /etc/logstash/conf.d/logstash.conf
+  mongodb:
+    image: mongo:4.2
     volumes:
-      - ./logstash.conf:/etc/logstash/conf.d/logstash.conf
-    ports:
-      - "5001:5000"
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-    depends_on:
-      - elasticsearch
+      - mongodb:/data/db
     restart: always
 
 volumes:
@@ -124,4 +121,4 @@ volumes:
       device: ${PWD}/logs
       o: bind
   esdata:
-    driver: local
+  mongodb:

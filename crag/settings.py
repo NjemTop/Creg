@@ -254,21 +254,22 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',  # Применяем форматтер
         },
-        'logstash': {
-            'level': 'DEBUG',
-            'class': 'logstash.TCPLogstashHandler',
-            'host': 'logstash',
-            'port': 5000,
-            'version': 1,
-        },
+        'gelf': {
+        'level': 'INFO',
+        'class': 'graypy.GELFTCPHandler',
+        'host': 'graylog',  # This should be the hostname of your Graylog server
+        'port': 12201,  # And this should be the GELF input port
+        'include_extra_fields': True,
+        'debug': True,
+    },
     },
     'root': {
-        'handlers': ['file', 'console', 'logstash'],
+        'handlers': ['file', 'console', 'gelf'],
         'level': 'DEBUG',
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'info_file', 'warning_file', 'error_file', 'critical_file', 'console', 'logstash'],
+            'handlers': ['file', 'info_file', 'warning_file', 'error_file', 'critical_file', 'console', 'gelf'],
             'level': 'INFO',
             'propagate': True,
         },
