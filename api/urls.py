@@ -14,6 +14,7 @@ urlpatterns = [
     path('api-token-auth', obtain_auth_token, name='api_token_auth'),
     path('token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('add_client', views.add_client, name='add_client'),
+    path('client_search', views.ClientSearch.as_view(), name='client_search'),
     path('contacts/client/<int:client_id>', views.ContactsByClientIdView.as_view(), name='contacts_by_client'),
     path('contacts/detail/<int:pk>', views.ContactDetailsView.as_view(), name='contact_details'),
     path('connect_info/client/<int:client_id>', views.ConnectInfoByClientIdView.as_view(), name='connect_info_by_client'),

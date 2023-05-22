@@ -1,7 +1,15 @@
 /* Стили для элемента body */
-body {
-    display: block;
-    margin: 0;
+body.main-page {
+    background: url('/media/favicons/background_image.jpg') no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+body, html {
+    overflow-x: hidden; /* Запретит горизонтальную прокрутку */
+    max-width: 100%; /* Ограничит максимальную ширину элементов до ширины вьюпорта */
 }
 
 /* Стили для контейнера с основным содержимым */
@@ -74,6 +82,7 @@ body {
 /* Стили для контейнера (растягивание на всю ширину и отступы по краям) */
 .container {
     width: 100%;
+    height: auto;
     max-width: 100%;
     padding-left: 15px;
     padding-right: 15px;
@@ -115,3 +124,85 @@ body {
     max-height: 50px; /* Установите максимальную высоту изображения баннера */
     max-width: 200px; /* Установите максимальную ширину изображения баннера */
 }
+
+/* Стили для кастомного крестика закрытия модального окна */
+.custom-close {
+    padding: 1;    /* делаем отступы вокруг содержимого кнопки */
+    border: none;  /* убирает границы кнопки */
+    background-color: transparent;
+    transition: background-color 0.5s ease; /* Это будет делать изменения более плавными */
+}
+
+.custom-close:hover {
+    background-color: rgba(0,123,255,0.1); /* Синий фон с небольшой прозрачностью */
+    border-radius: 5px; /* Скругленные углы, меняйте как нужно */
+}
+
+.custom-close:focus {
+    box-shadow: none;
+}
+
+/* .custom-button {
+    width: 100%;
+    height: 100px;
+    font-size: 1.5rem;
+    border-radius: 15px;
+} */
+
+.custom-button {
+    background-color: rgba(255, 255, 255, 0.1); /* Кнопка слегка прозрачная */
+    color: white; /* Белый текст */
+    text-align: center; /* Центрирование текста */
+    font-size: 1.5rem;
+}
+
+.search-input {
+    border-radius: 20px !important;
+}
+
+.navbar {
+    margin-bottom: 20px;
+}
+.search-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto 0;
+}
+
+#regularSearch {
+    width: 50%;
+    margin: 0 auto;
+    border-radius: 20px;
+    padding: 5px 10px;
+}
+
+#advancedSearchButton {
+    border: none;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.ui-datepicker {
+    z-index: 2000 !important; /* или другое значение выше, чем z-index модального окна */
+}
+
+/* Стили для уведомления об успешном выполнении */
+.success-toast {
+    color: #fff;
+}
+
+/* Стили для уведомления об ошибке */
+.error-toast {
+    color: #fff;
+}
+
+/* Перенос слов будет разрешен только при ширине экрана 992px и больше */
+@media (min-width: 992px) {
+    .form-check-label {
+      word-wrap: normal;
+    }
+  }
+  

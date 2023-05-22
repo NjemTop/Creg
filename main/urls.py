@@ -14,7 +14,7 @@ schema_view = get_schema_view(
       description="Описание REST API",
       terms_of_service="/",
       contact=openapi.Contact(email="oleg.eliseev@boardmaps.ru"),
-      # license=openapi.License(name="License"),
+      # license=openapi.License(name="License"), 
    ),
    public=True,
    permission_classes=(AllowAny,),

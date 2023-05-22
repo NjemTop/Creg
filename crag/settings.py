@@ -253,14 +253,21 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',  # Применяем форматтер
         },
+        'logstash': {
+            'level': 'DEBUG',
+            'class': 'logstash.TCPLogstashHandler',
+            'host': 'logstash',
+            'port': 5000,
+            'version': 1,
+        },
     },
     'root': {
-        'handlers': ['file', 'console'],
+        'handlers': ['file', 'console', 'logstash'],
         'level': 'DEBUG',
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'info_file', 'error_file', 'critical_file', 'console'],
+            'handlers': ['file', 'info_file', 'warning_file', 'error_file', 'critical_file', 'console', 'logstash'],
             'level': 'INFO',
             'propagate': True,
         },

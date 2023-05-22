@@ -1,0 +1,88 @@
+{% for client in clients %}
+<div class="modal fade" id="tech_informationModal_{{ client.id }}" tabindex="-1" role="dialog" aria-labelledby="tech_informationModalLabel_{{ client.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="background-color: #f8f9fa;">
+            <div class="modal-header d-flex justify-content-center">
+                <h5 class="modal-title" id="tech_informationModalLabel_{{ client.id }}" style="color: #6c757d;">Техническая информация</h5>
+                <button type="button" class="close custom-close" data-bs-dismiss="modal" aria-label="Закрыть" style="position: absolute; right: 15px;">
+                    <span aria-hidden="true" style="color: #6c757d; font-size: 1.5rem;">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Версия сервера:</span>
+                            <input id="server_version_{{ client.id }}" type="text" class="form-control" style="font-size: 18px; color: #6c757d;">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Дата обновления:</span>
+                            <input id="update_date_{{ client.id }}" type="text" class="form-control" style="font-size: 18px; color: #6c757d;">
+                        </div>
+                    </div>
+                </div>
+                <!-- "justify-content-between" распределит пространство между колонками, а "justify-content-around" распределит пространство вокруг колонок -->
+                <div class="row justify-content-between">
+                    <div class="col-2">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input tech-information-switch" type="checkbox" id="api_{{ client.id }}">
+                            <label class="form-check-label" for="api_{{ client.id }}">API</label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input tech-information-switch" type="checkbox" id="localizable_web_{{ client.id }}">
+                            <label class="form-check-label" for="localizable_web_{{ client.id }}">Локализация Web</label>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input tech-information-switch" type="checkbox" id="localizable_ios_{{ client.id }}">
+                            <label class="form-check-label" for="localizable_ios_{{ client.id }}">Локализация iOS</label>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input tech-information-switch" type="checkbox" id="skins_web_{{ client.id }}">
+                            <label class="form-check-label" for="skins_web_{{ client.id }}">Скины Web</label>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input tech-information-switch" type="checkbox" id="skins_ios_{{ client.id }}">
+                            <label class="form-check-label" for="skins_ios_{{ client.id }}">Скины iOS</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4" style="background-color: #e0f7fa; padding: 20px; border-radius: 5px;">
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">iPad:</span>
+                            <input id="ipad_{{ client.id }}" type="text" class="form-control" style="font-size: 18px; color: #6c757d;">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Android:</span>
+                            <input id="android_{{ client.id }}" type="text" class="form-control" style="font-size: 18px; color: #6c757d;">
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="background-color: #e0f7fa; padding: 20px; border-radius: 5px;">
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">MDM:</span>
+                            <input id="mdm_{{ client.id }}" type="text" class="form-control" style="font-size: 18px; color: #6c757d;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="apply_{{ client.id }}" class="btn btn-primary">Применить</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}

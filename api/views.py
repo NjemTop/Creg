@@ -11,6 +11,8 @@ from django.core import serializers
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.views import APIView
 import django_filters.rest_framework as filters
+from django.views import View
+from django.db.models import Q
 import datetime
 import logging
 from django.shortcuts import get_object_or_404
@@ -39,6 +41,19 @@ from .serializers import (
 
 # Настройка логирования
 logger = logging.getLogger(__name__)
+
+
+class ClientSearch(View):
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('q', '')
+        clients = ClientsList.objects.filter(
+            Q(client_name__icontains=query) | 
+            Q(clients_card__tech_information__server_version__icontains=query)
+        )[:5]
+        clients_info = list(clients.values('id', 'client_name', 'clients_card__tech_information__server_version'))
+        return JsonResponse(clients_info, safe=False)
+
+
 
 class ClientFilter(filters.FilterSet):
     """
@@ -80,6 +95,8 @@ class ClientFilter(filters.FilterSet):
         fields = ['client_name', 'contact_status', 'elasticsearch', 'ad', 'adfs', 'oauth_2', 'module_translate', 'ms_oos', 'exchange', 'office_365', 'sfb', 'zoom', 'teams', 'smtp', 'cryptopro_dss', 'cryptopro_csp', 'smpp', 'limesurvey', 'server_version', 'update_date', 'api', 'ipad', 'android', 'mdm', 'localizable_web', 'localizable_ios', 'skins_web', 'skins_ios']
 
 class ClientViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
+    permission_classes = [IsAuthenticated]
     """
     tags:
     - Clients
@@ -214,6 +231,10 @@ class ContactDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.De
     """
     Класс для изменения контактов клиента, а также удаление этого контакта
     """
+
+    authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
+    permission_classes = [IsAuthenticated]
+
     queryset = ContactsCard.objects.select_related('client_card__client_info')
     serializer_class = ContactsSerializer
 
@@ -258,6 +279,9 @@ class ConnectInfoDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
     а также UpdateModelMixin и DestroyModelMixin для выполнения операций обновления и удаления.
     """
 
+    authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
+    permission_classes = [IsAuthenticated]
+    
     def __init__(self, *args, **kwargs):
         super().__init__('contact_info_name', 'client_card', *args, **kwargs)
 
@@ -299,6 +323,10 @@ class BMServersDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.
     Наследует CustomResponseMixin для настройки пользовательских ответов,
     а также UpdateModelMixin и DestroyModelMixin для выполнения операций обновления и удаления.
     """
+
+    authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
+    permission_classes = [IsAuthenticated]
+
     def __init__(self, *args, **kwargs):
         super().__init__('bm_servers_servers_name', 'client_card', *args, **kwargs)
 
@@ -341,6 +369,10 @@ class IntegrationDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
     Класс изменения информации об интеграциях клиента,
     а также удаления этой информации полностью.
     """
+
+    authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
+    permission_classes = [IsAuthenticated]
+
     def __init__(self, *args, **kwargs):
         super().__init__('client_card', 'client_card', *args, **kwargs)
 
@@ -383,6 +415,10 @@ class ModuleCardDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins
     Класс изменения информации об интеграциях клиента,
     а также удаления этой информации полностью.
     """
+
+    authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
+    permission_classes = [IsAuthenticated]
+
     def __init__(self, *args, **kwargs):
         super().__init__('client_card', 'client_card', *args, **kwargs)
 
@@ -418,6 +454,9 @@ class TechAccountByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixi
 
 class TechAccountDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
 
+    authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
+    permission_classes = [IsAuthenticated]
+
     def __init__(self, *args, **kwargs):
         super().__init__('client_card', 'client_card', *args, **kwargs)
 
@@ -440,6 +479,10 @@ class TechAccountDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixin
 
 
 class FileUploadView(generics.RetrieveUpdateDestroyAPIView):
+
+    authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
+    permission_classes = [IsAuthenticated]
+
     queryset = ConnectionInfo.objects.all()
     serializer_class = ConnectionInfoSerializer
     parser_classes = [MultiPartParser]
@@ -527,6 +570,10 @@ class TextUploadView(generics.CreateAPIView):
         )
 
 class TextUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+
+    authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
+    permission_classes = [IsAuthenticated]
+
     queryset = ConnectionInfo.objects.all()
     serializer_class = ConnectionInfoSerializer
     parser_classes = [JSONParser]
@@ -575,6 +622,8 @@ class ServiseByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, g
         return ClientsCard.objects.get(client_info_id=client_id)
 
 class ServiseDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
+    permission_classes = [IsAuthenticated]
 
     def __init__(self, *args, **kwargs):
         super().__init__('client_card', 'client_card', *args, **kwargs)
@@ -598,6 +647,10 @@ class ServiseDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.De
 
 
 class TechInformationByClientIdView(CustomCreateModelMixin, CustomQuerySetFilterMixin, generics.ListAPIView):
+    
+    authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
+    permission_classes = [IsAuthenticated]
+
     serializer_class = TechInformationSerializer
     queryset = ClientsList.objects.all()
     related_name = "clients_card"
@@ -613,7 +666,8 @@ class TechInformationByClientIdView(CustomCreateModelMixin, CustomQuerySetFilter
         return super().post(request, *args, **kwargs)
 
 class TechInformationDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
-
+    authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
+    permission_classes = [IsAuthenticated]
     def __init__(self, *args, **kwargs):
         super().__init__('client_card', 'client_card', *args, **kwargs)
 
@@ -690,6 +744,7 @@ class ReleaseInfoViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mix
     def get_versions(self, request):
         release_versions = ReleaseInfo.objects.values('date', 'release_number').distinct()
         return Response(release_versions)
+
 
 
 

@@ -53,7 +53,7 @@
             event.preventDefault();
             const clientId = document.getElementById('client_id').value;
             const formData = new FormData(event.target);
-            const response = await fetch(`http://127.0.0.1:8000/api/upload_file/${clientId}`, {
+            const response = await fetch(`/api/upload_file/${clientId}`, {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': csrfToken,
