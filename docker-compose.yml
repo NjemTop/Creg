@@ -77,6 +77,7 @@ services:
       - transport.host=localhost
       - network.host=0.0.0.0
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    container_name: Elasticsearch
     ulimits:
       memlock:
         soft: -1
@@ -97,6 +98,7 @@ services:
     depends_on:
       - mongodb
       - elasticsearch
+    container_name: Graylog
     ports:
       - 9005:9005
       - 514:514
@@ -109,6 +111,7 @@ services:
     image: mongo:4.2
     volumes:
       - mongodb:/data/db
+    container_name: MongoDB
     restart: always
 
 volumes:
