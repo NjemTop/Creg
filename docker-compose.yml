@@ -73,7 +73,7 @@ services:
     restart: always
 
   graylog:
-    image: graylog/graylog:4.1
+    image: graylog/graylog:5.1
     container_name: Graylog
     environment:
       - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9000/
@@ -88,7 +88,7 @@ services:
       - mongo
 
   elasticsearch:
-    image: elasticsearch:7.12.0
+    image: elasticsearch:8.7.1
     container_name: Elasticsearch
     environment:
       - discovery.type=single-node
