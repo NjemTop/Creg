@@ -18,6 +18,7 @@ services:
     depends_on:
       - db
       - rabbitmq
+      - graylog
 
   db:
     image: postgres:13
@@ -75,11 +76,25 @@ services:
     image: graylog/graylog:4.1
     container_name: Graylog
     environment:
-      - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9000/
+    - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9000/
+    - GRAYLOG_GELF_TCP_INPUT_ENABLED=true  # Включение GELF TCP входа
     restart: always
     ports:
       - "9000:9000"  # Порт Graylog веб-интерфейса
       - "12201:12201/udp"  # Порт Graylog GELF UDP input
+    depends_on:
+      - elasticsearch
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+    container_name: Elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  # Опционально: ограничение памяти для Elasticsearch
+    restart: always
+    ports:
+      - "9200:9200"  # Порт Elasticsearch REST API
+      - "9300:9300"  # Порт Elasticsearch межузлового общения
 
 volumes:
   dbdata:
