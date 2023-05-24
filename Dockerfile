@@ -10,8 +10,7 @@ RUN mkdir /logs
 
 # Копируем файл с зависимостями и устанавливаем их
 COPY requirements.txt .
-RUN apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev bash && \
-    apk add --no-cache celery && \
+RUN apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \
     pip install --no-cache-dir psycopg2-binary && \
     pip install --no-cache-dir -r requirements.txt && \
     apk del .build-deps
@@ -20,6 +19,9 @@ RUN apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev bash &&
 FROM python:3.9-alpine
 WORKDIR /app
 COPY --from=builder /app /app
+
+# Устанавливаем bash
+RUN apk add --no-cache bash
 
 # Устанавливаем часовой пояс
 RUN apk add --no-cache tzdata && \
