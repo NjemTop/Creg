@@ -15,6 +15,9 @@ RUN apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \
     pip install --no-cache-dir -r requirements.txt && \
     apk del .build-deps
 
+# Устанавливаем Celery
+RUN pip install --no-cache-dir celery
+
 # Этап сборки приложения
 FROM python:3.9-alpine
 WORKDIR /app
