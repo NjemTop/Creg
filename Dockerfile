@@ -17,6 +17,7 @@ RUN apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \
 
 # Устанавливаем Celery
 RUN pip install --no-cache-dir celery
+RUN pip install --no-cache-dir django-celery-beat
 
 # Этап сборки приложения
 FROM python:3.9-alpine
