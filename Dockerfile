@@ -1,5 +1,5 @@
 # Используем официальный образ Python как базовый
-FROM python:3.9
+FROM python:3.9-slim as builder
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
@@ -10,6 +10,14 @@ RUN mkdir /logs
 # Копируем файлы с зависимостями и устанавливаем их
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Начинаем новую стадию сборки
+FROM python:3.9-slim
+
+WORKDIR /app
+
+COPY --from=builder /app /app
+COPY --from=builder /logs /logs
 
 # Установим часовой пояс Москвы, для контейнера
 RUN echo "Europe/Moscow" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
