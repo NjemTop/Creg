@@ -3,7 +3,7 @@ version: '3.9'
 services:
   base:
     build: .
-    image: myapp_base
+    image: creg2.0
 
   web:
     command: bash -c "python3.9 manage.py makemigrations && python3.9 manage.py migrate && python3.9 manage.py runserver 0.0.0.0:8137"
@@ -14,7 +14,7 @@ services:
     ports:
       - "8137:8137"
     container_name: Crag
-    image: myapp_base
+    image: creg2.0
     environment:
       - TZ=Europe/Moscow
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
@@ -56,7 +56,7 @@ services:
       - db
       - rabbitmq
     container_name: Celery
-    image: myapp_base
+    image: creg2.0
     environment:
       - TZ=Europe/Moscow
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
@@ -70,7 +70,7 @@ services:
       - db
       - rabbitmq
     container_name: Celery_Beat
-    image: myapp_base
+    image: creg2.0
     environment:
       - TZ=Europe/Moscow
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
