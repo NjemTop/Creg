@@ -10,7 +10,8 @@ RUN mkdir /logs
 
 # Копируем файл с зависимостями и устанавливаем их
 COPY requirements.txt .
-RUN apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \
+RUN apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev bash && \
+    apk add --no-cache celery && \
     pip install --no-cache-dir psycopg2-binary && \
     pip install --no-cache-dir -r requirements.txt && \
     apk del .build-deps
