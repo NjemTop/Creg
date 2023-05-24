@@ -1,5 +1,5 @@
 # Этап установки зависимостей
-# Устанавливасем "лёгкую" зависимость
+# Устанавливаем "легкую" зависимость
 FROM python:3.9-alpine AS builder
 
 # Устанавливаем рабочую директорию
@@ -19,11 +19,15 @@ RUN apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \
 FROM python:3.9-alpine
 WORKDIR /app
 COPY --from=builder /app /app
-# Установим часовой пояс Москвы, для контейнера
-RUN echo "Europe/Moscow" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
+
+# Устанавливаем часовой пояс
+RUN apk add --no-cache tzdata && \
+    cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime && \
+    echo "Europe/Moscow" > /etc/timezone && \
+    apk del tzdata
 
 # Копируем остальные файлы проекта
 COPY . .
 
-# Запустите сервер Django
+# Запускаем сервер Django
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8137"]
