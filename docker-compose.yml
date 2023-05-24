@@ -1,8 +1,11 @@
 version: '3.9'
 
 services:
-  web:
+  base:
     build: .
+    image: myapp_base
+
+  web:
     command: bash -c "python3.9 manage.py makemigrations && python3.9 manage.py migrate && python3.9 manage.py runserver 0.0.0.0:8137"
     volumes:
       - .:/app
@@ -11,6 +14,7 @@ services:
     ports:
       - "8137:8137"
     container_name: Crag
+    image: myapp_base
     environment:
       - TZ=Europe/Moscow
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
@@ -45,28 +49,28 @@ services:
       - "15672:15672"
 
   celery:
-    build: .
-    command: celery -A crag worker --loglevel=info
+    command: bash -c "celery -A crag worker --loglevel=info"
     volumes:
       - .:/app
     depends_on:
       - db
       - rabbitmq
     container_name: Celery
+    image: myapp_base
     environment:
       - TZ=Europe/Moscow
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
     restart: always
 
   celerybeat:
-    build: .
-    command: celery -A crag beat -l info
+    command: bash -c "celery -A crag beat -l info"
     volumes:
       - .:/app
     depends_on:
       - db
       - rabbitmq
     container_name: Celery_Beat
+    image: myapp_base
     environment:
       - TZ=Europe/Moscow
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
