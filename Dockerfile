@@ -1,6 +1,6 @@
 # Этап установки зависимостей
 # Устанавливаем "легкую" зависимость
-FROM python:3.9-alpine AS builder
+FROM python:3.9 AS builder
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
@@ -10,28 +10,25 @@ RUN mkdir /logs
 
 # Копируем файл с зависимостями и устанавливаем их
 COPY requirements.txt .
-RUN apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc musl-dev libpq-dev && \
     pip install --no-cache-dir psycopg2-binary && \
     pip install --no-cache-dir -r requirements.txt && \
-    apk del .build-deps
-
-# Устанавливаем Celery
-RUN pip install --no-cache-dir celery
-RUN pip install --no-cache-dir django-celery-beat
+    apt-get remove -y gcc musl-dev libpq-dev && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
 
 # Этап сборки приложения
-FROM python:3.9-alpine
+FROM python:3.9
 WORKDIR /app
 COPY --from=builder /app /app
 
-# Устанавливаем bash
-RUN apk add --no-cache bash
-
 # Устанавливаем часовой пояс
-RUN apk add --no-cache tzdata && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends tzdata && \
+    rm -rf /var/lib/apt/lists/* && \
     cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime && \
-    echo "Europe/Moscow" > /etc/timezone && \
-    apk del tzdata
+    echo "Europe/Moscow" > /etc/timezone
 
 # Копируем остальные файлы проекта
 COPY . .
