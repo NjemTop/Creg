@@ -9,7 +9,7 @@ django-celery-beat==2.5.0
 django-celery-results==2.5.1
 djangorestframework_simplejwt==5.2.2
 celery-once==3.0.1
-sqlalchemy==2.0.13
+sqlalchemy==1.4.22
 # выключил проверку на HTTPS
 django-cors-headers==4.0.0
 graypy==2.1.0
