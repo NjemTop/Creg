@@ -2,7 +2,9 @@ version: '3.9'
 
 services:
   base:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: creg2.0
 
   web:
@@ -28,8 +30,8 @@ services:
     environment:
       - TZ=Europe/Moscow
       - POSTGRES_DB=database_1.db
-      - POSTGRES_USER=sa
-      - POSTGRES_PASSWORD=kJGnTXBT
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     container_name: DataBase
     volumes:
       - dbdata:/var/lib/postgresql/data
@@ -40,8 +42,8 @@ services:
     container_name: RabbitMQ
     environment:
       - TZ=Europe/Moscow
-      - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=BfDVBPsNSf
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
     restart: always
     ports:
       - "5672:5672"
@@ -82,8 +84,8 @@ services:
       - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9000/
       - GRAYLOG_GELF_TCP_INPUT_ENABLED=true  # Включение GELF TCP входа
       - GRAYLOG_MONGODB_URI=mongodb://mongo:27017/graylog  # Указываем URI MongoDB для Graylog
-      - GRAYLOG_PASSWORD_SECRET=hPoyqflbLMYljPyu # Секретная фраза
-      - GRAYLOG_ROOT_PASSWORD_SHA2=5a83add1a47a96c12948044990bab61adccfcedae644a96b569cbc2509d6cec5 # L8LxNQ
+      - GRAYLOG_PASSWORD_SECRET=${GRAYLOG_PASSWORD_SECRET} # Секретная фраза
+      - GRAYLOG_ROOT_PASSWORD_SHA2=${GRAYLOG_ROOT_PASSWORD_SHA2}
     restart: always
     ports:
       - "9000:9000"  # Порт Graylog веб-интерфейса

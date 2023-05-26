@@ -12,26 +12,26 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from dotenv import load_dotenv
 from pathlib import Path
-import os
 import graypy
-import json
+import os
 
-# Получаем путь к текущему файлу (settings.py)
-current_file_path = os.path.abspath(__file__)
-
-# Получаем путь к директории проекта
-project_directory = os.path.dirname(os.path.dirname(current_file_path))
-
-# Получаем абсолютный путь к файлу main.config в корне проекта
-config_file_path = os.path.join(project_directory, 'main.config')
-
-print(config_file_path)
-
-# Открываем файл и загружаем его данные
-with open(config_file_path) as config_file:
-    config_data = json.load(config_file)
-
+# Загрузка переменных окружения из файла .env
 load_dotenv()
+
+
+# # Получаем путь к текущему файлу (settings.py)
+# current_file_path = os.path.abspath(__file__)
+
+# # Получаем путь к директории проекта
+# project_directory = os.path.dirname(os.path.dirname(current_file_path))
+
+# # Получаем абсолютный путь к файлу main.config в корне проекта
+# config_file_path = os.path.join(project_directory, 'main.config')
+
+# # Открываем файл и загружаем его данные
+# with open(config_file_path) as config_file:
+#     config_data = json.load(config_file)
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,7 +41,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)9j28#qir23k@sx0eun@ew&&1%fwwgjz%+_2fb25vkd)$ze0kw'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -133,6 +133,8 @@ WSGI_APPLICATION = 'crag.wsgi.application'
 # Перед запуском нужно выполнить команду: export DJANGO_ENV=local
 # Windows set DJANGO_ENV=local
 # Для установки переменного окружения DJANGO_ENV
+
+# Определение настроек базы данных в зависимости от переменной окружения DJANGO_ENV
 DJANGO_ENV = os.environ.get('DJANGO_ENV')
 
 if DJANGO_ENV == 'local':
@@ -140,8 +142,8 @@ if DJANGO_ENV == 'local':
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'database_1_TEST',
-            'USER': config_data['Docker']['POSTGRES']['POSTGRES_USER'],
-            'PASSWORD': config_data['Docker']['POSTGRES']['POSTGRES_PASSWORD'],
+            'USER': os.environ.get('POSTGRES_USER'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
             'HOST': 'localhost',
             'PORT': '5432',
         }
@@ -150,9 +152,9 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config_data['Docker']['POSTGRES']['POSTGRES_DB'],
-            'USER': config_data['Docker']['POSTGRES']['POSTGRES_USER'],
-            'PASSWORD': config_data['Docker']['POSTGRES']['POSTGRES_PASSWORD'],
+            'NAME': os.environ.get('POSTGRES_DB'),
+            'USER': os.environ.get('POSTGRES_USER'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
             'HOST': 'db',
             'PORT': '5432',
         }
@@ -198,18 +200,12 @@ STATIC_URL = 'static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-CELERY_BROKER_URL = f"amqp://{config_data['Docker']['RABBITMQ']['RABBITMQ_DEFAULT_USER']}:" \
-                    f"{config_data['Docker']['RABBITMQ']['RABBITMQ_DEFAULT_PASS']}@rabbitmq:5672//"
-
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
-
-CELERY_RESULT_BACKEND = f"db+postgresql://{config_data['Docker']['POSTGRES']['POSTGRES_USER']}:" \
-                       f"{config_data['Docker']['POSTGRES']['POSTGRES_PASSWORD']}@db/" \
-                       f"{config_data['Docker']['POSTGRES']['POSTGRES_DB']}"
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
+CELERY_ACCEPT_CONTENT = os.environ.get('CELERY_ACCEPT_CONTENT')
+CELERY_TASK_SERIALIZER = os.environ.get('CELERY_TASK_SERIALIZER')
+CELERY_RESULT_SERIALIZER = os.environ.get('CELERY_RESULT_SERIALIZER')
+CELERY_BEAT_SCHEDULER = os.environ.get('CELERY_BEAT_SCHEDULER')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')
 
 # Настройка, которая убирает слэш в конце "/"
 # APPEND_SLASH = False
