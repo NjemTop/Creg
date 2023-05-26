@@ -29,4 +29,4 @@ COPY . .
 COPY .env .
 
 # Устанавливаем сериализатор kombu для формата json
-RUN pip install kombu[serialization]
+RUN pip install kombu[serialization,json]
