@@ -18,7 +18,7 @@ app = Celery('crag', broker=os.getenv('CELERY_BROKER_URL'))
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # Автоматическая загрузка задач из файла tasks.py каждого приложения
-app.autodiscover_tasks()
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 
 @after_setup_logger.connect
