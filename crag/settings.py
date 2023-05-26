@@ -19,11 +19,13 @@ import json
 # Получаем путь к текущему файлу (settings.py)
 current_file_path = os.path.abspath(__file__)
 
-# Получаем путь к директории проекта (crag)
-project_directory = os.path.dirname(current_file_path)
+# Получаем путь к директории проекта
+project_directory = os.path.dirname(os.path.dirname(current_file_path))
 
 # Получаем абсолютный путь к файлу main.config в корне проекта
-config_file_path = os.path.join(project_directory, '..', 'main.config')
+config_file_path = os.path.join(project_directory, 'main.config')
+
+print(config_file_path)
 
 # Открываем файл и загружаем его данные
 with open(config_file_path) as config_file:
