@@ -28,5 +28,5 @@ COPY . .
 # Копируем файл env внутрь контейнера
 COPY .env .
 
-# Устанавливаем сериализатор kombu для формата json
-RUN pip install kombu[serialization,json]
+# Устанавливаем пакет simplejson
+RUN pip install simplejson
