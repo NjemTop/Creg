@@ -200,14 +200,24 @@ STATIC_URL = 'static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+# Настройки Celery
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')
+CELERY_TIMEZONE = 'Europe/Moscow'
+
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
-CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')
+# Расписание Celery Beat
+CELERY_BEAT_SCHEDULE = {
+    'update_module_info': {
+        'task': 'api.tasks.update_module_info',
+        'schedule': crontab(hour=3, minute=0),  # Запуск в 3:00 по МСК
+    },
+}
 
 # Настройка, которая убирает слэш в конце "/"
 # APPEND_SLASH = False
