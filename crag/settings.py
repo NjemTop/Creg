@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from dotenv import load_dotenv
 from pathlib import Path
+from celery.schedules import crontab
 import graypy
 import os
 
