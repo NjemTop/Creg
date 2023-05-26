@@ -16,9 +16,10 @@ import os
 import graypy
 import json
 
-config_file_path = os.path.join(os.getcwd(), 'main.config')
+# Получаем абсолютный путь к файлу main.config в корне проекта
+config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'main.config')
 
-# Указываем путь к файлу с конфигурациями
+# Открываем файл и загружаем его данные
 with open(config_file_path) as config_file:
     config_data = json.load(config_file)
 
