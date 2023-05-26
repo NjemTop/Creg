@@ -215,7 +215,7 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 # Расписание Celery Beat
 CELERY_BEAT_SCHEDULE = {
     'update_module_info': {
-        'task': 'api.tasks.update_module_info',
+        'task': 'api.tasks.update_module_info_task',
         'schedule': crontab(hour=3, minute=0),  # Запуск в 3:00 по МСК
     },
 }
