@@ -18,4 +18,4 @@ RUN echo "Europe/Moscow" > /etc/timezone && dpkg-reconfigure -f noninteractive t
 COPY . .
 
 # Копируем файл env внутрь контейнера
-COPY env .
+COPY .env .
