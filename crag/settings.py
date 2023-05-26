@@ -201,10 +201,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
-CELERY_ACCEPT_CONTENT = os.environ.get('CELERY_ACCEPT_CONTENT')
-CELERY_TASK_SERIALIZER = os.environ.get('CELERY_TASK_SERIALIZER')
-CELERY_RESULT_SERIALIZER = os.environ.get('CELERY_RESULT_SERIALIZER')
-CELERY_BEAT_SCHEDULER = os.environ.get('CELERY_BEAT_SCHEDULER')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')
 
 # Настройка, которая убирает слэш в конце "/"
