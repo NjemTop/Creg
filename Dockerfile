@@ -28,5 +28,5 @@ COPY . .
 # Копируем файл env внутрь контейнера
 COPY .env .
 
-# Устанавливаем пакет simplejson
-RUN pip install simplejson
+# Устанавливаем пакет json
+RUN pip install json
