@@ -16,8 +16,14 @@ import os
 import graypy
 import json
 
+# Получаем путь к текущему файлу (settings.py)
+current_file_path = os.path.abspath(__file__)
+
+# Получаем путь к директории проекта (crag)
+project_directory = os.path.dirname(current_file_path)
+
 # Получаем абсолютный путь к файлу main.config в корне проекта
-config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'main.config')
+config_file_path = os.path.join(project_directory, '..', 'main.config')
 
 # Открываем файл и загружаем его данные
 with open(config_file_path) as config_file:
