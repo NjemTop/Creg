@@ -46,16 +46,12 @@ body, html {
     padding: 20px 15px;
     box-shadow: 1px 1px 9px 6px rgba(80, 79, 79, 0.486);
     text-align: center; /* Центрирование текста */
-    font-size:larger; /* Размер шрифта */
-    min-height: 60px; /* Высота кнопок */
+    font-size: larger; /* Размер шрифта */
+    height: 80px; /* Установите фиксированную высоту кнопок */
+    min-width: 200px; /* Установите фиксированную минимальную ширину кнопок */
     display: flex; /* используется для выравнивания текста по вертикали */
     align-items: center; /* выравнивание текста по вертикали */
     justify-content: center; /* выравнивание текста по горизонтали */
-    flex: 200px;
-    flex-shrink: 1;
-    flex-wrap: nowrap;
-    word-wrap:normal;
-    word-spacing: normal;
 }
 
 /* Позиция и отображение выпадающего меню */
