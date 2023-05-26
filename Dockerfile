@@ -27,6 +27,3 @@ COPY . .
 
 # Копируем файл env внутрь контейнера
 COPY .env .
-
-# Устанавливаем пакет json
-RUN pip install json
