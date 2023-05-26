@@ -14,6 +14,13 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 import graypy
+import json
+
+config_file_path = os.path.join(os.getcwd(), 'main.config')
+
+# Указываем путь к файлу с конфигурациями
+with open(config_file_path) as config_file:
+    config_data = json.load(config_file)
 
 load_dotenv()
 
@@ -123,9 +130,9 @@ if DJANGO_ENV == 'local':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'database_1_test',
-            'USER': 'sa',
-            'PASSWORD': 'kJGnTXBT',
+            'NAME': 'database_1_TEST',
+            'USER': config_data['Docker']['POSTGRES']['POSTGRES_USER'],
+            'PASSWORD': config_data['Docker']['POSTGRES']['POSTGRES_PASSWORD'],
             'HOST': 'localhost',
             'PORT': '5432',
         }
@@ -134,9 +141,9 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'database_1.db',
-            'USER': 'sa',
-            'PASSWORD': 'kJGnTXBT',
+            'NAME': config_data['Docker']['POSTGRES']['POSTGRES_DB'],
+            'USER': config_data['Docker']['POSTGRES']['POSTGRES_USER'],
+            'PASSWORD': config_data['Docker']['POSTGRES']['POSTGRES_PASSWORD'],
             'HOST': 'db',
             'PORT': '5432',
         }
@@ -182,14 +189,18 @@ STATIC_URL = 'static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-CELERY_BROKER_URL = 'amqp://admin:BfDVBPsNSf@rabbitmq:5672//'
+CELERY_BROKER_URL = f"amqp://{config_data['Docker']['RABBITMQ']['RABBITMQ_DEFAULT_USER']}:" \
+                    f"{config_data['Docker']['RABBITMQ']['RABBITMQ_DEFAULT_PASS']}@rabbitmq:5672//"
+
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
-CELERY_RESULT_BACKEND = 'db+postgresql://sa:kJGnTXBT@db/database_1.db'
+CELERY_RESULT_BACKEND = f"db+postgresql://{config_data['Docker']['POSTGRES']['POSTGRES_USER']}:" \
+                       f"{config_data['Docker']['POSTGRES']['POSTGRES_PASSWORD']}@db/" \
+                       f"{config_data['Docker']['POSTGRES']['POSTGRES_DB']}"
 
 # Настройка, которая убирает слэш в конце "/"
 # APPEND_SLASH = False
