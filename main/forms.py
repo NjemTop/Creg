@@ -1,5 +1,5 @@
 from .models import ClientsList, ContactsCard, ServiseCard
-from django.forms import ModelForm, TextInput, Textarea, formset_factory
+from django.forms import ModelForm, TextInput, Textarea, formset_factory, Select
 
 
 class ClientListForm(ModelForm):
@@ -13,6 +13,13 @@ class ClientListForm(ModelForm):
             }),
         }
 
+    def clean_client_name(self):
+        client_name = self.cleaned_data.get("client_name")
+        # Дополнительная валидация и обработка ошибок для поля client_name
+        if not client_name:
+            raise forms.ValidationError("Поле 'Наименование клиента' обязательно для заполнения.")
+        return client_name
+
 
 class ContactForm(ModelForm):
     class Meta:
@@ -22,9 +29,33 @@ class ContactForm(ModelForm):
             'contact_name': TextInput(attrs={'class': 'form-control'}),
             'contact_position': TextInput(attrs={'class': 'form-control'}),
             'contact_email': TextInput(attrs={'class': 'form-control'}),
-            'notification_update': TextInput(attrs={'class': 'form-control'}),
+            'notification_update': Select(attrs={'class': 'form-control'}),
             'contact_notes': Textarea(attrs={'class': 'form-control'}),
         }
+
+    def clean_contact_name(self):
+        contact_name = self.cleaned_data.get("contact_name")
+        if not contact_name:
+            raise forms.ValidationError("Поле 'ФИО' обязательно для заполнения.")
+        return contact_name
+
+    def clean_contact_position(self):
+        contact_position = self.cleaned_data.get("contact_position")
+        if not contact_position:
+            raise forms.ValidationError("Поле 'Должность' обязательно для заполнения.")
+        return contact_position
+
+    def clean_contact_email(self):
+        contact_email = self.cleaned_data.get("contact_email")
+        if not contact_email:
+            raise forms.ValidationError("Поле 'Почта' обязательно для заполнения.")
+        return contact_email
+
+    def clean_notification_update(self):
+        notification_update = self.cleaned_data.get("notification_update")
+        if not notification_update:
+            raise forms.ValidationError("Поле 'Отправка рассылки' обязательно для заполнения.")
+        return notification_update
 
 
 ContactFormSet = formset_factory(ContactForm, extra=1)
@@ -35,7 +66,26 @@ class ServiseCardForm(ModelForm):
         model = ServiseCard
         fields = ['service_pack', 'manager', 'loyal']
         widgets = {
-            'service_pack': TextInput(attrs={'class': 'form-control'}),
-            'manager': TextInput(attrs={'class': 'form-control'}),
-            'loyal': TextInput(attrs={'class': 'form-control'}),
+            'service_pack': Select(attrs={'class': 'form-control'}),
+            'manager': Select(attrs={'class': 'form-control'}),
+            'loyal': Select(attrs={'class': 'form-control'}),
         }
+
+    def clean_service_pack(self):
+        service_pack = self.cleaned_data.get("service_pack")
+        if not service_pack:
+            raise forms.ValidationError("Поле 'Сервис план' обязательно для заполнения.")
+        return service_pack
+
+    def clean_manager(self):
+        manager = self.cleaned_data.get("manager")
+        if not manager:
+            raise forms.ValidationError("Поле 'Менеджер' обязательно для заполнения.")
+        return manager
+
+    def clean_loyal(self):
+        loyal = self.cleaned_data.get("loyal")
+        if not loyal:
+            raise forms.ValidationError("Поле 'Лояльность' обязательно для заполнения.")
+        return loyal
+
