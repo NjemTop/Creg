@@ -1,7 +1,10 @@
+// Получение значений contactFormCount и contactFormMaxCount из атрибутов кнопки
 var contactFormCount = parseInt(document.getElementById('add_contact').getAttribute('data-contact-formset-total-form-count'));
 var contactFormMaxCount = parseInt(document.getElementById('add_contact').getAttribute('data-contact-formset-max-num'));
 
+// Обработчик события клика на кнопке "Добавить контакт"
 document.getElementById('add_contact').addEventListener('click', function () {
+    // Проверка, что количество форм не превышает максимальное значение
     if (contactFormCount < contactFormMaxCount) {
         var formSet = document.getElementById('contact_form_set');
         var newForm = document.createElement('div');
@@ -42,6 +45,7 @@ document.getElementById('add_contact').addEventListener('click', function () {
     }
 });
 
+// Обработчик события изменения значения поля "Менеджер"
 document.getElementById('manager').addEventListener('change', function () {
     var managerCustomInput = document.getElementById('manager_custom');
     if (this.value === 'Другое') {
