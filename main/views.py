@@ -48,7 +48,9 @@ def create_client(request):
         'form_client': form_client,
         'contact_formset': contact_formset,
         'servise_form': servise_form,
-        'error': error
+        'error': error,
+        'contact_formset_total_form_count': contact_formset.total_form_count,
+        'contact_formset_max_num': contact_formset.max_num,
     }
     return render(request, 'main/create_client.html', context)
 

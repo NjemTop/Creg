@@ -1,5 +1,6 @@
 {% extends 'main/base.html' %}
 {% load custom_tags %}
+{% load static %}
 
 {% block title %}
     Создать клиента
@@ -113,66 +114,14 @@
                     </div>
                 {% endfor %}
             </div>
-            <button type="button" id="add_contact" class="btn btn-primary mt-2">Добавить контакт</button>
+            <button type="button" id="add_contact" class="btn btn-primary mt-2"
+                data-contact-formset-total-form-count="{{ contact_formset_total_form_count }}"
+                data-contact-formset-max-num="{{ contact_formset_max_num }}">Добавить контакт</button>
         </div>
         <button type="submit" class="btn btn-success">Добавить</button>
         <span>{{ error }}</span>
     </form>
 
-    <script>
-        var contactFormCount = {{ contact_formset.total_form_count }};
-        var contactFormMaxCount = {{ contact_formset.max_num }};
+    <script src="{% static 'js/create_client.js' %}"></script>
 
-        document.getElementById('add_contact').addEventListener('click', function () {
-            if (contactFormCount < contactFormMaxCount) {
-                var formSet = document.getElementById('contact_form_set');
-                var newForm = document.createElement('div');
-                newForm.className = 'contact-form mb-3 form-row';
-                newForm.innerHTML = `
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="id_contacts-${contactFormCount}-contact_name">ФИО <span class="text-danger">*</span></label>
-                            <input type="text" name="contacts-${contactFormCount}-contact_name" id="id_contacts-${contactFormCount}-contact_name" required class="form-control">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="id_contacts-${contactFormCount}-contact_position">Должность <span class="text-danger">*</span></label>
-                            <input type="text" name="contacts-${contactFormCount}-contact_position" id="id_contacts-${contactFormCount}-contact_position" required class="form-control">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="id_contacts-${contactFormCount}-contact_email">Почта <span class="text-danger">*</span></label>
-                            <input type="email" name="contacts-${contactFormCount}-contact_email" id="id_contacts-${contactFormCount}-contact_email" required class="form-control">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="id_contacts-${contactFormCount}-notification_update">Отправка рассылки</label>
-                            <select name="contacts-${contactFormCount}-notification_update" id="id_contacts-${contactFormCount}-notification_update" class="form-select">
-                                <option value="">Выберите тип рассылки</option>
-                                <option value="Основной контакт рассылки">Основной контакт рассылки</option>
-                                <option value="Копия рассылки">Копия рассылки</option>
-                                <option value="Рассылка не нужна">Рассылка не нужна</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="id_contacts-${contactFormCount}-contact_notes">Заметки</label>
-                            <textarea name="contacts-${contactFormCount}-contact_notes" id="id_contacts-${contactFormCount}-contact_notes" class="form-control"></textarea>
-                        </div>
-                    </div>
-                `;
-                formSet.appendChild(newForm);
-                contactFormCount++;
-            }
-        });
-
-        document.getElementById('manager').addEventListener('change', function () {
-            var managerCustomInput = document.getElementById('manager_custom');
-            if (this.value === 'Другое') {
-                managerCustomInput.style.display = 'block';
-                managerCustomInput.required = true;
-            } else {
-                managerCustomInput.style.display = 'none';
-                managerCustomInput.required = false;
-            }
-        });
-    </script>
 {% endblock %}
