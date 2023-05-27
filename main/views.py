@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import ClientsList, ReleaseInfo
+from .models import ClientsList, ClientsCard, ContactsCard, ReleaseInfo
 from .forms import ClientListForm, ContactFormSet, ServiseCardForm
+from django.db import transaction
 
 
 def index(request):
@@ -12,31 +13,37 @@ def clients(request):
     return render(request, 'main/clients.html', {'title': 'Список клиентов', 'clients': clients})
 
 
+@transaction.atomic
 def create_client(request):
     error = ''
-    form_client = None  # Установите значение None по умолчанию
+    form_client = None
 
     if request.method == 'POST':
         form_client = ClientListForm(request.POST)
         contact_formset = ContactFormSet(request.POST, prefix='contacts')
         servise_form = ServiseCardForm(request.POST)
         if form_client.is_valid() and contact_formset.is_valid() and servise_form.is_valid():
-            client = form_client.save()
-            contacts = contact_formset.save(commit=False)
-            for contact in contacts:
-                contact.client_card = client.clients_card
+            client_list = form_client.save()
+            client_card = ClientsCard.objects.create(client_info=client_list)
+            
+            for form in contact_formset:
+                contact = form.save(commit=False)
+                contact.client_card = client_card
                 contact.save()
+            
             servise_card = servise_form.save(commit=False)
-            servise_card.client_card = client.clients_card
+            servise_card.client_card = client_card
             servise_card.save()
+            
             return redirect('clients')
         else:
             error = 'Ошибка при заполнении формы данных'
+            raise ValueError('Ошибка при сохранении данных о контактах')
     else:
         form_client = ClientListForm()
         contact_formset = ContactFormSet(prefix='contacts')
         servise_form = ServiseCardForm()
-    
+
     context = {
         'form_client': form_client,
         'contact_formset': contact_formset,
