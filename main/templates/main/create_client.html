@@ -9,26 +9,26 @@
         {% csrf_token %}
         <div class="mb-3">
             <label for="client_name" class="form-label">Наименование клиента <span class="text-danger">*</span></label>
-            {{ form.client_name }}
+            {{ form_client.client_name }}
         </div>
         <div class="mb-3">
             <label for="manager" class="form-label">Менеджер <span class="text-danger">*</span></label>
-            {{ form.manager }}
+            {{ servise_form.manager }}
         </div>
         <div class="mb-3">
             <label for="service_pack" class="form-label">Сервис план <span class="text-danger">*</span></label>
-            {{ form.service_pack }}
+            {{ servise_form.service_pack }}
         </div>
         <div class="mb-3">
             <label for="loyal" class="form-label">Лояльность</label>
-            {{ form.loyal }}
+            {{ servise_form.loyal }}
         </div>
         <hr>
         <div class="mb-3">
             <label class="form-label">Контакты клиента</label>
             <div id="contact_form_set">
-                {{ formset.management_form }}
-                {% for form in formset %}
+                {{ contact_formset.management_form }}
+                {% for form in contact_formset %}
                     <div class="contact-form">
                         <div class="row">
                             <div class="col-md-4">
@@ -64,8 +64,8 @@
     </form>
 
     <script>
-        var contactFormCount = {{ formset.total_form_count }};
-        var contactFormMaxCount = {{ formset.max_num }};
+        var contactFormCount = {{ contact_formset.total_form_count }};
+        var contactFormMaxCount = {{ contact_formset.max_num }};
 
         document.getElementById('add_contact').addEventListener('click', function () {
             if (contactFormCount < contactFormMaxCount) {
@@ -75,26 +75,26 @@
                 newForm.innerHTML = `
                     <div class="row">
                         <div class="col-md-4">
-                            <label for="id_form-${contactFormCount}-contact_name">ФИО <span class="text-danger">*</span></label>
-                            <input type="text" name="form-${contactFormCount}-contact_name" id="id_form-${contactFormCount}-contact_name" required>
+                            <label for="id_contacts-${contactFormCount}-contact_name">ФИО <span class="text-danger">*</span></label>
+                            <input type="text" name="contacts-${contactFormCount}-contact_name" id="id_contacts-${contactFormCount}-contact_name" required>
                         </div>
                         <div class="col-md-4">
-                            <label for="id_form-${contactFormCount}-contact_position">Должность <span class="text-danger">*</span></label>
-                            <input type="text" name="form-${contactFormCount}-contact_position" id="id_form-${contactFormCount}-contact_position" required>
+                            <label for="id_contacts-${contactFormCount}-contact_position">Должность <span class="text-danger">*</span></label>
+                            <input type="text" name="contacts-${contactFormCount}-contact_position" id="id_contacts-${contactFormCount}-contact_position" required>
                         </div>
                         <div class="col-md-4">
-                            <label for="id_form-${contactFormCount}-contact_email">Почта <span class="text-danger">*</span></label>
-                            <input type="email" name="form-${contactFormCount}-contact_email" id="id_form-${contactFormCount}-contact_email" required>
+                            <label for="id_contacts-${contactFormCount}-contact_email">Почта <span class="text-danger">*</span></label>
+                            <input type="email" name="contacts-${contactFormCount}-contact_email" id="id_contacts-${contactFormCount}-contact_email" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
-                            <label for="id_form-${contactFormCount}-notification_update">Отправка рассылки</label>
-                            <input type="text" name="form-${contactFormCount}-notification_update" id="id_form-${contactFormCount}-notification_update">
+                            <label for="id_contacts-${contactFormCount}-notification_update">Отправка рассылки</label>
+                            <input type="text" name="contacts-${contactFormCount}-notification_update" id="id_contacts-${contactFormCount}-notification_update">
                         </div>
                         <div class="col-md-6">
-                            <label for="id_form-${contactFormCount}-contact_notes">Заметки</label>
-                            <textarea name="form-${contactFormCount}-contact_notes" id="id_form-${contactFormCount}-contact_notes"></textarea>
+                            <label for="id_contacts-${contactFormCount}-contact_notes">Заметки</label>
+                            <textarea name="contacts-${contactFormCount}-contact_notes" id="id_contacts-${contactFormCount}-contact_notes"></textarea>
                         </div>
                     </div>
                 `;

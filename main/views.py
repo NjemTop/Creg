@@ -15,11 +15,11 @@ def clients(request):
 def create_client(request):
     error = ''
     if request.method == 'POST':
-        form = ClientListForm(request.POST)
+        form_client = ClientListForm(request.POST)
         contact_formset = ContactFormSet(request.POST, prefix='contacts')
         servise_form = ServiseCardForm(request.POST)
-        if form.is_valid() and contact_formset.is_valid() and servise_form.is_valid():
-            client = form.save()
+        if form_client.is_valid() and contact_formset.is_valid() and servise_form.is_valid():
+            client = form_client.save()
             contacts = contact_formset.save(commit=False)
             for contact in contacts:
                 contact.client_card = client.clients_card
