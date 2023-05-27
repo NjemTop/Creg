@@ -82,10 +82,3 @@ class ServiseCardForm(ModelForm):
         if not manager:
             raise forms.ValidationError("Поле 'Менеджер' обязательно для заполнения.")
         return manager
-
-    def clean_loyal(self):
-        loyal = self.cleaned_data.get("loyal")
-        if not loyal:
-            raise forms.ValidationError("Поле 'Лояльность' обязательно для заполнения.")
-        return loyal
-
