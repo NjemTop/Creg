@@ -56,3 +56,20 @@ document.getElementById('manager').addEventListener('change', function () {
         managerCustomInput.required = false;
     }
 });
+
+$(function() {
+    $("#id_update_date").datepicker({
+        dateFormat: "dd MM yy",
+        monthNames: [
+            "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+            "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+        ],
+        onSelect: function(dateText, inst) {
+            var date = $(this).datepicker("getDate"),
+                day = date.getDate(),
+                month = date.getMonth(),
+                year = date.getFullYear();
+            $(this).val(day + " " + inst.settings.monthNames[month] + " " + year + " года");
+        }
+    });
+});

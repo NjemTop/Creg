@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import ClientsList, ClientsCard, ContactsCard, ReleaseInfo
-from .forms import ClientListForm, ContactFormSet, ServiseCardForm
+from .forms import ClientListForm, ContactFormSet, ServiseCardForm, TechInformationCardForm
 from django.db import transaction
 
 
@@ -22,6 +22,7 @@ def create_client(request):
         form_client = ClientListForm(request.POST)  # Создание формы клиента на основе POST-данных
         contact_formset = ContactFormSet(request.POST, prefix='contacts')  # Создание формсета контактов на основе POST-данных с префиксом 'contacts'
         servise_form = ServiseCardForm(request.POST)  # Создание формы сервисной карты на основе POST-данных
+        tech_info_form = TechInformationCardForm(request.POST) # Создание формы технической информации на основе POST-данных
 
         if form_client.is_valid() and contact_formset.is_valid() and servise_form.is_valid():
             # Если все формы валидны, выполняется сохранение данных
@@ -34,9 +35,15 @@ def create_client(request):
                 contact.client_card = client_card  # Привязка контакта к клиентской карте
                 contact.save()  # Сохранение контакта в базу данных
 
-            servise_card = servise_form.save(commit=False)  # Создание объекта сервисной карты без сохранения в базу данных
+            # Создание объекта сервисной карты без сохранения в базу данных
+            servise_card = servise_form.save(commit=False)
             servise_card.client_card = client_card  # Привязка сервисной карты к клиентской карте
             servise_card.save()  # Сохранение сервисной карты в базу данных
+
+            # Создание объекта технической информации без сохранения в базу данных
+            tech_info = tech_info_form.save(commit=False)
+            tech_info.client_card = client_card
+            tech_info.save()
 
             return redirect('clients')  # Перенаправление на страницу со списком клиентов
         else:
@@ -47,11 +54,13 @@ def create_client(request):
         form_client = ClientListForm()  # Создание пустой формы клиента
         contact_formset = ContactFormSet(prefix='contacts')  # Создание пустого формсета контактов с префиксом 'contacts'
         servise_form = ServiseCardForm()  # Создание пустой формы сервисной карты
+        tech_info_form = TechInformationCardForm() # Создание пустой формы технической информации
 
     context = {
         'form_client': form_client,
         'contact_formset': contact_formset,
         'servise_form': servise_form,
+        'tech_info_form': tech_info_form,
         'error': error,
         'contact_formset_total_form_count': contact_formset.total_form_count,  # Передача количества форм в формсете в контекст
         'contact_formset_max_num': contact_formset.max_num,  # Передача максимального количества форм в формсете в контекст

@@ -1,5 +1,5 @@
-from .models import ClientsList, ContactsCard, ServiseCard
-from django.forms import ModelForm, TextInput, Textarea, formset_factory, Select
+from .models import ClientsList, ContactsCard, ServiseCard, TechInformationCard
+from django.forms import ModelForm, TextInput, Textarea, formset_factory, Select, CheckboxInput
 
 
 class ClientListForm(ModelForm):
@@ -82,3 +82,21 @@ class ServiseCardForm(ModelForm):
         if not manager:
             raise forms.ValidationError("Поле 'Менеджер' обязательно для заполнения.")
         return manager
+
+
+class TechInformationCardForm(ModelForm):
+    class Meta:
+        model = TechInformationCard
+        exclude = ['client_card']  # Исключаем поле client_card, так как оно будет автоматически привязано при сохранении
+        widgets = {
+            'server_version': TextInput(attrs={'class': 'form-control'}),
+            'update_date': TextInput(attrs={'class': 'form-control'}),
+            'api': CheckboxInput(attrs={'class': 'form-check-input'}),
+            'ipad': TextInput(attrs={'class': 'form-control'}),
+            'android': TextInput(attrs={'class': 'form-control'}),
+            'mdm': TextInput(attrs={'class': 'form-control'}),
+            'localizable_web': CheckboxInput(attrs={'class': 'form-check-input'}),
+            'localizable_ios': CheckboxInput(attrs={'class': 'form-check-input'}),
+            'skins_web': CheckboxInput(attrs={'class': 'form-check-input'}),
+            'skins_ios': CheckboxInput(attrs={'class': 'form-check-input'}),
+        }

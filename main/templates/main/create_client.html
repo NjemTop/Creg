@@ -118,6 +118,55 @@
                 data-contact-formset-total-form-count="{{ contact_formset_total_form_count }}"
                 data-contact-formset-max-num="{{ contact_formset_max_num }}">Добавить контакт</button>
         </div>
+        <div class="mb-3">
+            <h5>Техническая информация</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="server_version" class="form-label">Версия сервера</label>
+                    {{ tech_info_form.server_version|add_class:'form-control' }}
+                </div>
+                <div class="col-md-6">
+                    <label for="update_date" class="form-label">Дата обновления</label>
+                    {{ tech_info_form.update_date|add_class:'form-control' }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="ipad" class="form-label">iPad</label>
+                    {{ tech_info_form.ipad|add_class:'form-control' }}
+                </div>
+                <div class="col-md-6">
+                    <label for="android" class="form-label">Android</label>
+                    {{ tech_info_form.android|add_class:'form-control' }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="mdm" class="form-label">MDM</label>
+                    {{ tech_info_form.mdm|add_class:'form-control' }}
+                </div>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="api" name="api">
+                <label class="form-check-label" for="api">API</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="localizable_web" name="localizable_web">
+                <label class="form-check-label" for="localizable_web">Локализация Web</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="localizable_ios" name="localizable_ios">
+                <label class="form-check-label" for="localizable_ios">Локализация iOS</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="skins_web" name="skins_web">
+                <label class="form-check-label" for="skins_web">Скины Web</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="skins_ios" name="skins_ios">
+                <label class="form-check-label" for="skins_ios">Скины iOS</label>
+            </div>
+        </div>
         <button type="submit" class="btn btn-success">Добавить</button>
         <span>{{ error }}</span>
     </form>
