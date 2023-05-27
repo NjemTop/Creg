@@ -1,27 +1,30 @@
 {% extends 'main/base.html' %}
+{% load custom_tags %}
 
 {% block title %}
     Создать клиента
 {% endblock %}
 
 {% block content %}
-    <form method="post">
+    <form method="post" class="needs-validation">
         {% csrf_token %}
         <div class="mb-3">
             <label for="client_name" class="form-label">Наименование клиента <span class="text-danger">*</span></label>
-            {{ form_client.client_name }}
+            {{ form_client.client_name|add_class:'form-control' }}
         </div>
-        <div class="mb-3">
-            <label for="manager" class="form-label">Менеджер <span class="text-danger">*</span></label>
-            {{ servise_form.manager }}
-        </div>
-        <div class="mb-3">
-            <label for="service_pack" class="form-label">Сервис план <span class="text-danger">*</span></label>
-            {{ servise_form.service_pack }}
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="manager" class="form-label">Менеджер <span class="text-danger">*</span></label>
+                {{ servise_form.manager|add_class:'form-control' }}
+            </div>
+            <div class="col-md-6">
+                <label for="service_pack" class="form-label">Сервис план <span class="text-danger">*</span></label>
+                {{ servise_form.service_pack|add_class:'form-control' }}
+            </div>
         </div>
         <div class="mb-3">
             <label for="loyal" class="form-label">Лояльность</label>
-            {{ servise_form.loyal }}
+            {{ servise_form.loyal|add_class:'form-control' }}
         </div>
         <hr>
         <div class="mb-3">
@@ -29,29 +32,29 @@
             <div id="contact_form_set">
                 {{ contact_formset.management_form }}
                 {% for form in contact_formset %}
-                    <div class="contact-form">
+                    <div class="contact-form mb-3">
                         <div class="row">
                             <div class="col-md-4">
                                 <label for="{{ form.prefix }}-contact_name">ФИО <span class="text-danger">*</span></label>
-                                {{ form.contact_name }}
+                                {{ form.contact_name|add_class:'form-control' }}
                             </div>
                             <div class="col-md-4">
                                 <label for="{{ form.prefix }}-contact_position">Должность <span class="text-danger">*</span></label>
-                                {{ form.contact_position }}
+                                {{ form.contact_position|add_class:'form-control' }}
                             </div>
                             <div class="col-md-4">
                                 <label for="{{ form.prefix }}-contact_email">Почта <span class="text-danger">*</span></label>
-                                {{ form.contact_email }}
+                                {{ form.contact_email|add_class:'form-control' }}
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="{{ form.prefix }}-notification_update">Отправка рассылки</label>
-                                {{ form.notification_update }}
+                                {{ form.notification_update|add_class:'form-control' }}
                             </div>
                             <div class="col-md-6">
                                 <label for="{{ form.prefix }}-contact_notes">Заметки</label>
-                                {{ form.contact_notes }}
+                                {{ form.contact_notes|add_class:'form-control' }}
                             </div>
                         </div>
                     </div>
@@ -71,30 +74,30 @@
             if (contactFormCount < contactFormMaxCount) {
                 var formSet = document.getElementById('contact_form_set');
                 var newForm = document.createElement('div');
-                newForm.className = 'contact-form';
+                newForm.className = 'contact-form mb-3';
                 newForm.innerHTML = `
                     <div class="row">
                         <div class="col-md-4">
                             <label for="id_contacts-${contactFormCount}-contact_name">ФИО <span class="text-danger">*</span></label>
-                            <input type="text" name="contacts-${contactFormCount}-contact_name" id="id_contacts-${contactFormCount}-contact_name" required>
+                            <input type="text" name="contacts-${contactFormCount}-contact_name" id="id_contacts-${contactFormCount}-contact_name" required class="form-control">
                         </div>
                         <div class="col-md-4">
                             <label for="id_contacts-${contactFormCount}-contact_position">Должность <span class="text-danger">*</span></label>
-                            <input type="text" name="contacts-${contactFormCount}-contact_position" id="id_contacts-${contactFormCount}-contact_position" required>
+                            <input type="text" name="contacts-${contactFormCount}-contact_position" id="id_contacts-${contactFormCount}-contact_position" required class="form-control">
                         </div>
                         <div class="col-md-4">
                             <label for="id_contacts-${contactFormCount}-contact_email">Почта <span class="text-danger">*</span></label>
-                            <input type="email" name="contacts-${contactFormCount}-contact_email" id="id_contacts-${contactFormCount}-contact_email" required>
+                            <input type="email" name="contacts-${contactFormCount}-contact_email" id="id_contacts-${contactFormCount}-contact_email" required class="form-control">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
                             <label for="id_contacts-${contactFormCount}-notification_update">Отправка рассылки</label>
-                            <input type="text" name="contacts-${contactFormCount}-notification_update" id="id_contacts-${contactFormCount}-notification_update">
+                            <input type="text" name="contacts-${contactFormCount}-notification_update" id="id_contacts-${contactFormCount}-notification_update" class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="id_contacts-${contactFormCount}-contact_notes">Заметки</label>
-                            <textarea name="contacts-${contactFormCount}-contact_notes" id="id_contacts-${contactFormCount}-contact_notes"></textarea>
+                            <textarea name="contacts-${contactFormCount}-contact_notes" id="id_contacts-${contactFormCount}-contact_notes" class="form-control"></textarea>
                         </div>
                     </div>
                 `;

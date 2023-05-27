@@ -14,6 +14,8 @@ def clients(request):
 
 def create_client(request):
     error = ''
+    form_client = None  # Установите значение None по умолчанию
+
     if request.method == 'POST':
         form_client = ClientListForm(request.POST)
         contact_formset = ContactFormSet(request.POST, prefix='contacts')
@@ -31,12 +33,12 @@ def create_client(request):
         else:
             error = 'Ошибка при заполнении формы данных'
     else:
-        form = ClientListForm()
+        form_client = ClientListForm()
         contact_formset = ContactFormSet(prefix='contacts')
         servise_form = ServiseCardForm()
     
     context = {
-        'form': form,
+        'form_client': form_client,
         'contact_formset': contact_formset,
         'servise_form': servise_form,
         'error': error
