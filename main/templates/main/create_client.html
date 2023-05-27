@@ -1,14 +1,106 @@
 {% extends 'main/base.html' %}
 
-{% block tite %}
+{% block title %}
     Создать клиента
 {% endblock %}
 
 {% block content %}
     <form method="post">
         {% csrf_token %}
-        {{ form.client_name }}<br>
+        <div class="mb-3">
+            <label for="client_name" class="form-label">Наименование клиента <span class="text-danger">*</span></label>
+            {{ form.client_name }}
+        </div>
+        <div class="mb-3">
+            <label for="manager" class="form-label">Менеджер <span class="text-danger">*</span></label>
+            {{ form.manager }}
+        </div>
+        <div class="mb-3">
+            <label for="service_pack" class="form-label">Сервис план <span class="text-danger">*</span></label>
+            {{ form.service_pack }}
+        </div>
+        <div class="mb-3">
+            <label for="loyal" class="form-label">Лояльность</label>
+            {{ form.loyal }}
+        </div>
+        <hr>
+        <div class="mb-3">
+            <label class="form-label">Контакты клиента</label>
+            <div id="contact_form_set">
+                {{ formset.management_form }}
+                {% for form in formset %}
+                    <div class="contact-form">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="{{ form.prefix }}-contact_name">ФИО <span class="text-danger">*</span></label>
+                                {{ form.contact_name }}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.prefix }}-contact_position">Должность <span class="text-danger">*</span></label>
+                                {{ form.contact_position }}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.prefix }}-contact_email">Почта <span class="text-danger">*</span></label>
+                                {{ form.contact_email }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="{{ form.prefix }}-notification_update">Отправка рассылки</label>
+                                {{ form.notification_update }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.prefix }}-contact_notes">Заметки</label>
+                                {{ form.contact_notes }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" id="add_contact" class="btn btn-primary mt-2">Добавить контакт</button>
+        </div>
         <button type="submit" class="btn btn-success">Добавить</button>
         <span>{{ error }}</span>
     </form>
+
+    <script>
+        var contactFormCount = {{ formset.total_form_count }};
+        var contactFormMaxCount = {{ formset.max_num }};
+
+        document.getElementById('add_contact').addEventListener('click', function () {
+            if (contactFormCount < contactFormMaxCount) {
+                var formSet = document.getElementById('contact_form_set');
+                var newForm = document.createElement('div');
+                newForm.className = 'contact-form';
+                newForm.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="id_form-${contactFormCount}-contact_name">ФИО <span class="text-danger">*</span></label>
+                            <input type="text" name="form-${contactFormCount}-contact_name" id="id_form-${contactFormCount}-contact_name" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="id_form-${contactFormCount}-contact_position">Должность <span class="text-danger">*</span></label>
+                            <input type="text" name="form-${contactFormCount}-contact_position" id="id_form-${contactFormCount}-contact_position" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="id_form-${contactFormCount}-contact_email">Почта <span class="text-danger">*</span></label>
+                            <input type="email" name="form-${contactFormCount}-contact_email" id="id_form-${contactFormCount}-contact_email" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="id_form-${contactFormCount}-notification_update">Отправка рассылки</label>
+                            <input type="text" name="form-${contactFormCount}-notification_update" id="id_form-${contactFormCount}-notification_update">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_form-${contactFormCount}-contact_notes">Заметки</label>
+                            <textarea name="form-${contactFormCount}-contact_notes" id="id_form-${contactFormCount}-contact_notes"></textarea>
+                        </div>
+                    </div>
+                `;
+                formSet.appendChild(newForm);
+                contactFormCount++;
+            }
+        });
+    </script>
 {% endblock %}
