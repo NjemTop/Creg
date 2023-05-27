@@ -6,25 +6,73 @@
 {% endblock %}
 
 {% block content %}
+    <style>
+        .form-row {
+            display: flex;
+            justify-content: center;
+            width: 50%; /* Уменьшаем ширину строки в два раза */
+            margin: 0 auto; /* Центрируем строку на странице */
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555555;
+            background-color: #ffffff;
+            background-image: none;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        }
+
+        .form-select.custom-input {
+            width: auto;
+            display: inline-block;
+        }
+    </style>
+
     <form method="post" class="needs-validation">
         {% csrf_token %}
-        <div class="mb-3">
+        <div class="mb-3 form-row">
             <label for="client_name" class="form-label">Наименование клиента <span class="text-danger">*</span></label>
             {{ form_client.client_name|add_class:'form-control' }}
         </div>
-        <div class="row mb-3">
+        <div class="row mb-3 form-row">
             <div class="col-md-6">
                 <label for="manager" class="form-label">Менеджер <span class="text-danger">*</span></label>
-                {{ servise_form.manager|add_class:'form-control' }}
+                <select name="manager" id="manager" class="form-select">
+                    <option value="">Выберите менеджера</option>
+                    <option value="Tatiana Shindikova">Tatiana Shindikova</option>
+                    <option value="Ekaterina Shneyder">Ekaterina Shneyder</option>
+                    <option value="Другое">Другое</option>
+                </select>
+                <input type="text" name="manager_custom" id="manager_custom" class="form-control custom-input" placeholder="Введите название" style="display: none;">
             </div>
             <div class="col-md-6">
                 <label for="service_pack" class="form-label">Сервис план <span class="text-danger">*</span></label>
-                {{ servise_form.service_pack|add_class:'form-control' }}
+                <select name="service_pack" id="service_pack" class="form-select">
+                    <option value="">Выберите статус плана</option>
+                    <option value="Bronze">Bronze</option>
+                    <option value="Silver">Silver</option>
+                    <option value="Gold">Gold</option>
+                    <option value="Platinum">Platinum</option>
+                </select>
             </div>
         </div>
-        <div class="mb-3">
+        <div class="mb-3 form-row">
             <label for="loyal" class="form-label">Лояльность</label>
-            {{ servise_form.loyal|add_class:'form-control' }}
+            <select name="loyal" id="loyal" class="form-select">
+                <option value="">Выберите уровень лояльности</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
         </div>
         <hr>
         <div class="mb-3">
@@ -32,7 +80,7 @@
             <div id="contact_form_set">
                 {{ contact_formset.management_form }}
                 {% for form in contact_formset %}
-                    <div class="contact-form mb-3">
+                    <div class="contact-form mb-3 form-row">
                         <div class="row">
                             <div class="col-md-4">
                                 <label for="{{ form.prefix }}-contact_name">ФИО <span class="text-danger">*</span></label>
@@ -50,7 +98,12 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="{{ form.prefix }}-notification_update">Отправка рассылки</label>
-                                {{ form.notification_update|add_class:'form-control' }}
+                                <select name="{{ form.prefix }}-notification_update" id="{{ form.prefix }}-notification_update" class="form-select">
+                                    <option value="">Выберите тип рассылки</option>
+                                    <option value="Основной контакт рассылки">Основной контакт рассылки</option>
+                                    <option value="Копия рассылки">Копия рассылки</option>
+                                    <option value="Рассылка не нужна">Рассылка не нужна</option>
+                                </select>
                             </div>
                             <div class="col-md-6">
                                 <label for="{{ form.prefix }}-contact_notes">Заметки</label>
@@ -74,7 +127,7 @@
             if (contactFormCount < contactFormMaxCount) {
                 var formSet = document.getElementById('contact_form_set');
                 var newForm = document.createElement('div');
-                newForm.className = 'contact-form mb-3';
+                newForm.className = 'contact-form mb-3 form-row';
                 newForm.innerHTML = `
                     <div class="row">
                         <div class="col-md-4">
@@ -93,7 +146,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label for="id_contacts-${contactFormCount}-notification_update">Отправка рассылки</label>
-                            <input type="text" name="contacts-${contactFormCount}-notification_update" id="id_contacts-${contactFormCount}-notification_update" class="form-control">
+                            <select name="contacts-${contactFormCount}-notification_update" id="id_contacts-${contactFormCount}-notification_update" class="form-select">
+                                <option value="">Выберите тип рассылки</option>
+                                <option value="Основной контакт рассылки">Основной контакт рассылки</option>
+                                <option value="Копия рассылки">Копия рассылки</option>
+                                <option value="Рассылка не нужна">Рассылка не нужна</option>
+                            </select>
                         </div>
                         <div class="col-md-6">
                             <label for="id_contacts-${contactFormCount}-contact_notes">Заметки</label>
@@ -103,6 +161,17 @@
                 `;
                 formSet.appendChild(newForm);
                 contactFormCount++;
+            }
+        });
+
+        document.getElementById('manager').addEventListener('change', function () {
+            var managerCustomInput = document.getElementById('manager_custom');
+            if (this.value === 'Другое') {
+                managerCustomInput.style.display = 'block';
+                managerCustomInput.required = true;
+            } else {
+                managerCustomInput.style.display = 'none';
+                managerCustomInput.required = false;
             }
         });
     </script>
