@@ -1,13 +1,14 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block tittle %}
-{{title}}
+{% block title %}
+{{ title }}
 {% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-12 text-center">
+        <a href="{% url 'create_client' %}" class="btn btn-primary rounded-pill mb-4">Добавить нового клиента</a>
         <h1 class="mt-4 display-4">Список всех клиентов</h1>
     </div>
 </div>

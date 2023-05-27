@@ -25,7 +25,7 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('clients/', views.clients, name='clients'),
-    path('create_client/', views.create_client, name='create'),
+    path('create_client/', views.create_client, name='create_client'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('upload_file/', views.upload_file, name='upload_file'),

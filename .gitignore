@@ -6,3 +6,4 @@ database_1_TEST.db
 logs/debug.log
 logs/info.log
 main.config
+.DS_Store
