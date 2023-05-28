@@ -57,19 +57,12 @@ document.getElementById('manager').addEventListener('change', function () {
     }
 });
 
+// Обработчик события всплывающего календаря
 $(function() {
     $("#id_update_date").datepicker({
-        dateFormat: "dd MM yy",
-        monthNames: [
-            "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
-            "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
-        ],
+        dateFormat: "yy-mm-dd",
         onSelect: function(dateText, inst) {
-            var date = $(this).datepicker("getDate"),
-                day = date.getDate(),
-                month = date.getMonth(),
-                year = date.getFullYear();
-            $(this).val(day + " " + inst.settings.monthNames[month] + " " + year + " года");
+            $(this).val(dateText);
         }
     });
 });

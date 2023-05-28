@@ -24,7 +24,7 @@ def create_client(request):
         servise_form = ServiseCardForm(request.POST)  # Создание формы сервисной карты на основе POST-данных
         tech_info_form = TechInformationCardForm(request.POST) # Создание формы технической информации на основе POST-данных
 
-        if form_client.is_valid() and contact_formset.is_valid() and servise_form.is_valid():
+        if form_client.is_valid() and contact_formset.is_valid() and servise_form.is_valid() and tech_info_form.is_valid():
             # Если все формы валидны, выполняется сохранение данных
 
             client_list = form_client.save()  # Сохранение данных клиента
