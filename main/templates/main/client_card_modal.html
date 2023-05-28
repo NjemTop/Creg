@@ -1,0 +1,20 @@
+{% for client in clients %}
+<div class="modal fade" id="clientCardModal_{{ client.id }}" tabindex="-1" aria-labelledby="clientCardModalLabel_{{ client.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="clientCardModalLabel">Карточка клиента</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-content">
+                    <button type="button" class="btn btn-primary">Контакты</button>
+                    <button type="button" class="btn btn-primary">Технические заметки</button>
+                    <button type="button" class="btn btn-primary">Настройки подключения</button>
+                    <button type="button" class="btn btn-primary">УЗ и сервера для подключения</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
