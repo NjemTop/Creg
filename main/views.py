@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from .models import ClientsList, ClientsCard, ContactsCard, ReleaseInfo
 from .forms import ClientListForm, ContactFormSet, ServiseCardForm, TechInformationCardForm
 from django.db import transaction
+from django.http import HttpResponse
+from django.template import loader
 
 
 def index(request):
@@ -9,9 +11,17 @@ def index(request):
 
 
 def clients(request):
-    clients = ClientsList.objects.all()
+    clients = ClientsList.objects.all().prefetch_related('clients_card__contact_cards')  # Загрузите все карточки клиентов и связанные контакты
     return render(request, 'main/clients.html', {'title': 'Список клиентов', 'clients': clients})
 
+
+def get_contacts(request, client_id):
+    client = ClientsList.objects.get(id=client_id)
+    contacts = client.clients_card.contact_cards.all()
+    template = loader.get_template('main/contacts_table.html')
+    context = {'contacts': contacts}
+    contacts_table = template.render(context, request)
+    return HttpResponse(contacts_table)
 
 @transaction.atomic
 def create_client(request):

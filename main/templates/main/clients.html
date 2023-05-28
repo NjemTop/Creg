@@ -61,6 +61,7 @@
             {% include 'main/client_card_modal.html' with clients=clients %}
             {% include 'main/service_modal.html' with clients=clients %}
             {% include 'main/tech_information_modal.html' with clients=clients %}
+            {% include 'main/contact_modal.html' with clients=clients %}
         {% else %}
             <p>Нет доступных клиентов.</p>
         {% endif %}
@@ -72,5 +73,6 @@
 <script src="{% static 'js/service_modal.js' %}"></script>
 <script src="{% static 'js/tech_information_modal.js' %}"></script>
 <script src="{% static 'js/client_card_modal.js' %}"></script>
+<script src="{% static 'js/contact_modal.js' %}"></script>
 
 {% endblock %}

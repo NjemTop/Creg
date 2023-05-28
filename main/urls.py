@@ -30,6 +30,7 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('upload_file/', views.upload_file, name='upload_file'),
     path('release_info/', views.release_info, name='release_info'),
+    path('get_contacts/<int:client_id>/', views.get_contacts, name='get_contacts'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
