@@ -114,10 +114,10 @@ class ClientFilter(filters.FilterSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        # Проверка значений фильтров и исключение "undefined"
+        # Проверка значений фильтров и исключение "null"
         filters_to_exclude = []
         for name, field in self.filters.copy().items():
-            if name in self.data and self.data[name] == "undefined":
+            if name in self.data and self.data[name] == "null":
                 filters_to_exclude.append(name)
         
         for name in filters_to_exclude:
