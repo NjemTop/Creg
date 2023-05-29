@@ -184,7 +184,7 @@ class ClientFilter(filters.FilterSet):
         for name, field in self.filters.copy().items():
             if name in self.data:
                 values = self.data.getlist(name)  # Получаем список значений
-                if "null" or "test" in values:
+                if "null" or "[]" in values:
                     filters_to_exclude.append(name)
                 else:
                     # Обновляем фильтр с методом фильтрации, принимающим список значений
