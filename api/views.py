@@ -14,6 +14,7 @@ import django_filters.rest_framework as filters
 from django_filters import BaseInFilter
 from django.views import View
 from django.db.models import Q
+from django.db.models import F
 import datetime
 import logging
 from django.shortcuts import get_object_or_404
@@ -132,6 +133,30 @@ class ClientFilter(filters.FilterSet):
         for name in filters_to_exclude:
             del self.filters[name]
 
+    # Добавляем поле сортировки по алфавиту client_name
+    order_by_client_name = filters.OrderingFilter(
+        fields=(
+            ('client_name', 'client_name'),  # Сортировка по возрастанию
+            ('-client_name', 'client_name_desc'),  # Сортировка по убыванию
+        ),
+        field_labels={
+            'client_name': 'Client Name (A-Z)',
+            'client_name_desc': 'Client Name (Z-A)',
+        }
+    )
+
+    # Добавляем поле сортировки по активному статусу contact_status
+    order_by_contact_status = filters.OrderingFilter(
+        fields=(
+            ('contact_status', 'active_first'),  # Сортировка активных клиентов вначале
+            ('-contact_status', 'inactive_first'),  # Сортировка неактивных клиентов вначале
+        ),
+        field_labels={
+            'active_first': 'Active Clients',
+            'inactive_first': 'Inactive Clients',
+        }
+    )
+
     class Meta:
         model = ClientsList
         fields = [
@@ -144,8 +169,21 @@ class ClientFilter(filters.FilterSet):
             'advanced_access_rights_management', 'visual_improvements',
             'third_party_product_integrations', 'microsoft_enterprise_product_integrations',
             'microsoft_office_365_integration', 'service_pack', 'manager',
-            'contact_name', 'contact_email'
+            'contact_name', 'contact_email',
+            'order_by_client_name',
+            'order_by_contact_status',
         ]
+    
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+
+        ordering = self.request.query_params.get('ordering', None)
+
+        if not ordering:
+            # Применить сортировку по умолчанию
+            queryset = queryset.order_by(F('client_name').asc(nulls_last=True))
+
+        return queryset
 
 class ClientViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
