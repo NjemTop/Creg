@@ -105,8 +105,8 @@ class ClientFilter(filters.FilterSet):
         filters_to_exclude = []
         for name, field in self.filters.copy().items():
             if name in self.data:
-                values = self.data.getlist(name)
-                cleaned_values = [value for value in values if value.lower() != "null" and value.lower() != "test"]
+                values = [unquote(value) for value in self.data.getlist(name)]
+                cleaned_values = [value for value in values if value.lower() != "null" and value.lower() != "[]"]
                 if cleaned_values:
                     # Обновляем фильтр с методом фильтрации MultipleValueFilter,
                     # принимающим список значений
@@ -178,20 +178,6 @@ class ClientFilter(filters.FilterSet):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        # Проверка значений фильтров и исключение "null"
-        filters_to_exclude = []
-        for name, field in self.filters.copy().items():
-            if name in self.data:
-                values = self.data.getlist(name)  # Получаем список значений
-                if "null" or "[]" in values:
-                    filters_to_exclude.append(name)
-                else:
-                    # Обновляем фильтр с методом фильтрации, принимающим список значений
-                    self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
-
-        for name in filters_to_exclude:
-            del self.filters[name]
 
     # Добавляем поле сортировки по алфавиту client_name
     order_by_client_name = filters.OrderingFilter(
