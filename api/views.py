@@ -11,7 +11,7 @@ from django.core import serializers
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.views import APIView
 import django_filters.rest_framework as filters
-from django_filters import BaseCSVFilter
+from django_filters import BaseInFilter
 from django.views import View
 from django.db.models import Q
 import datetime
@@ -56,15 +56,8 @@ class ClientSearch(View):
 
 
 
-class MultipleValueFilter(BaseCSVFilter):
-    """
-    Фильтр для обработки списка значений
-    """
-    def filter(self, qs, value):
-        if value:
-            values = self.get_values(value)
-            return super().filter(qs, values)
-        return qs
+class MultipleValueFilter(BaseInFilter, filters.CharFilter):
+    pass
 
 class ClientFilter(filters.FilterSet):
     """
