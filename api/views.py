@@ -67,25 +67,56 @@ class ClientFilter(filters.FilterSet):
     """
     
     def list(self, request, *args, **kwargs):
-        self.queryset = self.filter_queryset(self.get_queryset())  # Применить фильтры
-        return super().list(request, *args, **kwargs)
+        """
+        Базовый endpoint, который отдаёт список всех клиентов.
+        Есть фильтрация в url строке по важным критериям, которые необходимы для вывода этой информации,
+        здесь мы можем как указать версию, по которой мы получим ответ со списком клиентов,
+        которые используют эту версию, так и проверить у каких клиентов установлена та или иная интеграция,
+        например "/clients/?elasticsearch=true&ad=false", которая вернет всех клиентов,
+        у которых интеграция с Elasticsearch, а интеграция AD отсутствует.
+        """
 
+        # Обработка и удаление лишних символов из параметров запроса
+        params = request.query_params.copy()
+        for key, values in params.lists():
+            # Применяем функцию unquote для удаления лишних символов
+            cleaned_values = [unquote(value.replace(",", "").replace("%2C", "")) for value in values]
+            cleaned_values = [value for value in cleaned_values if value.lower() not in ["null", "undefined"]]
+            if cleaned_values:
+                params.setlist(key, cleaned_values)
+            else:
+                del params[key]
+
+        request.query_params = params
+
+        # Продолжение обработки запроса с обновленными значениями фильтров
+        return super().list(request, *args, **kwargs)
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
 
-        # Применение фильтров
+        ordering = self.request.query_params.get('ordering', None)
+
+        if not ordering:
+            # Применить сортировку по умолчанию
+            queryset = queryset.order_by(F('client_name').asc(nulls_last=True))
+
+        # Проверка значений фильтров и исключение "null" и пустых списков
         filters_to_exclude = []
         for name, field in self.filters.copy().items():
             if name in self.data:
                 values = self.data.getlist(name)
-                cleaned_values = [value.lower() for value in values if value.lower() not in ["null", "[]"]]
+                cleaned_values = [value for value in values if value.lower() != "null" and value.lower() != "test"]
                 if cleaned_values:
+                    # Обновляем фильтр с методом фильтрации MultipleValueFilter,
+                    # принимающим список значений
                     if len(cleaned_values) == 1:
+                        # Если осталось только одно значение, используем фильтр CharFilter
                         self.filters[name] = filters.CharFilter(field_name=field.field_name, lookup_expr='iexact')
                     else:
                         self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
                 else:
+                    # Если значение ключа передается без значений или как пустой список, удаляем ключ из фильтров
                     filters_to_exclude.append(name)
 
         for name in filters_to_exclude:
@@ -144,6 +175,23 @@ class ClientFilter(filters.FilterSet):
     # Фильтр по контактам
     contact_name = filters.CharFilter(field_name="clients_card__contact_cards__contact_name", lookup_expr='icontains')
     contact_email = filters.CharFilter(field_name="clients_card__contact_cards__contact_email", lookup_expr='icontains')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Проверка значений фильтров и исключение "null"
+        filters_to_exclude = []
+        for name, field in self.filters.copy().items():
+            if name in self.data:
+                values = self.data.getlist(name)  # Получаем список значений
+                if "null" or "[]" in values:
+                    filters_to_exclude.append(name)
+                else:
+                    # Обновляем фильтр с методом фильтрации, принимающим список значений
+                    self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
+
+        for name in filters_to_exclude:
+            del self.filters[name]
 
     # Добавляем поле сортировки по алфавиту client_name
     order_by_client_name = filters.OrderingFilter(
