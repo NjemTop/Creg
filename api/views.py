@@ -82,6 +82,9 @@ class ClientFilter(filters.FilterSet):
             # Применяем функцию unquote для удаления лишних символов
             params[key] = unquote(value)
 
+        # Удаление параметров фильтрации, содержащих значения "null" или "undefined"
+        params = {key: value for key, value in params.items() if value.lower() not in ["null", "undefined"]}
+
         request.query_params = params
 
         # Продолжение обработки запроса с обновленными значениями фильтров
