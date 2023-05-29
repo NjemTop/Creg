@@ -106,7 +106,7 @@ class ClientFilter(filters.FilterSet):
         for name, field in self.filters.copy().items():
             if name in self.data:
                 values = self.data.getlist(name)
-                cleaned_values = [value for value in values if value.lower() != "null" and value.lower() != "[]"]
+                cleaned_values = [value for value in values if value.lower() not in ["null", "[]"]]
                 if cleaned_values:
                     # Обновляем фильтр с методом фильтрации MultipleValueFilter,
                     # принимающим список значений
