@@ -101,18 +101,17 @@ class ClientFilter(filters.FilterSet):
             # Применить сортировку по умолчанию
             queryset = queryset.order_by(F('client_name').asc(nulls_last=True))
 
-        # Проверка значений фильтров и исключение "null" и "undefined"
+        # Проверка значений фильтров и исключение "null"
         filters_to_exclude = []
         for name, field in self.filters.copy().items():
             if name in self.data:
                 values = self.data.getlist(name)
-                cleaned_values = [value for value in values if value.lower() not in ["null", "undefined"]]
+                cleaned_values = [value for value in values if value.lower() != "null"]
                 if cleaned_values:
                     # Обновляем фильтр с методом фильтрации MultipleValueFilter,
                     # принимающим список значений
                     self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
                 else:
-                    # Если все значения равны "null", добавляем ключ в список для исключения
                     filters_to_exclude.append(name)
 
         for name in filters_to_exclude:
