@@ -15,7 +15,7 @@ from django_filters import BaseInFilter
 from django.views import View
 from django.db.models import Q
 from django.db.models import F
-import urllib.parse
+from urllib.parse import unquote
 import datetime
 import logging
 from django.shortcuts import get_object_or_404
@@ -67,17 +67,22 @@ class ClientFilter(filters.FilterSet):
     """
     
     def list(self, request, *args, **kwargs):
-        # Получение параметров запроса
-        manager = request.query_params.get('manager')
-        service_pack = request.query_params.get('service_pack')
+        """
+        Базовый endpoint, который отдаёт список всех клиентов.
+        Есть фильтрация в url строке по важным критериям, которые необходимы для вывода этой информации,
+        здесь мы можем как указать версию, по которой мы получим ответ со списком клиентов,
+        которые используют эту версию, так и проверить у каких клиентов установлена та или иная интеграция,
+        например "/clients/?elasticsearch=true&ad=false", которая вернет всех клиентов,
+        у которых интеграция с Elasticsearch, а интеграция AD отсутствует.
+        """
 
-        # Очистка от лишних символов и преобразование URL-кодированных значений
-        if manager:
-            manager = urllib.parse.unquote(manager).replace('[', '').replace(']', '')
-        if service_pack:
-            service_pack = urllib.parse.unquote(service_pack).replace('[', '').replace(']', '')
+        # Обработка и удаление лишних символов из параметров запроса
+        params = request.query_params.copy()
+        for key, value in params.items():   
+            # Применяем функцию unquote для удаления лишних символов
+            params[key] = unquote(value)
 
-        # ... остальная обработка фильтров ...
+        request.query_params = params
 
         # Продолжение обработки запроса с обновленными значениями фильтров
         return super().list(request, *args, **kwargs)
