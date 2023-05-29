@@ -115,9 +115,13 @@ class ClientFilter(filters.FilterSet):
         super().__init__(*args, **kwargs)
         
         # Проверка значений фильтров и исключение "undefined"
-        for name, field in self.filters.items():
+        filters_to_exclude = []
+        for name, field in self.filters.copy().items():
             if name in self.data and self.data[name] == "undefined":
-                del self.filters[name]
+                filters_to_exclude.append(name)
+        
+        for name in filters_to_exclude:
+            del self.filters[name]
 
     class Meta:
         model = ClientsList
