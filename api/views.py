@@ -58,18 +58,8 @@ class ClientSearch(View):
 
 
 
-class MultipleValueFilter(BaseInFilter, filters.CharFilter, filters.BaseFilterBackend):
-    def filter_queryset(self, request, queryset, view):
-        values = request.query_params.getlist(self.field_name)
-        values = [value.strip() for value in values if value.strip() not in ["null", "undefined"]]
-
-        if values:
-            q_objects = Q()
-            for value in values:
-                q_objects |= Q(**{self.field_name: value})
-            queryset = queryset.filter(q_objects)
-
-        return queryset
+class MultipleValueFilter(BaseInFilter, filters.CharFilter):
+    pass
 
 class ClientFilter(filters.FilterSet):
     """
@@ -90,9 +80,9 @@ class ClientFilter(filters.FilterSet):
         params = request.query_params.copy()
         for key, value in params.items():
             # Применяем функцию unquote для удаления лишних символов
-            values = [unquote(v) for v in value.split(",") if v.lower() not in ["null", "undefined"]]
-            if values:
-                params.setlist(key, values)
+            cleaned_values = [unquote(val) for val in value.split('|') if val.lower() not in ["null", "undefined"]]
+            if cleaned_values:
+                params.setlist(key, cleaned_values)
             else:
                 del params[key]
 
@@ -180,8 +170,6 @@ class ClientFilter(filters.FilterSet):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        self.filters['manager'] = MultipleValueFilter(field_name='clients_card__servise_card__manager')
 
         # Проверка значений фильтров и исключение "null"
         filters_to_exclude = []
