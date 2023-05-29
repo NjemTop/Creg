@@ -206,6 +206,20 @@ class ClientFilter(filters.FilterSet):
             # Применить сортировку по умолчанию
             queryset = queryset.order_by(F('client_name').asc(nulls_last=True))
 
+        # Проверка значений фильтров и исключение "null"
+        filters_to_exclude = []
+        for name, field in self.filters.copy().items():
+            if name in self.data:
+                values = self.data.getlist(name)  # Получаем список значений
+                if "null" in values:
+                    filters_to_exclude.append(name)
+                else:
+                    # Обновляем фильтр с методом фильтрации, принимающим список значений
+                    self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
+
+        for name in filters_to_exclude:
+            del self.filters[name]
+
         return queryset
 
 class ClientViewSet(viewsets.ModelViewSet):
