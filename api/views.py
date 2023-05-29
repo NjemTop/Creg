@@ -123,7 +123,7 @@ class ClientFilter(filters.FilterSet):
                     filters_to_exclude.append(name)
                 else:
                     # Обновляем фильтр с методом фильтрации, принимающим список значений
-                    self.filters[name] = filters.MethodFilter(action=filters_to_exclude, method='filter_multiple_values')
+                    self.filters[name] = filters.MethodFilter(action='filter_multiple_values')
 
         for name in filters_to_exclude:
             del self.filters[name]
