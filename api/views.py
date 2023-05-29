@@ -80,9 +80,9 @@ class ClientFilter(filters.FilterSet):
         params = request.query_params.copy()
         for key, value in params.items():
             # Применяем функцию unquote для удаления лишних символов
-            cleaned_value = unquote(value.replace(",", "").replace("%2C", ""))
-            if cleaned_value.lower() not in ["null", "undefined"]:
-                params[key] = cleaned_value
+            values = [unquote(v) for v in value.split(",") if v.lower() not in ["null", "undefined"]]
+            if values:
+                params.setlist(key, values)
             else:
                 del params[key]
 
