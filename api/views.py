@@ -105,8 +105,8 @@ class ClientFilter(filters.FilterSet):
         filters_to_exclude = []
         for name, field in self.filters.copy().items():
             if name in self.data:
-                values = [unquote(value) for value in self.data.getlist(name)]
-                cleaned_values = [value for value in values if value.lower() != "null" and value.lower() != "[]"]
+                values = self.data.getlist(name)
+                cleaned_values = [value for value in values if value.lower() not in ["null", "[]"]]
                 if cleaned_values:
                     # Обновляем фильтр с методом фильтрации MultipleValueFilter,
                     # принимающим список значений
@@ -175,9 +175,6 @@ class ClientFilter(filters.FilterSet):
     # Фильтр по контактам
     contact_name = filters.CharFilter(field_name="clients_card__contact_cards__contact_name", lookup_expr='icontains')
     contact_email = filters.CharFilter(field_name="clients_card__contact_cards__contact_email", lookup_expr='icontains')
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
     # Добавляем поле сортировки по алфавиту client_name
     order_by_client_name = filters.OrderingFilter(
