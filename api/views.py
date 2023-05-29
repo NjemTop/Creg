@@ -104,8 +104,8 @@ class ClientFilter(filters.FilterSet):
     microsoft_office_365_integration = filters.BooleanFilter(field_name="client_card__module__microsoft_office_365_integration")
 
     # Фильтр по обслуживанию
-    service_pack = filters.CharFilter(field_name="client_card__servise_card__service_pack", lookup_expr='iexact')
-    manager = filters.CharFilter(field_name="client_card__servise_card__manager", lookup_expr='iexact')
+    service_pack = filters.CharFilter(field_name="clients_card__servise_card__service_pack", lookup_expr='iexact')
+    manager = filters.CharFilter(field_name="clients_card__servise_card__manager", lookup_expr='iexact')
 
     # Фильтр по контактам
     contact_name = filters.CharFilter(field_name="client_card__contact_cards__contact_name", lookup_expr='icontains')
