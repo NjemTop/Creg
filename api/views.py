@@ -112,6 +112,7 @@ class ClientFilter(filters.FilterSet):
                     # принимающим список значений
                     self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
                 else:
+                    # Если все значения равны "null", добавляем ключ в список для исключения
                     filters_to_exclude.append(name)
 
         for name in filters_to_exclude:
