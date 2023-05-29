@@ -11,6 +11,7 @@ from django.core import serializers
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.views import APIView
 import django_filters.rest_framework as filters
+from django_filters import BaseCSVFilter
 from django.views import View
 from django.db.models import Q
 import datetime
@@ -54,6 +55,16 @@ class ClientSearch(View):
         return JsonResponse(clients_info, safe=False)
 
 
+
+class MultipleValueFilter(BaseCSVFilter):
+    """
+    Фильтр для обработки списка значений
+    """
+    def filter(self, qs, value):
+        if value:
+            values = self.get_values(value)
+            return super().filter(qs, values)
+        return qs
 
 class ClientFilter(filters.FilterSet):
     """
@@ -123,14 +134,10 @@ class ClientFilter(filters.FilterSet):
                     filters_to_exclude.append(name)
                 else:
                     # Обновляем фильтр с методом фильтрации, принимающим список значений
-                    self.filters[name] = filters.MethodFilter(action='filter_multiple_values')
+                    self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
 
         for name in filters_to_exclude:
             del self.filters[name]
-
-    def filter_multiple_values(self, queryset, name, values):
-        lookup = f'{name}__in'
-        return queryset.filter(**{lookup: values})
 
     class Meta:
         model = ClientsList
