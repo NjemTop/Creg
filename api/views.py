@@ -74,28 +74,18 @@ class ClientFilter(filters.FilterSet):
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
 
-        ordering = self.request.query_params.get('ordering', None)
-
-        if not ordering:
-            # Применить сортировку по умолчанию
-            queryset = queryset.order_by(F('client_name').asc(nulls_last=True))
-
-        # Проверка значений фильтров и исключение "null" и пустых списков
+        # Применение фильтров
         filters_to_exclude = []
         for name, field in self.filters.copy().items():
             if name in self.data:
                 values = self.data.getlist(name)
-                cleaned_values = [value for value in values if value.lower() not in ["null", "[]"]]
+                cleaned_values = [value.lower() for value in values if value.lower() not in ["null", "[]"]]
                 if cleaned_values:
-                    # Обновляем фильтр с методом фильтрации MultipleValueFilter,
-                    # принимающим список значений
                     if len(cleaned_values) == 1:
-                        # Если осталось только одно значение, используем фильтр CharFilter
                         self.filters[name] = filters.CharFilter(field_name=field.field_name, lookup_expr='iexact')
                     else:
                         self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
                 else:
-                    # Если значение ключа передается без значений или как пустой список, удаляем ключ из фильтров
                     filters_to_exclude.append(name)
 
         for name in filters_to_exclude:
