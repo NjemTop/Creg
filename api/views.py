@@ -58,7 +58,7 @@ class ClientSearch(View):
 
 
 
-class MultipleValueFilter(BaseInFilter, filters.CharFilter):
+class MultipleValueFilter(filters.BaseInFilter, filters.CharFilter):
     pass
 
 class ClientFilter(filters.FilterSet):
@@ -105,12 +105,14 @@ class ClientFilter(filters.FilterSet):
         filters_to_exclude = []
         for name, field in self.filters.copy().items():
             if name in self.data:
-                values = self.data.getlist(name)  # Получаем список значений
-                if "null" in values or "undefined" in values:
-                    filters_to_exclude.append(name)
-                else:
-                    # Обновляем фильтр с методом фильтрации, принимающим список значений
+                values = self.data.getlist(name)
+                cleaned_values = [value for value in values if value.lower() not in ["null", "undefined"]]
+                if cleaned_values:
+                    # Обновляем фильтр с методом фильтрации MultipleValueFilter,
+                    # принимающим список значений
                     self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
+                else:
+                    filters_to_exclude.append(name)
 
         for name in filters_to_exclude:
             del self.filters[name]
