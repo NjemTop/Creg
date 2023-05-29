@@ -113,7 +113,7 @@ class ClientFilter(filters.FilterSet):
 
     class Meta:
         model = ClientsList
-        fields = ['client_name', 'contact_status', 'elasticsearch', 'ad', 'adfs', 'oauth_2', 'module_translate', 'ms_oos', 'exchange', 'office_365', 'sfb', 'zoom', 'teams', 'smtp', 'cryptopro_dss', 'cryptopro_csp', 'smpp', 'limesurvey', 'server_version', 'update_date', 'api', 'ipad', 'android', 'mdm', 'localizable_web', 'localizable_ios', 'skins_web', 'skins_ios', 'translate', 'electronic_signature', 'action_items', 'limesurvey', 'advanced_voting', 'advanced_work_with_documents', 'advanced_access_rights_management', 'visual_improvements', 'third_party_product_integrations', 'microsoft_enterprise_product_integrations', 'microsoft_office_365_integration', 'service_pack', 'contact_name', 'contact_email']
+        fields = ['client_name', 'contact_status', 'elasticsearch', 'ad', 'adfs', 'oauth_2', 'module_translate', 'ms_oos', 'exchange', 'office_365', 'sfb', 'zoom', 'teams', 'smtp', 'cryptopro_dss', 'cryptopro_csp', 'smpp', 'limesurvey', 'server_version', 'update_date', 'api', 'ipad', 'android', 'mdm', 'localizable_web', 'localizable_ios', 'skins_web', 'skins_ios', 'translate', 'electronic_signature', 'action_items', 'limesurvey', 'advanced_voting', 'advanced_work_with_documents', 'advanced_access_rights_management', 'visual_improvements', 'third_party_product_integrations', 'microsoft_enterprise_product_integrations', 'microsoft_office_365_integration', 'service_pack', 'manager', 'contact_name', 'contact_email']
 
 class ClientViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
