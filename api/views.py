@@ -15,6 +15,7 @@ from django_filters import BaseInFilter
 from django.views import View
 from django.db.models import Q
 from django.db.models import F
+import urllib.parse
 import datetime
 import logging
 from django.shortcuts import get_object_or_404
@@ -64,6 +65,23 @@ class ClientFilter(filters.FilterSet):
     """
     Класс фильтрации по клиентам
     """
+    
+    def list(self, request, *args, **kwargs):
+        # Получение параметров запроса
+        manager = request.query_params.get('manager')
+        service_pack = request.query_params.get('service_pack')
+
+        # Очистка от лишних символов и преобразование URL-кодированных значений
+        if manager:
+            manager = urllib.parse.unquote(manager).replace('[', '').replace(']', '')
+        if service_pack:
+            service_pack = urllib.parse.unquote(service_pack).replace('[', '').replace(']', '')
+
+        # ... остальная обработка фильтров ...
+
+        # Продолжение обработки запроса с обновленными значениями фильтров
+        return super().list(request, *args, **kwargs)
+
     client_name = filters.CharFilter(field_name="client_name", lookup_expr='iexact')
     contact_status = filters.BooleanFilter(field_name="contact_status")
 
