@@ -78,7 +78,7 @@ class ClientFilter(filters.FilterSet):
 
         # Обработка и удаление лишних символов из параметров запроса
         params = request.query_params.copy()
-        for key, value in params.items():   
+        for key, value in params.items():
             # Применяем функцию unquote для удаления лишних символов
             params[key] = unquote(value)
 
@@ -86,6 +86,31 @@ class ClientFilter(filters.FilterSet):
 
         # Продолжение обработки запроса с обновленными значениями фильтров
         return super().list(request, *args, **kwargs)
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+
+        ordering = self.request.query_params.get('ordering', None)
+
+        if not ordering:
+            # Применить сортировку по умолчанию
+            queryset = queryset.order_by(F('client_name').asc(nulls_last=True))
+
+        # Проверка значений фильтров и исключение "null"
+        filters_to_exclude = []
+        for name, field in self.filters.copy().items():
+            if name in self.data:
+                values = self.data.getlist(name)  # Получаем список значений
+                if "null" in values:
+                    filters_to_exclude.append(name)
+                else:
+                    # Обновляем фильтр с методом фильтрации, принимающим список значений
+                    self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
+
+        for name in filters_to_exclude:
+            del self.filters[name]
+
+        return queryset
 
     client_name = filters.CharFilter(field_name="client_name", lookup_expr='iexact')
     contact_status = filters.BooleanFilter(field_name="contact_status")
@@ -196,31 +221,6 @@ class ClientFilter(filters.FilterSet):
             'order_by_client_name',
             'order_by_contact_status',
         ]
-    
-    def filter_queryset(self, queryset):
-        queryset = super().filter_queryset(queryset)
-
-        ordering = self.request.query_params.get('ordering', None)
-
-        if not ordering:
-            # Применить сортировку по умолчанию
-            queryset = queryset.order_by(F('client_name').asc(nulls_last=True))
-
-        # Проверка значений фильтров и исключение "null"
-        filters_to_exclude = []
-        for name, field in self.filters.copy().items():
-            if name in self.data:
-                values = self.data.getlist(name)  # Получаем список значений
-                if "null" in values:
-                    filters_to_exclude.append(name)
-                else:
-                    # Обновляем фильтр с методом фильтрации, принимающим список значений
-                    self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
-
-        for name in filters_to_exclude:
-            del self.filters[name]
-
-        return queryset
 
 class ClientViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
