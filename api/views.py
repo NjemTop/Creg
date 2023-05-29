@@ -106,21 +106,18 @@ class ClientFilter(filters.FilterSet):
         for name, field in self.filters.copy().items():
             if name in self.data:
                 values = self.data.getlist(name)
-                if values == [""]:
-                    # Если значения пустые, исключаем ключ из запроса фильтрации
-                    filters_to_exclude.append(name)
-                else:
-                    cleaned_values = [value for value in values if value.lower() != "null"]
-                    if cleaned_values:
-                        # Обновляем фильтр с методом фильтрации MultipleValueFilter,
-                        # принимающим список значений
-                        if len(cleaned_values) == 1:
-                            # Если осталось только одно значение, используем фильтр CharFilter
-                            self.filters[name] = filters.CharFilter(field_name=field.field_name, lookup_expr='iexact')
-                        else:
-                            self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
+                cleaned_values = [value for value in values if value.lower() != "null"]
+                if cleaned_values:
+                    # Обновляем фильтр с методом фильтрации MultipleValueFilter,
+                    # принимающим список значений
+                    if len(cleaned_values) == 1:
+                        # Если осталось только одно значение, используем фильтр CharFilter
+                        self.filters[name] = filters.CharFilter(field_name=field.field_name, lookup_expr='iexact')
                     else:
-                        filters_to_exclude.append(name)
+                        self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
+                else:
+                    # Если значение ключа передается без значений, удаляем ключ из фильтров
+                    filters_to_exclude.append(name)
 
         for name in filters_to_exclude:
             del self.filters[name]
