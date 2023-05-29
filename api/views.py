@@ -91,25 +91,25 @@ class ClientFilter(filters.FilterSet):
     skins_ios = filters.BooleanFilter(field_name="clients_card__tech_information__skins_ios")
 
     # Фильтр по модулям
-    translate = filters.BooleanFilter(field_name="client_card__module__translate")
-    electronic_signature = filters.BooleanFilter(field_name="client_card__module__electronic_signature")
-    action_items = filters.BooleanFilter(field_name="client_card__module__action_items")
-    limesurvey = filters.BooleanFilter(field_name="client_card__module__limesurvey")
-    advanced_voting = filters.BooleanFilter(field_name="client_card__module__advanced_voting")
-    advanced_work_with_documents = filters.BooleanFilter(field_name="client_card__module__advanced_work_with_documents")
-    advanced_access_rights_management = filters.BooleanFilter(field_name="client_card__module__advanced_access_rights_management")
-    visual_improvements = filters.BooleanFilter(field_name="client_card__module__visual_improvements")
-    third_party_product_integrations = filters.BooleanFilter(field_name="client_card__module__third_party_product_integrations")
-    microsoft_enterprise_product_integrations = filters.BooleanFilter(field_name="client_card__module__microsoft_enterprise_product_integrations")
-    microsoft_office_365_integration = filters.BooleanFilter(field_name="client_card__module__microsoft_office_365_integration")
+    translate = filters.BooleanFilter(field_name="clients_card__module__translate")
+    electronic_signature = filters.BooleanFilter(field_name="clients_card__module__electronic_signature")
+    action_items = filters.BooleanFilter(field_name="clients_card__module__action_items")
+    limesurvey = filters.BooleanFilter(field_name="clients_card__module__limesurvey")
+    advanced_voting = filters.BooleanFilter(field_name="clients_card__module__advanced_voting")
+    advanced_work_with_documents = filters.BooleanFilter(field_name="clients_card__module__advanced_work_with_documents")
+    advanced_access_rights_management = filters.BooleanFilter(field_name="clients_card__module__advanced_access_rights_management")
+    visual_improvements = filters.BooleanFilter(field_name="clients_card__module__visual_improvements")
+    third_party_product_integrations = filters.BooleanFilter(field_name="clients_card__module__third_party_product_integrations")
+    microsoft_enterprise_product_integrations = filters.BooleanFilter(field_name="clients_card__module__microsoft_enterprise_product_integrations")
+    microsoft_office_365_integration = filters.BooleanFilter(field_name="clients_card__module__microsoft_office_365_integration")
 
     # Фильтр по обслуживанию
     service_pack = filters.CharFilter(field_name="clients_card__servise_card__service_pack", lookup_expr='iexact')
     manager = filters.CharFilter(field_name="clients_card__servise_card__manager", lookup_expr='iexact')
 
     # Фильтр по контактам
-    contact_name = filters.CharFilter(field_name="client_card__contact_cards__contact_name", lookup_expr='icontains')
-    contact_email = filters.CharFilter(field_name="client_card__contact_cards__contact_email", lookup_expr='icontains')
+    contact_name = filters.CharFilter(field_name="clients_card__contact_cards__contact_name", lookup_expr='icontains')
+    contact_email = filters.CharFilter(field_name="clients_card__contact_cards__contact_email", lookup_expr='icontains')
 
     class Meta:
         model = ClientsList
