@@ -67,30 +67,9 @@ class ClientFilter(filters.FilterSet):
     """
     
     def list(self, request, *args, **kwargs):
-        """
-        Базовый endpoint, который отдаёт список всех клиентов.
-        Есть фильтрация в url строке по важным критериям, которые необходимы для вывода этой информации,
-        здесь мы можем как указать версию, по которой мы получим ответ со списком клиентов,
-        которые используют эту версию, так и проверить у каких клиентов установлена та или иная интеграция,
-        например "/clients/?elasticsearch=true&ad=false", которая вернет всех клиентов,
-        у которых интеграция с Elasticsearch, а интеграция AD отсутствует.
-        """
-
-        # Обработка и удаление лишних символов из параметров запроса
-        params = request.query_params.copy()
-        for key, values in params.lists():
-            # Применяем функцию unquote для удаления лишних символов
-            cleaned_values = [unquote(value.replace(",", "").replace("%2C", "")) for value in values]
-            cleaned_values = [value for value in cleaned_values if value.lower() not in ["null", "undefined"]]
-            if cleaned_values:
-                params.setlist(key, cleaned_values)
-            else:
-                del params[key]
-
-        request.query_params = params
-
-        # Продолжение обработки запроса с обновленными значениями фильтров
+        self.queryset = self.filter_queryset(self.get_queryset())  # Применить фильтры
         return super().list(request, *args, **kwargs)
+
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
