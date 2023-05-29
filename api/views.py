@@ -110,7 +110,11 @@ class ClientFilter(filters.FilterSet):
                 if cleaned_values:
                     # Обновляем фильтр с методом фильтрации MultipleValueFilter,
                     # принимающим список значений
-                    self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
+                    if len(cleaned_values) == 1:
+                        # Если осталось только одно значение, используем фильтр CharFilter
+                        self.filters[name] = filters.CharFilter(field_name=field.field_name, lookup_expr='iexact')
+                    else:
+                        self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
                 else:
                     filters_to_exclude.append(name)
 
