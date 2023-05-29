@@ -104,7 +104,7 @@ class ClientFilter(filters.FilterSet):
     microsoft_office_365_integration = filters.BooleanFilter(field_name="clients_card__module__microsoft_office_365_integration")
 
     # Фильтр по обслуживанию
-    service_pack = filters.CharFilter(field_name="clients_card__servise_card__service_pack", lookup_expr='iexact', method='in')
+    service_pack = filters.CharFilter(field_name="clients_card__servise_card__service_pack", lookup_expr='iexact')
     manager = filters.CharFilter(field_name="clients_card__servise_card__manager", lookup_expr='iexact')
 
     # Фильтр по контактам
@@ -113,15 +113,24 @@ class ClientFilter(filters.FilterSet):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         # Проверка значений фильтров и исключение "null"
         filters_to_exclude = []
         for name, field in self.filters.copy().items():
-            if name in self.data and self.data[name] == "null":
-                filters_to_exclude.append(name)
-        
+            if name in self.data:
+                values = self.data.getlist(name)  # Получаем список значений
+                if "null" in values:
+                    filters_to_exclude.append(name)
+                else:
+                    # Обновляем фильтр с методом фильтрации, принимающим список значений
+                    self.filters[name] = filters.MethodFilter(action=filters_to_exclude, method='filter_multiple_values')
+
         for name in filters_to_exclude:
             del self.filters[name]
+
+    def filter_multiple_values(self, queryset, name, values):
+        lookup = f'{name}__in'
+        return queryset.filter(**{lookup: values})
 
     class Meta:
         model = ClientsList
