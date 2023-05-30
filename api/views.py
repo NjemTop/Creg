@@ -160,8 +160,6 @@ class ClientFilter(filters.FilterSet):
 
         for name in filters_to_exclude:
             del self.filters[name]
-
-    # Добавляем поле сортировки по алфавиту client_name
     order_by_client_name = filters.OrderingFilter(
         fields=(
             ('client_name', 'client_name'),  # Сортировка по возрастанию
@@ -170,11 +168,7 @@ class ClientFilter(filters.FilterSet):
         field_labels={
             'client_name': 'Client Name (A-Z)',
             'client_name_desc': 'Client Name (Z-A)',
-        },
-        # Установите значение по умолчанию для сортировки по имени клиента
-        # Измените значение по умолчанию на '-client_name' для сортировки по убыванию
-        # Если вы хотите сортировку по возрастанию, установите значение 'client_name'
-        default='-client_name',
+        }
     )
 
     class Meta:
