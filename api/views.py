@@ -202,21 +202,21 @@ class ClientFilter(filters.FilterSet):
             'order_by_contact_status',
         ]
 
-        def filter_queryset(self, queryset):
-            queryset = super().filter_queryset(queryset)
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
 
-            # По умолчанию сортируем по алфавиту client_name
-            ordering = self.request.query_params.get('ordering', 'client_name')
-            if ordering.startswith('client_name'):
-                queryset = queryset.order_by(F('client_name').asc(nulls_last=True))
-            elif ordering.startswith('-client_name'):
-                queryset = queryset.order_by(F('client_name').desc(nulls_last=True))
+        # По умолчанию сортируем по алфавиту client_name
+        ordering = self.request.query_params.get('ordering', 'client_name')
+        if ordering.startswith('client_name'):
+            queryset = queryset.order_by(F('client_name').asc(nulls_last=True))
+        elif ordering.startswith('-client_name'):
+            queryset = queryset.order_by(F('client_name').desc(nulls_last=True))
 
-            # Если указано поле сортировки по активному статусу contact_status, то сортируем
-            if ordering.startswith('contact_status'):
-                queryset = queryset.order_by(F('contact_status').desc())
+        # Если указано поле сортировки по активному статусу contact_status, то сортируем
+        if ordering.startswith('contact_status'):
+            queryset = queryset.order_by(F('contact_status').desc())
 
-            return queryset
+        return queryset
 
 class ClientViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
