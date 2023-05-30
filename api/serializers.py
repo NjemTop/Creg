@@ -12,6 +12,31 @@ class ClientsCardSerializer(serializers.ModelSerializer):
         model = ClientsCard
         fields = ('contacts', 'tech_notes', 'connect_info', 'rdp', 'tech_account', 'bm_servers')
 
+class ServiseCardSerializer(serializers.ModelSerializer):
+    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
+    class Meta:
+        model = ServiseCard
+        fields = ('id', 'client_id', 'service_pack', 'manager', 'loyal')
+
+class TechInformationCardSerializer(serializers.ModelSerializer):
+    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
+    class Meta:
+        model = TechInformationCard
+        fields = (
+            'id',
+            'client_id',
+            'server_version',
+            'update_date',
+            'api',
+            'ipad',
+            'android',
+            'mdm',
+            'localizable_web',
+            'localizable_ios',
+            'skins_web',
+            'skins_ios'
+        )
+
 class ContactsCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
     class Meta:
@@ -63,31 +88,6 @@ class TechAccountCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = TechAccountCard
         fields = ('id', 'client_id', 'contact_info_disc', 'contact_info_account', 'contact_info_password')
-
-class ServiseCardSerializer(serializers.ModelSerializer):
-    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
-    class Meta:
-        model = ServiseCard
-        fields = ('id', 'client_id', 'service_pack', 'manager', 'loyal')
-
-class TechInformationCardSerializer(serializers.ModelSerializer):
-    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
-    class Meta:
-        model = TechInformationCard
-        fields = (
-            'id',
-            'client_id',
-            'server_version',
-            'update_date',
-            'api',
-            'ipad',
-            'android',
-            'mdm',
-            'localizable_web',
-            'localizable_ios',
-            'skins_web',
-            'skins_ios'
-        )
 
 class TechNoteCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
