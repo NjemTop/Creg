@@ -161,6 +161,18 @@ class ClientFilter(filters.FilterSet):
         for name in filters_to_exclude:
             del self.filters[name]
 
+    # Добавляем поле сортировки по алфавиту client_name
+    order_by_client_name = filters.OrderingFilter(
+        fields=(
+            ('client_name', 'client_name'),  # Сортировка по возрастанию
+            ('-client_name', 'client_name_desc'),  # Сортировка по убыванию
+        ),
+        field_labels={
+            'client_name': 'Client Name (A-Z)',
+            'client_name_desc': 'Client Name (Z-A)',
+        }
+    )
+
     class Meta:
         model = ClientsList
         fields = [
@@ -173,7 +185,7 @@ class ClientFilter(filters.FilterSet):
             'advanced_access_rights_management', 'visual_improvements',
             'third_party_product_integrations', 'microsoft_enterprise_product_integrations',
             'microsoft_office_365_integration', 'service_pack', 'manager',
-            'contact_name', 'contact_email',
+            'contact_name', 'contact_email', 'order_by_client_name',
         ]
 
 class ClientViewSet(viewsets.ModelViewSet):
