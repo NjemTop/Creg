@@ -104,15 +104,15 @@ class ClientSerializer(serializers.ModelSerializer):
 
     # Вложенные сериализаторы для связанных объектов
     # clients_card = ClientsCardSerializer(read_only=True)
-    contacts_card = ContactsCardSerializer(many=True, read_only=True, source='clients_card.contact_cards')
-    connect_info_card = ConnectInfoCardSerializer(many=True, read_only=True, source='clients_card.connect_info_card')
-    bm_servers = BMServersCardSerializer(many=True, read_only=True, source='clients_card.bm_servers_card')
-    integration = IntegrationCardSerializer(read_only=True, source='clients_card.integration')
-    module = ModuleCardSerializer(read_only=True, source='clients_card.module')
-    tech_account_card = TechAccountCardSerializer(many=True, read_only=True, source='clients_card.tech_account_card')
     servise_card = ServiseCardSerializer(read_only=True, source='clients_card.servise_card')
     tech_information = TechInformationCardSerializer(read_only=True, source='clients_card.tech_information')
+    contacts_card = ContactsCardSerializer(many=True, read_only=True, source='clients_card.contact_cards')
+    connect_info_card = ConnectInfoCardSerializer(many=True, read_only=True, source='clients_card.connect_info_card')
+    tech_account_card = TechAccountCardSerializer(many=True, read_only=True, source='clients_card.tech_account_card')
+    bm_servers = BMServersCardSerializer(many=True, read_only=True, source='clients_card.bm_servers_card')
     tech_note = TechNoteCardSerializer(read_only=True, source='clients_card.tech_note')
+    integration = IntegrationCardSerializer(read_only=True, source='clients_card.integration')
+    module = ModuleCardSerializer(read_only=True, source='clients_card.module')
 
     class Meta:
         model = ClientsList
