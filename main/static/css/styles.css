@@ -226,39 +226,8 @@ body, html {
     }
 }
 
-
-
-
-
-
-
-  /* Средние экраны (планшеты, 768px и выше) */
-/* @media (min-width: 768px) {
-  .custom-button {
-    font-size: 1.5rem;
-    height: 70px;
-    min-width: 200px;
-  }
-  .form-check-label {
-    word-wrap: normal;
-  }
-} */
-
-/* Большие экраны (настольные компьютеры, 992px и выше) */
-/* @media (min-width: 992px) {
-  .custom-button {
-    font-size: 1.75rem;
-    height: 90px;
-    min-width: 250px;
-  }
-  
-} */
-
-/* Экстра большие экраны (большие настольные компьютеры, 1200px и выше) */
-/* @media (min-width: 1200px) {
-  .custom-button {
-    font-size: 2rem;
-    height: 110px;
-    min-width: 300px;
-  }
-} */
+/* Размер кнопок на странице списка клиентов  */
+.img-small {
+    width: 4rem;
+    height: 4rem;
+}

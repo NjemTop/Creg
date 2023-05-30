@@ -39,16 +39,20 @@
                                 <input type="checkbox" id="client_{{ client.id }}" class="client-active-checkbox" {% if client.contact_status %}checked{% endif %}>
                             </td>
                             <td>
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#clientCardModal_{{ client.id }}" data-client-id="{{ client.id }}"><img src="/media/favicons/icon_card.png" alt="Карточка клиента" /></a>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#clientCardModal_{{ client.id }}" data-client-id="{{ client.id }}"><img src="/media/favicons/icon_card.png" alt="Карточка клиента" class="img-small" /></a>
                             </td>
                             <td>
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#serviceModal_{{ client.id }}" data-client-id="{{ client.id }}"><img src="/media/favicons/icon_service.png" alt="Обслуживание" /></a>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#serviceModal_{{ client.id }}" data-client-id="{{ client.id }}"><img src="/media/favicons/icon_service.png" alt="Обслуживание" class="img-small" /></a>
                             </td>
                             <td>
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#tech_informationModal_{{ client.id }}" data-client-id="{{ client.id }}"><img src="/media/favicons/icon_tech_info.png" alt="Тех. Информация" /></a>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#tech_informationModal_{{ client.id }}" data-client-id="{{ client.id }}"><img src="/media/favicons/icon_tech_info.png" alt="Тех. Информация" class="img-small" /></a>
                             </td>
-                            <td><a href="#"><img src="/media/favicons/icon_integrations.png" alt="Интеграции" /></a></td>
-                            <td><a href="#"><img src="/media/favicons/icon_documents.png" alt="Документы" /></a></td>
+                            <td>
+                                <a href="#"><img src="/media/favicons/icon_integrations.png" alt="Интеграции" class="img-small" /></a>
+                            </td>
+                            <td>
+                                <a href="#"><img src="/media/favicons/icon_documents.png" alt="Документы" class="img-small" /></a>
+                            </td>
                             <td>{{ client.notes }}</td>
                             <td>
                                 <a href="#" class="btn btn-warning btn-sm">Посмотреть</a>
