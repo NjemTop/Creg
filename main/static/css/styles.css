@@ -228,6 +228,6 @@ body, html {
 
 /* Размер кнопок на странице списка клиентов  */
 .img-small {
-    width: 4rem;
-    height: 4rem;
+    width: 3.5rem;
+    height: 3.5rem;
 }
