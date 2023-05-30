@@ -170,7 +170,11 @@ class ClientFilter(filters.FilterSet):
         field_labels={
             'client_name': 'Client Name (A-Z)',
             'client_name_desc': 'Client Name (Z-A)',
-        }
+        },
+        # Установите значение по умолчанию для сортировки по имени клиента
+        # Измените значение по умолчанию на '-client_name' для сортировки по убыванию
+        # Если вы хотите сортировку по возрастанию, установите значение 'client_name'
+        default='-client_name',
     )
 
     class Meta:
@@ -185,7 +189,8 @@ class ClientFilter(filters.FilterSet):
             'advanced_access_rights_management', 'visual_improvements',
             'third_party_product_integrations', 'microsoft_enterprise_product_integrations',
             'microsoft_office_365_integration', 'service_pack', 'manager',
-            'contact_name', 'contact_email', 'order_by_client_name',
+            'contact_name', 'contact_email',
+            'order_by_client_name',
         ]
 
 class ClientViewSet(viewsets.ModelViewSet):
