@@ -11,8 +11,11 @@ from django.core import serializers
 from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework.views import APIView
 import django_filters.rest_framework as filters
+from django_filters import BaseInFilter
 from django.views import View
 from django.db.models import Q
+from django.db.models import F
+from urllib.parse import unquote
 import datetime
 import logging
 from django.shortcuts import get_object_or_404
@@ -55,12 +58,41 @@ class ClientSearch(View):
 
 
 
+class MultipleValueFilter(filters.BaseInFilter, filters.CharFilter):
+    pass
+
 class ClientFilter(filters.FilterSet):
     """
     Класс фильтрации по клиентам
     """
+    
+    def list(self, request, *args, **kwargs):
+        """
+        Базовый endpoint, который отдаёт список всех клиентов.
+        Есть фильтрация в url строке по важным критериям, которые необходимы для вывода этой информации,
+        здесь мы можем как указать версию, по которой мы получим ответ со списком клиентов,
+        которые используют эту версию, так и проверить у каких клиентов установлена та или иная интеграция,
+        например "/clients/?elasticsearch=true&ad=false", которая вернет всех клиентов,
+        у которых интеграция с Elasticsearch, а интеграция AD отсутствует.
+        """
+
+        # Обработка и удаление лишних символов из параметров запроса
+        params = request.query_params.copy()
+        for key, values in params.lists():
+            # Применяем функцию unquote для удаления лишних символов
+            cleaned_values = [unquote(value.replace(",", "").replace("%2C", "")) for value in values]
+            cleaned_values = [value for value in cleaned_values if value.lower() not in ["null", "undefined"]]
+            if cleaned_values:
+                params.setlist(key, cleaned_values)
+            else:
+                del params[key]
+
+        request.query_params = params
+
+        # Продолжение обработки запроса с обновленными значениями фильтров
+        return super().list(request, *args, **kwargs)
+
     client_name = filters.CharFilter(field_name="client_name", lookup_expr='iexact')
-    short_name = filters.CharFilter(field_name="short_name", lookup_expr='iexact')
     contact_status = filters.BooleanFilter(field_name="contact_status")
 
     elasticsearch = filters.BooleanFilter(field_name="clients_card__integration__elasticsearch")
@@ -91,9 +123,100 @@ class ClientFilter(filters.FilterSet):
     skins_web = filters.BooleanFilter(field_name="clients_card__tech_information__skins_web")
     skins_ios = filters.BooleanFilter(field_name="clients_card__tech_information__skins_ios")
 
+    # Фильтр по модулям
+    translate = filters.BooleanFilter(field_name="clients_card__module__translate")
+    electronic_signature = filters.BooleanFilter(field_name="clients_card__module__electronic_signature")
+    action_items = filters.BooleanFilter(field_name="clients_card__module__action_items")
+    limesurvey = filters.BooleanFilter(field_name="clients_card__module__limesurvey")
+    advanced_voting = filters.BooleanFilter(field_name="clients_card__module__advanced_voting")
+    advanced_work_with_documents = filters.BooleanFilter(field_name="clients_card__module__advanced_work_with_documents")
+    advanced_access_rights_management = filters.BooleanFilter(field_name="clients_card__module__advanced_access_rights_management")
+    visual_improvements = filters.BooleanFilter(field_name="clients_card__module__visual_improvements")
+    third_party_product_integrations = filters.BooleanFilter(field_name="clients_card__module__third_party_product_integrations")
+    microsoft_enterprise_product_integrations = filters.BooleanFilter(field_name="clients_card__module__microsoft_enterprise_product_integrations")
+    microsoft_office_365_integration = filters.BooleanFilter(field_name="clients_card__module__microsoft_office_365_integration")
+
+    # Фильтр по обслуживанию
+    service_pack = filters.CharFilter(field_name="clients_card__servise_card__service_pack", lookup_expr='iexact')
+    manager = filters.CharFilter(field_name="clients_card__servise_card__manager", lookup_expr='iexact')
+
+    # Фильтр по контактам
+    contact_name = filters.CharFilter(field_name="clients_card__contact_cards__contact_name", lookup_expr='icontains')
+    contact_email = filters.CharFilter(field_name="clients_card__contact_cards__contact_email", lookup_expr='icontains')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Проверка значений фильтров и исключение "null"
+        filters_to_exclude = []
+        for name, field in self.filters.copy().items():
+            if name in self.data:
+                values = self.data.getlist(name)  # Получаем список значений
+                if "null" in values or "[]" in values:
+                    filters_to_exclude.append(name)
+                else:
+                    # Обновляем фильтр с методом фильтрации, принимающим список значений
+                    self.filters[name] = MultipleValueFilter(field_name=field.field_name, lookup_expr='in')
+
+        for name in filters_to_exclude:
+            del self.filters[name]
+
+    # Добавляем поле сортировки по алфавиту client_name
+    order_by_client_name = filters.OrderingFilter(
+        fields=(
+            ('client_name', 'client_name'),  # Сортировка по возрастанию
+            ('-client_name', 'client_name_desc'),  # Сортировка по убыванию
+        ),
+        field_labels={
+            'client_name': 'Client Name (A-Z)',
+            'client_name_desc': 'Client Name (Z-A)',
+        }
+    )
+
+    # Добавляем поле сортировки по активному статусу contact_status
+    order_by_contact_status = filters.OrderingFilter(
+        fields=(
+            ('contact_status', 'active_first'),  # Сортировка активных клиентов вначале
+            ('-contact_status', 'inactive_first'),  # Сортировка неактивных клиентов вначале
+        ),
+        field_labels={
+            'active_first': 'Active Clients',
+            'inactive_first': 'Inactive Clients',
+        }
+    )
+
     class Meta:
         model = ClientsList
-        fields = ['client_name', 'short_name', 'contact_status', 'elasticsearch', 'ad', 'adfs', 'oauth_2', 'module_translate', 'ms_oos', 'exchange', 'office_365', 'sfb', 'zoom', 'teams', 'smtp', 'cryptopro_dss', 'cryptopro_csp', 'smpp', 'limesurvey', 'server_version', 'update_date', 'api', 'ipad', 'android', 'mdm', 'localizable_web', 'localizable_ios', 'skins_web', 'skins_ios']
+        fields = [
+            'client_name', 'contact_status', 'elasticsearch', 'ad', 'adfs', 'oauth_2',
+            'module_translate', 'ms_oos', 'exchange', 'office_365', 'sfb', 'zoom', 'teams',
+            'smtp', 'cryptopro_dss', 'cryptopro_csp', 'smpp', 'limesurvey', 'server_version',
+            'update_date', 'api', 'ipad', 'android', 'mdm', 'localizable_web', 'localizable_ios',
+            'skins_web', 'skins_ios', 'translate', 'electronic_signature', 'action_items',
+            'limesurvey', 'advanced_voting', 'advanced_work_with_documents',
+            'advanced_access_rights_management', 'visual_improvements',
+            'third_party_product_integrations', 'microsoft_enterprise_product_integrations',
+            'microsoft_office_365_integration', 'service_pack', 'manager',
+            'contact_name', 'contact_email',
+            'order_by_client_name',
+            'order_by_contact_status',
+        ]
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+
+        # По умолчанию сортируем по алфавиту client_name
+        ordering = self.request.query_params.get('ordering', 'client_name')
+        if ordering.startswith('client_name'):
+            queryset = queryset.order_by(F('client_name').asc(nulls_last=True))
+        elif ordering.startswith('-client_name'):
+            queryset = queryset.order_by(F('client_name').desc(nulls_last=True))
+
+        # Если указано поле сортировки по активному статусу contact_status, то сортируем
+        if ordering.startswith('contact_status'):
+            queryset = queryset.order_by(F('contact_status').desc())
+
+        return queryset
 
 class ClientViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
