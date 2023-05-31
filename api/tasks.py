@@ -14,6 +14,11 @@ def update_module_info_task():
 
 
 @shared_task
+def test_task():
+    print("Test task executed successfully!")
+
+
+@shared_task
 def for_test_task():
     try:
         x = 5 + 2

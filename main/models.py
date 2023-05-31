@@ -21,7 +21,8 @@ class Favicon(models.Model):
 
 
 class ClientsList(models.Model):
-    client_name = models.CharField(verbose_name="Название клиента", max_length=255, db_index=True)
+    client_name = models.CharField(verbose_name="Название клиента", max_length=100, db_index=True)
+    short_name = models.CharField(verbose_name="Сокращенное наименование клиента", max_length=20, null=True, blank=True)
     contact_status = models.BooleanField(verbose_name='Статус клиента', default=True)
     service = models.CharField(verbose_name="Обслуживание", max_length=255, default=generate_unique_id)
     technical_information = models.CharField(verbose_name="Техническая информация", max_length=255,

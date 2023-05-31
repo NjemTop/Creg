@@ -19,8 +19,8 @@ document.addEventListener('DOMContentLoaded', function () {
         checkboxes.forEach(checkbox => {
             let switchery = new Switchery(checkbox, {
                 size: 'small', // Размер свича ('small', 'default', 'large')
-                color: '#64bd63', // Цвет активного свича
-                secondaryColor: '#f44336', // Цвет не активного свеча
+                color: '#ff9e4c', // Цвет активного свича
+                secondaryColor: '#808080', // Цвет не активного свеча
                 jackColor: '#fff',
                 jackSecondaryColor: '#fff'
             });

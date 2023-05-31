@@ -38,14 +38,21 @@ $(document).ready(function() {
                 response($.map(data, function(item) {
                     return {
                         label: item.client_name + " (Version: " + (item.clients_card__tech_information__server_version || 'N/A') + ")",
-                        value: item.client_name
+                        value: item.client_name,
+                        id: item.id  // Добавление идентификатора клиента
                     };
                 }));
             });
         },
         select: function(event, ui) {
-            // Обработка выбранного элемента.
-            console.log("Selected item:", ui.item);  // Вывод информации о выбранном элементе в консоль.
-        }
+            // Получение идентификатора клиента из выбранного элемента.
+            var clientId = ui.item.id;
+        
+            // Формирование URL на основе идентификатора клиента.
+            var clientUrl = "/client/" + clientId + "/";
+        
+            // Перенаправление на страницу клиента.
+            window.location.href = clientUrl;
+        }        
     });
 });

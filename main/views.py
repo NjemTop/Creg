@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import ClientsList, ClientsCard, ContactsCard, ReleaseInfo
-from .forms import ClientListForm, ContactFormSet, ServiseCardForm, TechInformationCardForm
+from .models import ClientsList, ClientsCard, ContactsCard, ReleaseInfo, ServiseCard, TechInformationCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, TechNote
+from .forms import ClientListForm, ContactFormSet, ServiseCardForm, TechInformationCardForm, ContactForm
 from django.db import transaction
 from django.http import HttpResponse
 from django.template import loader
+from django.shortcuts import render, get_object_or_404
 
 
 def index(request):
@@ -76,6 +77,133 @@ def create_client(request):
         'contact_formset_max_num': contact_formset.max_num,  # Передача максимального количества форм в формсете в контекст
     }
     return render(request, 'main/create_client.html', context)  # Возвращение ответа с рендерингом шаблона 'create_client.html' и передачей контекста
+
+
+def client(request, client_id):
+    client = ClientsList.objects.get(id=client_id)
+    
+    try:
+        contacts_list = ContactsCard.objects.filter(client_card=client.clients_card)
+    except ContactsCard.DoesNotExist:
+        # Создаем пустую запись для ContactsCard, если она не существует
+        contacts_list = []
+
+    try:
+        integration = Integration.objects.get(client_card__client_info=client)
+    except Integration.DoesNotExist:
+        # Создаем пустую запись для Integration, если она не существует
+        integration = Integration.objects.create(client_card=client.clients_card, elasticsearch=False, ad=False, adfs=False,
+                                                 oauth_2=False, module_translate=False, ms_oos=False, exchange=False,
+                                                 office_365=False, sfb=False, zoom=False, teams=False, smtp=False,
+                                                 cryptopro_dss=False, cryptopro_csp=False, smpp=False, limesurvey=False)
+
+    try:
+        module = ModuleCard.objects.get(client_card=client.clients_card)
+    except ModuleCard.DoesNotExist:
+        # Создаем пустую запись для ModuleCard, если она не существует
+        module = ModuleCard.objects.create(client_card=client.clients_card, translate=False, electronic_signature=False,
+                                           action_items=False, limesurvey=False, advanced_voting=False,
+                                           advanced_work_with_documents=False, advanced_access_rights_management=False,
+                                           visual_improvements=False, third_party_product_integrations=False,
+                                           microsoft_enterprise_product_integrations=False,
+                                           microsoft_office_365_integration=False)
+
+    try:
+        tech_info = TechInformationCard.objects.get(client_card=client.clients_card)
+    except TechInformationCard.DoesNotExist:
+        # Создаем пустую запись для TechInformationCard, если она не существует
+        tech_info = TechInformationCard.objects.create(client_card=client.clients_card, server_version="Нет данных",
+                                                       update_date=None, api=False, ipad="Нет данных", android="Нет данных",
+                                                       mdm="Нет данных", localizable_web=False, localizable_ios=False,
+                                                       skins_web=False, skins_ios=False)
+
+    try:
+        connect_info_list = ConnectInfoCard.objects.filter(client_card=client.clients_card)
+        # if not connect_info_list:
+        #     # Создаем пустую запись для ConnectInfoCard, если она не существует
+        #     ConnectInfoCard.objects.create(client_card=client.clients_card, contact_info_name="Нет данных",
+        #                                    contact_info_account="Нет данных",
+        #                                    contact_info_password="Нет данных")
+    except ConnectInfoCard.DoesNotExist:
+        connect_info_list = []
+
+    try:
+        bm_servers_list = BMServersCard.objects.filter(client_card=client.clients_card)
+        # if not bm_servers_list:
+        #     # Создаем пустую запись для BMServersCard, если она не существует
+        #     BMServersCard.objects.create(client_card=client.clients_card, bm_servers_circuit="Нет данных",
+        #                                   bm_servers_servers_name="Нет данных",
+        #                                   bm_servers_servers_adress="Нет данных", bm_servers_role="Нет данных")
+    except BMServersCard.DoesNotExist:
+        # Создаем пустую запись для BMServersCard, если она не существует
+        bm_servers_list = []
+
+    try:
+        servise = ServiseCard.objects.get(client_card=client.clients_card)
+    except ServiseCard.DoesNotExist:
+        # Создаем пустую запись для ServiseCard, если она не существует
+        servise = ServiseCard.objects.create(client_card=client.clients_card, service_pack="Нет данных",
+                                             manager="Нет данных", loyal="Нет данных")
+
+    try:
+        tech_account_list = TechAccountCard.objects.filter(client_card=client.clients_card)
+        # if not tech_account_list:
+        #     # Создаем пустую запись для TechAccountCard, если она не существует
+        #     TechAccountCard.objects.create(client_card=client.clients_card, contact_info_disc="Нет данных",
+        #                                    contact_info_account="Нет данных",
+        #                                    contact_info_password="Нет данных")
+    except TechAccountCard.DoesNotExist:
+        # Создаем пустую запись для TechAccountCard, если она не существует
+        tech_account_list = []
+
+    try:
+        connection_info = ConnectionInfo.objects.get(client_card__client_info=client)
+        file_path = connection_info.file_path.url
+        text = connection_info.text
+    except ConnectionInfo.DoesNotExist:
+        file_path = "Нет документа"
+        text = "Нет данных"
+    except ValueError:
+        file_path = "Нет документа"
+        text = "Нет данных"
+
+    try:
+        tech_note = TechNote.objects.get(client_card=client.clients_card)
+    except TechNote.DoesNotExist:
+        # Создаем пустую запись для TechNote, если она не существует
+        tech_note = TechNote.objects.create(client_card=client.clients_card, tech_note_text="Нет данных")
+
+    return render(request, 'main/client.html', {
+        'title': 'Информация о клиенте',
+        'client': client,
+        'contacts_list': contacts_list,
+        'integration': integration,
+        'module': module,
+        'tech_info': tech_info,
+        'connect_info_list': connect_info_list,
+        'bm_servers_list': bm_servers_list,
+        'servise': servise,
+        'tech_account_list': tech_account_list,
+        'file_path': file_path,
+        'text': text,
+        'tech_note': tech_note,
+    })
+
+
+def add_contact(request, client_id):
+    client = get_object_or_404(ClientsList, id=client_id)
+    
+    if request.method == 'POST':
+        contact_form = ContactForm(request.POST)
+        if contact_form.is_valid():
+            contact = contact_form.save(commit=False)
+            contact.client_card = client.clients_card
+            contact.save()
+            return redirect('client', client_id=client_id)
+    else:
+        contact_form = ContactForm()
+    
+    return render(request, 'main/add_contact.html', {'title': 'Добавить контакт', 'client': client, 'contact_form': contact_form})
 
 
 def upload_file(request):

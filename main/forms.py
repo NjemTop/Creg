@@ -1,5 +1,6 @@
 from .models import ClientsList, ContactsCard, ServiseCard, TechInformationCard
 from django.forms import ModelForm, TextInput, Textarea, formset_factory, Select, CheckboxInput
+from django import forms
 
 
 class ClientListForm(ModelForm):
@@ -100,3 +101,7 @@ class TechInformationCardForm(ModelForm):
             'skins_web': CheckboxInput(attrs={'class': 'form-check-input'}),
             'skins_ios': CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+
+class ClientForm(forms.Form):
+    client_id = forms.IntegerField()

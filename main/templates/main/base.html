@@ -25,6 +25,7 @@
     <!-- Switchery JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <!-- Добавляем скрипт и стили фреимворка SELECT2 -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
     <!-- Добавляем скрипт фреимворка vue-good-table -->
@@ -56,6 +57,9 @@
                 align-items: center;
             }
         }
+        .navbar-nav.ml-auto {
+            margin-left: auto !important;
+        }
     </style>
 </head>
 <body>
@@ -78,10 +82,15 @@
         <!-- Для браузерной версии -->
         <button id="advancedSearchButton" class="d-none d-md-inline-block" data-bs-toggle="modal" data-bs-target="#advancedSearchModalDesktop">Расширенный поиск</button>
         <div class="search-input-wrapper">
-            <input type="text" id="regularSearch" placeholder="Поиск информации о клиенте">
+          <input type="text" id="regularSearch" placeholder="Поиск информации о клиенте" data-url="{% url 'client' client_id=0 %}">
         </div>
       </div>
-      <a class="nav-link px-3 d-none d-md-inline-block" href="/admin">Панель администрирования</a>
+      <div class="navbar-nav ml-auto nav-item">
+        <a class="nav-link link-dark px-2" href="{% url 'create_client' %}">Добавить клиента</a>
+      </div>
+      <div class="navbar-nav ml-auto nav-item">
+        <a class="nav-link link-dark px-2" href="/admin">Панель администрирования</a>
+      </div>
     </div>
   </header>
   <div class="container">

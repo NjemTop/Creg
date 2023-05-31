@@ -12,31 +12,6 @@ class ClientsCardSerializer(serializers.ModelSerializer):
         model = ClientsCard
         fields = ('contacts', 'tech_notes', 'connect_info', 'rdp', 'tech_account', 'bm_servers')
 
-class ServiseCardSerializer(serializers.ModelSerializer):
-    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
-    class Meta:
-        model = ServiseCard
-        fields = ('id', 'client_id', 'service_pack', 'manager', 'loyal')
-
-class TechInformationCardSerializer(serializers.ModelSerializer):
-    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
-    class Meta:
-        model = TechInformationCard
-        fields = (
-            'id',
-            'client_id',
-            'server_version',
-            'update_date',
-            'api',
-            'ipad',
-            'android',
-            'mdm',
-            'localizable_web',
-            'localizable_ios',
-            'skins_web',
-            'skins_ios'
-        )
-
 class ContactsCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
     class Meta:
@@ -89,6 +64,31 @@ class TechAccountCardSerializer(serializers.ModelSerializer):
         model = TechAccountCard
         fields = ('id', 'client_id', 'contact_info_disc', 'contact_info_account', 'contact_info_password')
 
+class ServiseCardSerializer(serializers.ModelSerializer):
+    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
+    class Meta:
+        model = ServiseCard
+        fields = ('id', 'client_id', 'service_pack', 'manager', 'loyal')
+
+class TechInformationCardSerializer(serializers.ModelSerializer):
+    client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
+    class Meta:
+        model = TechInformationCard
+        fields = (
+            'id',
+            'client_id',
+            'server_version',
+            'update_date',
+            'api',
+            'ipad',
+            'android',
+            'mdm',
+            'localizable_web',
+            'localizable_ios',
+            'skins_web',
+            'skins_ios'
+        )
+
 class TechNoteCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
     class Meta:
@@ -110,13 +110,13 @@ class ClientSerializer(serializers.ModelSerializer):
     connect_info_card = ConnectInfoCardSerializer(many=True, read_only=True, source='clients_card.connect_info_card')
     tech_account_card = TechAccountCardSerializer(many=True, read_only=True, source='clients_card.tech_account_card')
     bm_servers = BMServersCardSerializer(many=True, read_only=True, source='clients_card.bm_servers_card')
-    tech_note = TechNoteCardSerializer(read_only=True, source='clients_card.tech_note')
     integration = IntegrationCardSerializer(read_only=True, source='clients_card.integration')
     module = ModuleCardSerializer(read_only=True, source='clients_card.module')
+    tech_note = TechNoteCardSerializer(read_only=True, source='clients_card.tech_note')
 
     class Meta:
         model = ClientsList
-        fields = ('id', 'client_name', 'contact_status', 'contacts_card', 'connect_info_card', 'bm_servers', 'integration', 'module', 'tech_account_card', 'servise_card', 'tech_information', 'tech_note', 'notes')
+        fields = ('id', 'client_name', 'contact_status', 'short_name', 'servise_card', 'tech_information', 'contacts_card', 'connect_info_card', 'tech_account_card', 'bm_servers', 'integration', 'module', 'tech_note', 'notes')
 
     def create(self, validated_data):
         """
