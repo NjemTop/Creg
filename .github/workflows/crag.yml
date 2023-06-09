@@ -29,6 +29,11 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Check Environment Variables
+      run: |
+        echo "POSTGRES_DB: $POSTGRES_DB"
+        echo "POSTGRES_USER: $POSTGRES_USER"
+        echo "POSTGRES_PASSWORD: $POSTGRES_PASSWORD"
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
