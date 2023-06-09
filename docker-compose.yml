@@ -12,7 +12,7 @@ services:
     volumes:
       - mediadata:/app/media
       - logdata:/app/logs
-      - main/migrations:/app/main/migrations
+      - /main/migrations:/app/main/migrations
     ports:
       - "8137:8137"
     container_name: Crag
@@ -123,6 +123,11 @@ services:
 volumes:
   dbdata:
   mediadata:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${PWD}/media
+      o: bind
   logdata:
     driver: local
     driver_opts:
