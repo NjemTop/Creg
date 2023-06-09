@@ -82,6 +82,7 @@ services:
     image: graylog/graylog:5.1
     container_name: Graylog
     environment:
+      - TZ=Europe/Moscow
       - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9000/
       - GRAYLOG_GELF_TCP_INPUT_ENABLED=true  # Включение GELF TCP входа
       - GRAYLOG_MONGODB_URI=mongodb://mongo:27017/graylog  # Указываем URI MongoDB для Graylog
@@ -104,6 +105,7 @@ services:
     image: elasticsearch:7.12.0
     container_name: Elasticsearch
     environment:
+      - TZ=Europe/Moscow
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  # Опционально: ограничение памяти для Elasticsearch
     restart: always
