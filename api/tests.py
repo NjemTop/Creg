@@ -1,16 +1,34 @@
 from django.test import TestCase
+from .serializers import (
+    ClientsCardSerializer,
+    ContactsCardSerializer,
+    ConnectInfoCardSerializer,
+    BMServersCardSerializer,
+    IntegrationCardSerializer,
+)
 
-# Create your tests here.
-def custom_decorator(function):
-    def wrapper(*args, **kwargs):
-        print("До вызова функции")
-        result = function(*args, **kwargs)
-        print("После вызова функции")
-        return result
-    return wrapper
 
-@custom_decorator
-def example_function():
-    print("Внутри функции")
+class ClientsCardSerializerTestCase(TestCase):
+    def test_serialization(self):
+        serializer = ClientsCardSerializer()
+        self.assertIsNotNone(serializer)
 
-example_function()
+class ContactsCardSerializerTestCase(TestCase):
+    def test_serialization(self):
+        serializer = ContactsCardSerializer()
+        self.assertIsNotNone(serializer)
+
+class ConnectInfoCardSerializerTestCase(TestCase):
+    def test_serialization(self):
+        serializer = ConnectInfoCardSerializer()
+        self.assertIsNotNone(serializer)
+
+class BMServersCardSerializerTestCase(TestCase):
+    def test_serialization(self):
+        serializer = BMServersCardSerializer()
+        self.assertIsNotNone(serializer)
+
+class IntegrationCardSerializerTestCase(TestCase):
+    def test_serialization(self):
+        serializer = IntegrationCardSerializer()
+        self.assertIsNotNone(serializer)
