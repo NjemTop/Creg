@@ -1,11 +1,46 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 import uuid
+from django.core.files.storage import FileSystemStorage
+from django.db.models.signals import pre_delete, pre_save
+from django.dispatch import receiver
+import os
 
+
+backup_storage = FileSystemStorage(location='./backup/db/')
+
+def backup_file_path(instance, filename):
+    return os.path.join('backup', 'db', filename)
+
+class BackupStorage(FileSystemStorage):
+    def get_available_name(self, name, **kwargs):
+        if self.exists(name):
+            os.remove(self.path(name))
+        return name
 
 def generate_unique_id():
     """Функция генерации случайного числа для БД"""
     return str(uuid.uuid4())
+
+
+class DatabaseBackup(models.Model):
+    timestamp = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    file_name = models.CharField(max_length=255, null=True, blank=True)
+    file = models.FileField(upload_to=backup_file_path, storage=backup_storage, null=True, blank=True)
+    is_selected = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "Резервное копирование базы данных"
+        verbose_name_plural = "Резервное копирование базы данных"
+        db_table = 'databasebackup'
+
+    def __str__(self):
+        return self.file_name
+
+@receiver(pre_delete, sender=DatabaseBackup)
+def delete_backup_file(sender, instance, **kwargs):
+    if instance.file:
+        instance.file.storage.delete(instance.file.name)
 
 
 class Favicon(models.Model):
@@ -18,6 +53,27 @@ class Favicon(models.Model):
 
     def __str__(self):
         return self.file.name
+
+@receiver(pre_delete, sender=Favicon)
+def delete_favicon_file(sender, instance, **kwargs):
+    if instance.file:
+        path = instance.file.path
+        if os.path.exists(path):
+            os.remove(path)
+
+@receiver(pre_save, sender=Favicon)
+def update_favicon_file(sender, instance, **kwargs):
+    if not instance.pk:
+        return False
+
+    try:
+        old_favicon = Favicon.objects.get(pk=instance.pk)
+        if old_favicon.file:
+            old_path = old_favicon.file.path
+            if os.path.exists(old_path):
+                os.remove(old_path)
+    except Favicon.DoesNotExist:
+        return False
 
 
 class ClientsList(models.Model):
@@ -292,3 +348,31 @@ class ReleaseInfo(models.Model):
 
     def __str__(self):
         return self.release_number
+
+
+class ReportTicket(models.Model):
+    """Класс для таблицы БД информации с отчётами о тикетах"""
+    report_date = models.DateField(verbose_name='Дата_отчёта', null=True, blank=True)
+    ticket_id = models.IntegerField(verbose_name='Номер_тикета', null=True, blank=True)
+    subject = models.CharField(verbose_name='Тема_тикета', max_length=100, null=True, blank=True)
+    creation_date = models.DateField(verbose_name='Создан', null=True, blank=True)
+    status = models.CharField(verbose_name='Статус', max_length=100, null=True, blank=True)
+    client_name = models.CharField(verbose_name='Название_клиента', max_length=100, null=True, blank=True)
+    priority = models.CharField(verbose_name='Приоритет', max_length=100, null=True, blank=True)
+    assignee_name = models.CharField(verbose_name='Исполнитель', max_length=100, null=True, blank=True)
+    updated_at = models.DateField(verbose_name='Дата_обновления', null=True, blank=True)
+    last_reply_at = models.DateField(verbose_name='Дата_последнего_ответа_клиенту', null=True, blank=True)
+    sla = models.BooleanField(verbose_name='SLA', null=True, blank=True)
+    sla_time = models.IntegerField(verbose_name='Общее_время_SLA', null=True, blank=True)
+    response_time = models.IntegerField(verbose_name='Среднее_время_ответа', null=True, blank=True)
+    cause = models.CharField(verbose_name='Причина_возникновения', max_length=100, null=True, blank=True)
+    module_boardmaps = models.CharField(verbose_name='Модуль_BoardMaps', max_length=100, null=True, blank=True)
+    staff_message = models.IntegerField(verbose_name='Сообщений_от_саппорта', null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Отчёт о тикетах"
+        verbose_name_plural = "Отчёты о тикетах"
+        db_table = "report_ticket"
+
+    def __str__(self):
+        return str(self.ticket_id) if self.ticket_id else ''

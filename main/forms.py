@@ -1,4 +1,4 @@
-from .models import ClientsList, ContactsCard, ServiseCard, TechInformationCard
+from .models import ClientsList, ContactsCard, ServiseCard, TechInformationCard, Integration
 from django.forms import ModelForm, TextInput, Textarea, formset_factory, Select, CheckboxInput
 from django import forms
 
@@ -105,3 +105,48 @@ class TechInformationCardForm(ModelForm):
 
 class ClientForm(forms.Form):
     client_id = forms.IntegerField()
+
+
+class IntegrationForm(forms.ModelForm):
+    class Meta:
+        model = Integration
+        fields = [
+            'elasticsearch',
+            'ad',
+            'adfs',
+            'oauth_2',
+            'module_translate',
+            'ms_oos',
+            'exchange',
+            'office_365',
+            'sfb',
+            'zoom',
+            'teams',
+            'smtp',
+            'cryptopro_dss',
+            'cryptopro_csp',
+            'smpp',
+            'limesurvey',
+        ]
+        widgets = {
+            'elasticsearch': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+            'ad': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+            'adfs': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+            'oauth_2': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+            'module_translate': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+            'ms_oos': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+            'exchange': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+            'office_365': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+            'sfb': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+            'zoom': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+            'teams': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+            'smtp': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+            'cryptopro_dss': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+            'cryptopro_csp': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+            'smpp': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+            'limesurvey': forms.CheckboxInput(attrs={'class': 'js-switch'}),
+        }
+
+class AdvancedSearchForm(forms.Form):
+    serverVersionCheckbox = forms.BooleanField(label='Версия сервера', required=False)
+    serverVersionInput = forms.CharField(label='Введите версию сервера', max_length=255, required=False)

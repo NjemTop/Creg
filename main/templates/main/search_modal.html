@@ -10,7 +10,7 @@
       </div>
       <div class="modal-body">
         <!-- Форма с фильтрами для дополнительного поиска -->
-        <form id="advancedSearchForm">
+        <form id="advancedSearchForm" action="{% url 'search_results' %}" method="GET">
           <!-- Добавьте здесь фильтры, необходимые для вашего поиска -->
           <div class="form-group">
             <label for="integrationCheckbox">Интеграции</label>
@@ -27,16 +27,21 @@
           <div class="form-group">
             <label for="serverVersionCheckbox">Версия сервера</label>
             <input type="checkbox" id="serverVersionCheckbox" name="serverVersionCheckbox">
+            <div class="form-group" id="serverVersionInputWrapper" style="display: none;">
+              <label for="serverVersionInput">Введите версию сервера</label>
+              <input type="text" id="serverVersionInput" name="serverVersionInput" class="form-control">
+              <button type="button" id="showAllClients" class="btn btn-primary">Вывести всех клиентов</button>
+            </div>
           </div>
           <div class="form-group">
             <label for="managerCheckbox">Менеджеры</label>
             <input type="checkbox" id="managerCheckbox" name="managerCheckbox">
           </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" id="advancedSearchSubmit">Искать</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+          </div>
         </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="advancedSearchSubmit">Искать</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
       </div>
     </div>
   </div>
@@ -79,9 +84,27 @@
               </form>
           </div>
           <div class="modal-footer">
-              <button type="button" class="btn btn-primary" id="advancedSearchSubmitMobile">Искать</button>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="button" class="btn btn-primary" id="advancedSearchSubmit">Искать</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
           </div>
       </div>
   </div>
 </div>
+
+<script>
+  $(document).ready(function() {
+    // При изменении состояния чекбокса "Версия сервера"
+    $('#serverVersionCheckbox').change(function() {
+      if ($(this).is(':checked')) {
+        $('#serverVersionInputWrapper').show(); // Показать поле ввода
+      } else {
+        $('#serverVersionInputWrapper').hide(); // Скрыть поле ввода
+      }
+    });
+
+    // Обработка клика по кнопке "Вывести всех клиентов"
+    $('#showAllClients').click(function() {
+      window.location.href = '/search_results?show_all=true';
+    });
+  });
+</script>

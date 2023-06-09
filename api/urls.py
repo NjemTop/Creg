@@ -7,7 +7,7 @@ from . import views
 router = routers.DefaultRouter()
 router.register(r'clients', views.ClientViewSet)
 router.register(r'data_release', views.ReleaseInfoViewSet, basename='releaseinfo')
-
+router.register(r'report', views.ReportTicketViewSet, basename='report')
 
 urlpatterns = [
     path('', include(router.urls)),

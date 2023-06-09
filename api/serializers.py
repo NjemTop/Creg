@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db import transaction
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechNote, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, ReleaseInfo
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechNote, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, ReleaseInfo, ReportTicket
 from rest_framework.exceptions import ValidationError
 
 class ClientsCardSerializer(serializers.ModelSerializer):
@@ -572,77 +572,7 @@ class ReleaseInfoSerializer(serializers.ModelSerializer):
         fields = ['date', 'release_number', 'client_name', 'main_contact', 'copy_contact']
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# class ClientsListSerializer(serializers.ModelSerializer):
-#     """
-#     Сериализатор для модели ClientsList.
-#     Здесь определены дополнительные сериализаторы ClientsCardSerializer, ContactsCardSerializer
-#     и СonnectInfoCardSerializer для связанных полей. 
-#     В методе create реализована логика создания клиента и связанных с ним объектов.
-#     """
-#     clients_card = ClientsCardSerializer(read_only=True)
-#     contacts_card = ContactsCardSerializer(many=True, source='clients_card.contact_cards')
-#     connect_info_card = СonnectInfoCardSerializer(many=True, source='clients_card.connect_info_card')
-
-#     class Meta:
-#         model = ClientsList
-#         fields = '__all__'
-
-#     @transaction.atomic
-#     def create(self, validated_data):
-#         # Проверяем, существует ли уже клиент с таким именем
-#         client_name = validated_data.get('client_name')
-#         if ClientsList.objects.filter(client_name=client_name).exists():
-#             raise ValidationError(f"Клиент '{client_name}' уже есть в системе")
-
-#         # Создаем список для хранения сообщений об ошибках
-#         errors = []
-
-#         # Извлекаем данные контактных карт из валидированных данных
-#         clients_card_data = validated_data.pop('clients_card', {})
-#         contacts_card_data = clients_card_data.get('contacts_card', [])
-#         connect_info_card_data = clients_card_data.get('connect_info_card', [])
-
-#         # Создаем экземпляр ClientsList с переданными данными
-#         clients_list = ClientsList.objects.create(**validated_data)
-
-#         # Создаем экземпляр ClientsCard и устанавливаем связь с созданным экземпляром ClientsList
-#         clients_card = ClientsCard.objects.create(client_info=clients_list)
-
-#         # Создаем экземпляры ContactsCard с данными из contacts_cards_data
-#         for contact_card_data in contacts_card_data:
-#             try:
-#                 ContactsCard.objects.create(client_card=clients_card, **contact_card_data)
-#             except Exception as error_message:
-#                 # Если возникает ошибка при создании экземпляра ContactsCard, выводим информацию об ошибке
-#                 errors.append(f"Ошибка создания карточки пользователя: {error_message}")
-
-#         # Создаем экземпляры СonnectInfoCard с данными из connect_info_card_data
-#         for connect_info_data in connect_info_card_data:
-#             try:
-#                 СonnectInfoCard.objects.create(client_id=clients_card, **connect_info_data)
-#             except Exception as error_message:
-#                 errors.append(f"Ошибка создания информации для подключения: {error_message}")
-
-#         # Если список ошибок не пуст, вызываем исключение ValidationError
-#         if errors:
-#             raise serializers.ValidationError(errors)
-
-#         # Возвращаем созданный экземпляр ClientsList
-#         return clients_list
+class ReportTicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReportTicket
+        fields = ['report_date', 'ticket_id', 'subject', 'creation_date', 'status', 'client_name', 'priority', 'assignee_name', 'updated_at', 'last_reply_at', 'sla', 'sla_time', 'response_time', 'cause', 'module_boardmaps', 'staff_message']

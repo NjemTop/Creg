@@ -22,7 +22,7 @@ from django.shortcuts import get_object_or_404
 from .swagger_schemas import request_schema, response_schema
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote, ReleaseInfo
+from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote, ReleaseInfo, ReportTicket
 from .mixins import CustomResponseMixin, CustomCreateModelMixin, CustomQuerySetFilterMixin
 from .response_helpers import file_upload_error_response, custom_update_response, custom_delete_response
 from .serializers import (
@@ -39,6 +39,7 @@ from .serializers import (
     TechNoteSerializer,
     ForAutomaticEmailSerializer,
     ReleaseInfoSerializer,
+    ReportTicketSerializer,
 )
 
 
@@ -870,7 +871,18 @@ class ReleaseInfoViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mix
         return Response(release_versions)
 
 
-
+class ReportTicketViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
+    permission_classes = [IsAuthenticated]
+    serializer_class = ReportTicketSerializer
+    
+    def get_queryset(self):
+        queryset = ReportTicket.objects.all()
+        start_date = self.request.query_params.get('start_date', None)
+        end_date = self.request.query_params.get('end_date', None)
+        if start_date is not None and end_date is not None:
+            queryset = queryset.filter(creation_date__range=[start_date, end_date])
+        return queryset
 
 
 

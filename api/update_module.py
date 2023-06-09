@@ -1,6 +1,8 @@
 import requests
 from django.db.models import Q
 from main.models import ClientsCard, ModuleCard
+from django.db.utils import IntegrityError
+from rapidfuzz import fuzz
 import logging
 
 logger = logging.getLogger(__name__)
@@ -8,9 +10,10 @@ logger = logging.getLogger(__name__)
 def update_module_info():
     url = "https://licensor.boardmaps.ru/api/v1/licenses"
 
+    # Получение данных с API
     try:
         response = requests.get(url)
-        response.raise_for_status()  # проверка на статус ответа, в случае ошибки будет выброшено исключение
+        response.raise_for_status()
     except requests.exceptions.RequestException as e:
         logger.error(f"Ошибка при получении данных с API: {e}")
         return
@@ -19,11 +22,27 @@ def update_module_info():
 
     for item in data:
         client_name_api = clean_client_name(item["Name"])
-        client_card = ClientsCard.objects.filter(Q(client_info__client_name__iexact=client_name_api)).first()
-        
-        if client_card:
-            module_card, created = ModuleCard.objects.get_or_create(client_card=client_card)
-            
+        try:
+            # Находим клиента с наиболее схожим именем
+            client_card = None
+            max_ratio = 0
+            for client in ClientsCard.objects.all():
+                ratio = fuzz.ratio(client_name_api, client.client_info.client_name.lower())
+                if ratio > max_ratio:
+                    max_ratio = ratio
+                    client_card = client
+        except IntegrityError as e:
+            logger.error(f"Ошибка целостности данных: {e}")
+            continue  # Переходим к следующему элементу
+
+        if client_card and max_ratio > 70:  # Можно изменить порог схожести по необходимости
+            try:
+                module_card, created = ModuleCard.objects.get_or_create(client_card=client_card)
+            except IntegrityError as e:
+                logger.error(f"Ошибка целостности данных: {e}")
+                continue  # Переходим к следующему элементу
+
+            # Обновление или создание записи модуля
             module_card.translate = item["ModuleDocumentBroadcastingEnabled"]
             module_card.electronic_signature = item["ModuleElectronicSignatureEnabled"]
             module_card.action_items = item["ModuleActionItemsEnabled"]
@@ -45,9 +64,7 @@ def update_module_info():
         else:
             logger.warning(f"Клиент {client_name_api} не найден в базе данных")
 
-
 def clean_client_name(client_name):
     # Удаляем лишние символы и приводим к нижнему регистру
     cleaned_name = ''.join(e for e in client_name if e.isalnum() or e.isspace()).lower()
     return cleaned_name
-

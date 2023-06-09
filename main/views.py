@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect
-from .models import ClientsList, ClientsCard, ContactsCard, ReleaseInfo, ServiseCard, TechInformationCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, TechNote
-from .forms import ClientListForm, ContactFormSet, ServiseCardForm, TechInformationCardForm, ContactForm
+from .models import ClientsList, ReportTicket, ClientsCard, ContactsCard, ReleaseInfo, ServiseCard, TechInformationCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, TechNote
+from .forms import ClientListForm, AdvancedSearchForm, ContactFormSet, ServiseCardForm, TechInformationCardForm, ContactForm, IntegrationForm
 from django.db import transaction
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseServerError
 from django.template import loader
 from django.shortcuts import render, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.utils import timezone
 
 
 def index(request):
@@ -12,8 +15,9 @@ def index(request):
 
 
 def clients(request):
-    clients = ClientsList.objects.all().prefetch_related('clients_card__contact_cards')  # Загрузите все карточки клиентов и связанные контакты
-    return render(request, 'main/clients.html', {'title': 'Список клиентов', 'clients': clients})
+    clients = ClientsList.objects.all().prefetch_related('clients_card__contact_cards', 'clients_card__integration')  # Загрузите все карточки клиентов, связанные контакты и данные интеграции
+    forms = {client.id: IntegrationForm(instance=client.clients_card.integration) for client in clients}  # Создаем словарь с формами интеграции для каждого клиента
+    return render(request, 'main/clients.html', {'title': 'Список клиентов', 'clients': clients, 'forms': forms})
 
 
 def get_contacts(request, client_id):
@@ -23,6 +27,71 @@ def get_contacts(request, client_id):
     context = {'contacts': contacts}
     contacts_table = template.render(context, request)
     return HttpResponse(contacts_table)
+
+
+def search_results(request):
+    # Получаем данные формы из GET-запроса
+    form = AdvancedSearchForm(request.GET)
+
+    # Проверяем, установлен ли флаг "show_all"
+    # Если "show_all" равно "true", возвращаем все записи из TechInformationCard
+    # В противном случае используем данные формы для поиска
+    show_all = request.GET.get('show_all', 'false') == 'true'
+
+    # Если установлен флаг "show_all"
+    if show_all:
+        try:
+            results = TechInformationCard.objects.all()
+        except Exception as error:
+            error_message = f"Произошла ошибка при получении всех записей: {str(error)}"
+            return render(request, 'main/error.html', {'error_message': error_message})
+    # Если форма действительна
+    elif form.is_valid():
+        try:
+            # Получаем значения чекбокса и поля ввода для версии сервера
+            server_version_checkbox = form.cleaned_data.get('serverVersionCheckbox')
+            server_version_input = form.cleaned_data.get('serverVersionInput')
+            
+            # Если чекбокс версии сервера отмечен, используем введенную версию сервера для поиска записей
+            if server_version_checkbox:
+                results = TechInformationCard.objects.filter(server_version=server_version_input)
+        except Exception as error:
+            error_message = f"Произошла ошибка при обработке данных формы: {str(error)}"
+            return render(request, 'main/error.html', {'error_message': error_message})
+    else:
+        error_message = "Произошла ошибка при обработке формы."
+        return render(request, 'main/error.html', {'error_message': error_message})
+
+    # Подготавливаем данные для отправки в шаблон
+    rows = []
+    for result in results:
+        try:
+            # Создаем словарь для каждого результата и добавляем его в список
+            row = {
+            'client_name': result.client_card.client_info.client_name,
+            'server_version': result.server_version,
+            'update_date': result.update_date.strftime('%Y-%m-%d'),
+            # Добавьте другие поля, если необходимо
+            }
+            rows.append(row)
+        except Exception as error:
+            error_message = f"Произошла ошибка при обработке результатов: {str(error)}"
+            return render(request, 'main/error.html', {'error_message': error_message})
+
+    # Преобразуем список результатов в JSON
+    results_json = json.dumps(rows)
+    context = {'results_json': results_json}
+
+    # Возвращаем шаблон search_results.html с данными для отображения результатов
+    return render(request, 'main/search_results.html', context)
+
+
+def update_integration(request, client_id):
+    form = IntegrationForm(request.POST, instance=ClientsList.objects.get(id=client_id).clients_card.integration)
+    if form.is_valid():
+        form.save()
+    return redirect('clients')
+
 
 @transaction.atomic
 def create_client(request):
@@ -214,3 +283,11 @@ def upload_file(request):
 def release_info(request):
     release_infos = ReleaseInfo.objects.order_by('-date')
     return render(request, 'main/release_info.html', {'release_infos': release_infos})
+
+
+def report(request):
+    now = timezone.now()
+    start_week = now - timezone.timedelta(days=now.weekday())  # начало недели (понедельник)
+    report_tickets = list(ReportTicket.objects.filter(creation_date__range=[start_week, now]).values())
+    report_tickets_json = json.dumps(report_tickets, default=str)  # default=str используется для преобразования дат в строки
+    return render(request, 'main/report.html', {'report_tickets': report_tickets_json})

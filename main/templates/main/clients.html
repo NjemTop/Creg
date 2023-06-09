@@ -41,7 +41,7 @@
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#tech_informationModal_{{ client.id }}" data-client-id="{{ client.id }}"><img src="/media/favicons/icon_tech_info.png" alt="Тех. Информация" class="img-small" /></a>
                             </td>
                             <td class="wider-icon-column">
-                                <a href="#"><img src="/media/favicons/icon_integrations.png" alt="Интеграции" class="img-small" /></a>
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#integrationModal_{{ client.id }}" data-client-id="{{ client.id }}"><img src="/media/favicons/icon_integrations.png" alt="Интеграции" class="img-small" /></a>
                             </td>
                             <td class="wider-icon-column">
                                 <a href="#"><img src="/media/favicons/icon_documents.png" alt="Документы" class="img-small" /></a>
@@ -57,6 +57,7 @@
             {% include 'main/service_modal.html' with clients=clients %}
             {% include 'main/tech_information_modal.html' with clients=clients %}
             {% include 'main/contact_modal.html' with clients=clients %}
+            {% include 'main/integration_modal.html' with clients=clients %}
         {% else %}
             <p>Нет доступных клиентов.</p>
         {% endif %}
