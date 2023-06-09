@@ -96,7 +96,8 @@ services:
       - "514:514" # Порт Graylog Syslog TCP input
       - "514:514/udp" # Порт Graylog Syslog UDP input
     volumes:
-    - graylogdata:/usr/share/graylog/data
+      - graylogdata:/usr/share/graylog/data
+      - ./plugins:/usr/share/graylog/plugin
     depends_on:
       - elasticsearch
       - mongo
