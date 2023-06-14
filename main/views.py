@@ -15,7 +15,12 @@ from celery.result import AsyncResult
 def test_task(request):
     task = echo.delay(4, 4)
     result = AsyncResult(id=task.task_id)
-    response = f"Task ID: {task.task_id}, Task Status: {result.status}, Task Result: {result.result}"
+    
+    if result.failed():
+        response = f"Task ID: {task.task_id}, Task Status: {result.status}, Error: {result.result}"
+    else:
+        response = f"Task ID: {task.task_id}, Task Status: {result.status}, Task Result: {result.result}"
+    
     return HttpResponse(response)
 
 def get_task_info(request, task_id):

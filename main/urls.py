@@ -37,7 +37,7 @@ urlpatterns = [
     path('search_results/', views.search_results, name='search_results'),
     path('report/', views.report, name='report'),
     path('test_task/', views.test_task, name='test_task'),
-    path('test_task/<str:task_id>/', views.get_task_info, name='test_task'),
+    path('get_task_info/<str:task_id>/', views.get_task_info, name='get_task_info'),
     path('test_email_task/', views.test_send_email_task, name='test_email_task'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
