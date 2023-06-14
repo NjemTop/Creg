@@ -10,6 +10,7 @@ import json
 from django.utils import timezone
 from main.tasks import echo, send_test_email
 from celery.result import AsyncResult
+from django_celery_results.models import TaskResult
 
 
 def test_task(request):
@@ -34,6 +35,10 @@ def get_task_info(request, task_id):
 def test_send_email_task(request):
     task = send_test_email.delay('oleg.eliseev@boardmaps.ru')
     return JsonResponse({'task_id': task.id}, status=202)
+
+def task_results(request):
+    results = TaskResult.objects.all()
+    return render(request, 'main/results.html', {'results': results})
 
 
 def index(request):

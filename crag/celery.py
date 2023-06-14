@@ -17,6 +17,9 @@ app = Celery('crag', broker=os.getenv('CELERY_BROKER_URL'))
 # Используем настройки Django для конфигурации Celery
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
+# Установка backend для результатов задач в Celery
+app.conf.result_backend = 'db+postgresql://sa:kJGnTXBT@db/database_2'
+
 # Автоматическая загрузка задач из файла tasks.py каждого приложения
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
