@@ -229,6 +229,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'api.tasks.update_module_info_task',
         'schedule': crontab(hour=3, minute=0),  # Запуск в 3:00 по МСК
     },
+    'update_tickets': {
+        'task': 'api.tasks.update_tickets',
+        'schedule': crontab(hour=22, minute=0),  # Запуск в 22:00 по МСК
+    },
 }
 
 # Настройка, которая убирает слэш в конце "/"
