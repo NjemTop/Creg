@@ -11,6 +11,9 @@ from django.contrib import messages
 from datetime import datetime
 from django.core.files.base import ContentFile
 from io import StringIO
+import json
+from django_celery_beat.models import PeriodicTask
+from api.tasks import add_user_jfrog_task, update_module_info_task, update_tickets
 
 
 @admin.register(DatabaseBackup)
@@ -62,6 +65,30 @@ class DatabaseBackupAdmin(admin.ModelAdmin):
         return redirect('..')
 
 
+def run_selected_tasks(modeladmin, request, queryset):
+    for task in queryset:
+        args = json.loads(task.args)  # Десериализация аргументов из JSON
+        if task.task == 'api.tasks.add_user_jfrog_task':
+            add_user_jfrog_task.delay(*args)  # Используйте delay() для запуска задачи
+        elif task.task == 'api.tasks.update_module_info_task':
+            update_module_info_task.delay(*args)  # Используйте delay() для запуска задачи
+        elif task.task == 'api.tasks.update_tickets':
+            update_tickets.delay(*args)  # Используем метод delay() для запуска задачи
+        task.last_run_at = timezone.now()  # Установка времени последнего запуска
+        task.save()
+
+run_selected_tasks.short_description = "Запустить выбранные задачи"
+
+class PeriodicTaskAdmin(admin.ModelAdmin):
+    list_display = ('name', 'task', 'enabled')
+    actions = [run_selected_tasks]
+
+# Повторная регистрация модели PeriodicTask
+admin.site.register(PeriodicTask, PeriodicTaskAdmin)
+
+# Отмена регистрации модели PeriodicTask
+admin.site.unregister(PeriodicTask)
+
 class ClientsCardAdmin(admin.ModelAdmin):
     list_display = ('id', 'client_name', 'contacts', 'tech_notes', 'connect_info', 'rdp', 'tech_account', 'bm_servers')
     list_display_links = ('client_name',)
@@ -87,8 +114,16 @@ class ServiseCardAdmin(admin.ModelAdmin):
         return obj.client_card.client_info.client_name
     client_name.short_description = 'Клиент'
 
+class ClientsListAdmin(admin.ModelAdmin):
+    list_display = ('id', 'client_name', 'short_name', 'password', 'contact_status')
+    list_display_links = ('client_name',)
 
-admin.site.register(ClientsList)
+    def client_name(self, obj):
+        return obj.client_card.client_info.client_name
+    client_name.short_description = 'Клиент'
+
+
+admin.site.register(ClientsList, ClientsListAdmin)
 admin.site.register(ClientsCard, ClientsCardAdmin)
 admin.site.register(ContactsCard, ContactsCardAdmin)
 admin.site.register(ConnectInfoCard)
@@ -102,9 +137,11 @@ admin.site.register(TechNote)
 admin.site.register(ReleaseInfo)
 admin.site.register(ReportTicket)
 
+
 @admin.register(Favicon)
 class FaviconAdmin(admin.ModelAdmin):
     fields = ['file']
+
 
 @admin.register(ConnectionInfo)
 class ConnectionInfoAdmin(admin.ModelAdmin):

@@ -116,7 +116,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClientsList
-        fields = ('id', 'client_name', 'contact_status', 'short_name', 'servise_card', 'tech_information', 'contacts_card', 'connect_info_card', 'tech_account_card', 'bm_servers', 'integration', 'module', 'tech_note', 'notes')
+        fields = ('id', 'client_name', 'contact_status', 'short_name', 'password', 'servise_card', 'tech_information', 'contacts_card', 'connect_info_card', 'tech_account_card', 'bm_servers', 'integration', 'module', 'tech_note', 'notes')
 
     def create(self, validated_data):
         """

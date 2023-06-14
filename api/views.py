@@ -18,6 +18,7 @@ from django.db.models import F
 from urllib.parse import unquote
 import datetime
 import logging
+from scripts.add_user_JFrog_WEB import generate_random_password
 from django.shortcuts import get_object_or_404
 from .swagger_schemas import request_schema, response_schema
 from drf_yasg.utils import swagger_auto_schema
@@ -56,7 +57,6 @@ class ClientSearch(View):
         )[:5]
         clients_info = list(clients.values('id', 'client_name', 'clients_card__tech_information__server_version'))
         return JsonResponse(clients_info, safe=False)
-
 
 
 class MultipleValueFilter(filters.BaseInFilter, filters.CharFilter):
@@ -277,6 +277,18 @@ def add_client(request):
             if serializer.is_valid():
                 client = serializer.save()
                 client_card = client.clients_card  # Получаем объект ClientsCard для созданного клиента
+
+                # Генерируем пароль и сохраняем его в объект клиента
+                password = generate_random_password()
+                client.password = password
+                client.save()
+
+                # Асинхронно запускаем скрипт для создания пользователя в JFrog
+                username = client.short_name
+                email = f"{username}@example.com"
+                from api.tasks import add_user_jfrog_task
+                add_user_jfrog_task.apply_async((username, email, password), countdown=600)
+
                 contact_serializer = ContactsSerializer(data=request.data.get('contacts_card', []), many=True)
                 if contact_serializer.is_valid():
                     contact_serializer.save(client_card=client_card)  # Передаем объект ClientsCard

@@ -79,6 +79,7 @@ def update_favicon_file(sender, instance, **kwargs):
 class ClientsList(models.Model):
     client_name = models.CharField(verbose_name="Название клиента", max_length=100, db_index=True)
     short_name = models.CharField(verbose_name="Сокращенное наименование клиента", max_length=20, null=True, blank=True)
+    password = models.CharField(verbose_name="Пароль для JFrog", max_length=20, null=True, blank=True)
     contact_status = models.BooleanField(verbose_name='Статус клиента', default=True)
     service = models.CharField(verbose_name="Обслуживание", max_length=255, default=generate_unique_id)
     technical_information = models.CharField(verbose_name="Техническая информация", max_length=255,
@@ -219,7 +220,7 @@ class ModuleCard(models.Model):
     advanced_voting = models.BooleanField(verbose_name='Расширенные сценарии голосования', null=True, blank=True, default=False)
     advanced_work_with_documents = models.BooleanField(verbose_name='Расширенные сценарии работы с документами', null=True, blank=True, default=False)
     advanced_access_rights_management = models.BooleanField(verbose_name='Расширенные сценарии управления правами доступа', null=True, blank=True, default=False)
-    visual_improvements = models.BooleanField(verbose_name='Визуальные_улучшения', null=True, blank=True, default=False)
+    visual_improvements = models.BooleanField(verbose_name='Визуальные улучшения', null=True, blank=True, default=False)
     third_party_product_integrations = models.BooleanField(verbose_name='Интеграции со сторонними продуктами', null=True, blank=True, default=False)
     microsoft_enterprise_product_integrations = models.BooleanField(verbose_name='Интеграция с продуктами Microsoft Enterprise', null=True, blank=True, default=False)
     microsoft_office_365_integration = models.BooleanField(verbose_name='Интеграция с продуктами Microsoft Office 365', null=True, blank=True, default=False)
@@ -240,7 +241,7 @@ class TechAccountCard(models.Model):
     client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='tech_account_card',
                                   verbose_name="Client Card")
     contact_info_disc = models.CharField(verbose_name='Описание', max_length=255)
-    contact_info_account = models.CharField(verbose_name='Учетная_запись', max_length=255)
+    contact_info_account = models.CharField(verbose_name='Учетная запись', max_length=255)
     contact_info_password = models.CharField(verbose_name='Пароль', max_length=255)
 
     class Meta:
@@ -352,22 +353,22 @@ class ReleaseInfo(models.Model):
 
 class ReportTicket(models.Model):
     """Класс для таблицы БД информации с отчётами о тикетах"""
-    report_date = models.DateField(verbose_name='Дата_отчёта', null=True, blank=True)
-    ticket_id = models.IntegerField(verbose_name='Номер_тикета', null=True, blank=True)
-    subject = models.CharField(verbose_name='Тема_тикета', max_length=100, null=True, blank=True)
+    report_date = models.DateField(verbose_name='Дата отчёта', null=True, blank=True)
+    ticket_id = models.IntegerField(verbose_name='Номер тикета', null=True, blank=True)
+    subject = models.CharField(verbose_name='Тема тикета', max_length=100, null=True, blank=True)
     creation_date = models.DateField(verbose_name='Создан', null=True, blank=True)
     status = models.CharField(verbose_name='Статус', max_length=100, null=True, blank=True)
-    client_name = models.CharField(verbose_name='Название_клиента', max_length=100, null=True, blank=True)
+    client_name = models.CharField(verbose_name='Название клиента', max_length=100, null=True, blank=True)
     priority = models.CharField(verbose_name='Приоритет', max_length=100, null=True, blank=True)
     assignee_name = models.CharField(verbose_name='Исполнитель', max_length=100, null=True, blank=True)
-    updated_at = models.DateField(verbose_name='Дата_обновления', null=True, blank=True)
-    last_reply_at = models.DateField(verbose_name='Дата_последнего_ответа_клиенту', null=True, blank=True)
+    updated_at = models.DateField(verbose_name='Дата обновления', null=True, blank=True)
+    last_reply_at = models.DateField(verbose_name='Дата последнего ответа клиенту', null=True, blank=True)
     sla = models.BooleanField(verbose_name='SLA', null=True, blank=True)
-    sla_time = models.IntegerField(verbose_name='Общее_время_SLA', null=True, blank=True)
-    response_time = models.IntegerField(verbose_name='Среднее_время_ответа', null=True, blank=True)
-    cause = models.CharField(verbose_name='Причина_возникновения', max_length=100, null=True, blank=True)
-    module_boardmaps = models.CharField(verbose_name='Модуль_BoardMaps', max_length=100, null=True, blank=True)
-    staff_message = models.IntegerField(verbose_name='Сообщений_от_саппорта', null=True, blank=True)
+    sla_time = models.IntegerField(verbose_name='Общее_время SLA', null=True, blank=True)
+    response_time = models.IntegerField(verbose_name='Среднее время ответа', null=True, blank=True)
+    cause = models.CharField(verbose_name='Причина возникновения', max_length=100, null=True, blank=True)
+    module_boardmaps = models.CharField(verbose_name='Модуль BoardMaps', max_length=100, null=True, blank=True)
+    staff_message = models.IntegerField(verbose_name='Сообщений от саппорта', null=True, blank=True)
 
     class Meta:
         verbose_name = "Отчёт о тикетах"

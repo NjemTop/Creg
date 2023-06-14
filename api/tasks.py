@@ -3,6 +3,7 @@ from api.update_module import update_module_info
 from datetime import datetime
 from django.utils import timezone
 from main.models import ReportTicket
+from scripts.add_user_JFrog_WEB import add_user_jfrog
 import requests
 import json
 import logging
@@ -16,6 +17,11 @@ def update_module_info_task():
     except Exception as error_message:
         print('Ошибка: %s' % str(error_message))
         logger.error(f"Ошибка при запуске задачи: {error_message}")
+
+
+@shared_task
+def add_user_jfrog_task(username, email, password):
+    add_user_jfrog(username, email, password)
 
 
 @shared_task

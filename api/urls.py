@@ -4,6 +4,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_simplejwt.views import TokenObtainPairView
 from . import views
 
+
 router = routers.DefaultRouter()
 router.register(r'clients', views.ClientViewSet)
 router.register(r'data_release', views.ReleaseInfoViewSet, basename='releaseinfo')
