@@ -4,6 +4,8 @@
 # python3 manage.py createsuperuser
 # python3 manage.py makemigrations main
 # python3 manage.py migrate --database=default main zero
+# python3 manage.py migrate django_celery_beat zero
+# python3 manage.py migrate django_celery_beat
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
