@@ -8,13 +8,15 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.utils import timezone
-from main.tasks import echo
+from main.tasks import echo, send_test_email
 from celery.result import AsyncResult
 
 
 def test_task(request):
-    task = echo.delay("Hello, Celery!")
-    return JsonResponse({'task_id': task.id}, status=202)
+    task = echo.delay(4, 4)
+    result = AsyncResult(id=task.task_id)
+    response = f"Task ID: {task.task_id}, Task Status: {result.status}, Task Result: {result.result}"
+    return HttpResponse(response)
 
 def get_task_info(request, task_id):
     task = AsyncResult(task_id)
@@ -23,6 +25,10 @@ def get_task_info(request, task_id):
         'result': task.result,
     }
     return JsonResponse(info)
+
+def test_send_email_task(request):
+    task = send_test_email.delay('oleg.eliseev@boardmaps.ru')
+    return JsonResponse({'task_id': task.id}, status=202)
 
 
 def index(request):

@@ -235,6 +235,15 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
+# Настройки почты
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'sup-smtp@boardmaps.ru'
+EMAIL_HOST_PASSWORD = 'rcjtcxvjzfsjglko'
+DEFAULT_FROM_EMAIL = 'sup-smtp@boardmaps.ru'
+
 # Настройка, которая убирает слэш в конце "/"
 # APPEND_SLASH = False
 
