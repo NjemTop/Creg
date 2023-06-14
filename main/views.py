@@ -8,6 +8,21 @@ from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.utils import timezone
+from main.tasks import echo
+from celery.result import AsyncResult
+
+
+def test_task(request):
+    task = echo.delay("Hello, Celery!")
+    return JsonResponse({'task_id': task.id}, status=202)
+
+def get_task_info(request, task_id):
+    task = AsyncResult(task_id)
+    info = {
+        'state': task.state,
+        'result': task.result,
+    }
+    return JsonResponse(info)
 
 
 def index(request):

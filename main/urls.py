@@ -36,6 +36,8 @@ urlpatterns = [
     path('update_integration/<int:client_id>/', views.update_integration, name='update_integration'),
     path('search_results/', views.search_results, name='search_results'),
     path('report/', views.report, name='report'),
+    path('test_task/', views.test_task, name='test_task'),
+    path('task_info/<str:task_id>/', views.get_task_info, name='task_info'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
