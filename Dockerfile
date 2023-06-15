@@ -22,21 +22,6 @@ RUN apt-get update && apt-get install -y \
     default-libmysqlclient-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Установка браузера Firefox и Geckodriver
-RUN apt-get update \
-    && apt-get install -y firefox-esr \
-    && apt-get install -y wget \
-    && apt-get install -y libgtk-3-0 \
-    && apt-get install -y libdbus-glib-1-2 \
-    && apt-get install -y libxt6 \
-    && rm -rf /var/lib/apt/lists/*
-
-# Установка Geckodriver
-RUN wget -O /tmp/geckodriver.tar.gz https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz \
-    && tar -xf /tmp/geckodriver.tar.gz -C /usr/local/bin/ \
-    && chmod +x /usr/local/bin/geckodriver \
-    && rm /tmp/geckodriver.tar.gz
-
 # Копируем остальные файлы проекта
 COPY . .
 
