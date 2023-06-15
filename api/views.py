@@ -18,7 +18,7 @@ from django.db.models import F
 from urllib.parse import unquote
 import datetime
 import logging
-from scripts.add_user_JFrog_WEB import generate_random_password
+from scripts.add_user_JFrog import generate_random_password
 from django.shortcuts import get_object_or_404
 from .swagger_schemas import request_schema, response_schema
 from drf_yasg.utils import swagger_auto_schema
@@ -285,9 +285,8 @@ def add_client(request):
 
                 # Асинхронно запускаем скрипт для создания пользователя в JFrog
                 username = client.short_name
-                email = f"{username}@example.com"
                 from api.tasks import add_user_jfrog_task
-                add_user_jfrog_task.apply_async((username, email, password), countdown=600)
+                add_user_jfrog_task.apply_async((username, password), countdown=600)
 
                 contact_serializer = ContactsSerializer(data=request.data.get('contacts_card', []), many=True)
                 if contact_serializer.is_valid():

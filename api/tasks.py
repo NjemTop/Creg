@@ -3,7 +3,7 @@ from api.update_module import update_module_info
 from datetime import datetime
 from django.utils import timezone
 from main.models import ReportTicket
-from scripts.add_user_JFrog_WEB import add_user_jfrog
+from scripts.add_user_JFrog import authenticate, create_user
 import requests
 import json
 import logging
@@ -20,8 +20,24 @@ def update_module_info_task():
 
 
 @shared_task
-def add_user_jfrog_task(username, email, password):
-    add_user_jfrog(username, email, password)
+def add_user_jfrog_task(username, password):
+    try:
+        # Вызов функций авторизации
+        cookies = authenticate()
+        if cookies:
+            status_code = create_user(username, password, cookies)
+            if status_code:
+                print(f"Пользователь успешно создан. Код ответа: {status_code}")
+                logger.info(f"Пользователь успешно создан. Код ответа: {status_code}")
+            else:
+                print("Ошибка при создании пользователя")
+                logger.error("Ошибка при создании пользователя")
+        else:
+            print("Ошибка авторизации")
+            logger.error("Ошибка авторизации")
+    except Exception as error_message:
+        logger.error(f"Ошибка при выполнении задачи: {error_message}")
+
 
 
 @shared_task
