@@ -1,5 +1,7 @@
 import requests
 import json
+import string
+import random
 
 
 def authenticate():
