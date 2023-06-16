@@ -216,8 +216,8 @@ MEDIA_URL = '/media/'
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 CELERY_RESULT_BACKEND = 'django-db'
 # Сохраняем результаты задач в БД
-CELERY_TASK_IGNORE_RESULT = False
-CELERY_IGNORE_RESULT = False
+# CELERY_TASK_IGNORE_RESULT = False
+# CELERY_IGNORE_RESULT = False
 CELERY_TIMEZONE = 'Europe/Moscow'
 
 CELERY_ACCEPT_CONTENT = ['json']
