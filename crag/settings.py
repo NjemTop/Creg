@@ -214,7 +214,7 @@ MEDIA_URL = '/media/'
 
 # Настройки Celery
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
-CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')
+CELERY_RESULT_BACKEND = 'django-db'
 # Сохраняем результаты задач в БД
 CELERY_TASK_IGNORE_RESULT = False
 CELERY_IGNORE_RESULT = False
@@ -278,23 +278,23 @@ LOGGING = {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': './logs/info.log',
-            'maxBytes': 1024*1024*10,  # Устанавливаем размер файла логов в 10 MB
-            'backupCount': 10,  # Устанавливаем количество файлов логов в 10 файлов
+            'maxBytes': 1024*1024*2,  # Устанавливаем размер файла логов в 2 MB
+            'backupCount': 5,  # Устанавливаем количество файлов логов в 5 файлов
             'formatter': 'verbose',  # Применяем форматтер
         },
         'warning_file': {
             'level': 'WARNING',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': './logs/warning.log',
-            'maxBytes': 1024*1024*10, # Устанавливаем размер файла логов в 10 MB
-            'backupCount': 5, # Устанавливаем количество файлов логов в 10 файлов
+            'maxBytes': 1024*1024*5, # Устанавливаем размер файла логов в 5 MB
+            'backupCount': 2, # Устанавливаем количество файлов логов в 2 файлов
             'formatter': 'verbose', # Применяем форматтер
         },
         'error_file': {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': './logs/error.log',
-            'maxBytes': 1024*1024*10,  # Устанавливаем размер файла логов в 10 MB
+            'maxBytes': 1024*1024*2,  # Устанавливаем размер файла логов в 2 MB
             'backupCount': 3,  # Устанавливаем количество файлов логов в 3 файла
             'formatter': 'verbose',  # Применяем форматтер
         },
@@ -302,7 +302,7 @@ LOGGING = {
             'level': 'CRITICAL',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': './logs/critical.log',
-            'maxBytes': 1024*1024*10,  # Устанавливаем размер файла логов в 10 MB
+            'maxBytes': 1024*1024*2,  # Устанавливаем размер файла логов в 1 MB
             'backupCount': 3,  # Устанавливаем количество файлов логов в 3 файла
             'formatter': 'verbose',  # Применяем форматтер
         },
@@ -310,20 +310,20 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',  # Применяем форматтер
         },
-        'graypy': {
+        'gelf': {
         'level': 'INFO',
-        'class': 'graypy.GELFUDPHandler',
-        'host': 'graylog',
-        'port': 12201,  # Порт Graylog GELF UDP input
+        'class': 'graypy.GELFTCPHandler',
+        'host': 'mongo',
+        'port': 12201,  # Порт Graylog GELF TCP input
     },
     },
     'root': {
-        'handlers': ['file', 'console', 'graypy'],
+        'handlers': ['file', 'console', 'gelf'],
         'level': 'DEBUG',
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'info_file', 'warning_file', 'error_file', 'critical_file', 'console', 'graypy' ],
+            'handlers': ['file', 'info_file', 'warning_file', 'error_file', 'critical_file', 'console', 'gelf'],
             'level': 'INFO',
             'propagate': True,
         },
