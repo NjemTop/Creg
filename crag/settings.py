@@ -214,16 +214,16 @@ MEDIA_URL = '/media/'
 
 # Настройки Celery
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
-CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')
 # Сохраняем результаты задач в БД
-# CELERY_TASK_IGNORE_RESULT = False
-# CELERY_IGNORE_RESULT = False
+CELERY_TASK_IGNORE_RESULT = False
+CELERY_IGNORE_RESULT = False
 CELERY_TIMEZONE = 'Europe/Moscow'
 
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-
+ 
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 # Расписание Celery Beat
