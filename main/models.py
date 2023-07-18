@@ -340,7 +340,7 @@ class ReleaseInfo(models.Model):
     release_number = models.CharField(verbose_name="Номер релиза", max_length=10)
     client_name = models.CharField(verbose_name="Наименование клиента", max_length=100)
     main_contact = models.CharField(verbose_name="Основной контакт", max_length=100)
-    copy_contact = models.TextField(verbose_name="Копия")
+    copy_contact = models.TextField(verbose_name="Копия", null=True, blank=True)
 
     class Meta:
         verbose_name = "Отчёт о рассылке"

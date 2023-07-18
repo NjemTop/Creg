@@ -18,8 +18,9 @@ from django.db.models import F
 from urllib.parse import unquote
 import datetime
 import logging
-from scripts.add_user_JFrog import generate_random_password
-from django.shortcuts import get_object_or_404
+import threading
+from scripts.add_user_JFrog import generate_random_password, authenticate, create_user
+from django.shortcuts import get_object_or_404, get_list_or_404
 from .swagger_schemas import request_schema, response_schema
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -48,6 +49,12 @@ from .serializers import (
 logger = logging.getLogger(__name__)
 
 
+def create_user_in_jfrog(username, password):
+    cookies = authenticate()
+    if cookies:
+        create_user(username, password, cookies)
+
+
 class ClientSearch(View):
     def get(self, request, *args, **kwargs):
         query = request.GET.get('q', '')
@@ -61,6 +68,18 @@ class ClientSearch(View):
 
 class MultipleValueFilter(filters.BaseInFilter, filters.CharFilter):
     pass
+
+# class NonEmptyMDMFilter(filters.BooleanFilter):
+#     """
+#     Фильтр, который возвращает записи, у которых поле 'mdm' не пустое.
+#     """
+
+#     def filter(self, qs, value):
+#         if value in filters.constants.EMPTY_VALUES:
+#             return qs
+
+#         q = Q(**{f'{self.field_name}__isnull': False}) & ~Q(**{f'{self.field_name}': ''})
+#         return qs.filter(q)
 
 class ClientFilter(filters.FilterSet):
     """
@@ -93,9 +112,11 @@ class ClientFilter(filters.FilterSet):
         # Продолжение обработки запроса с обновленными значениями фильтров
         return super().list(request, *args, **kwargs)
 
+    # Фильтр по Наименоанию клиента и его активности
     client_name = filters.CharFilter(field_name="client_name", lookup_expr='iexact')
     contact_status = filters.BooleanFilter(field_name="contact_status")
 
+    # Фильтр по интеграциям
     elasticsearch = filters.BooleanFilter(field_name="clients_card__integration__elasticsearch")
     ad = filters.BooleanFilter(field_name="clients_card__integration__ad")
     adfs = filters.BooleanFilter(field_name="clients_card__integration__adfs")
@@ -113,12 +134,28 @@ class ClientFilter(filters.FilterSet):
     smpp = filters.BooleanFilter(field_name="clients_card__integration__smpp")
     limesurvey = filters.BooleanFilter(field_name="clients_card__integration__limesurvey")
 
+    # Фильтр по технической информации
     server_version = filters.CharFilter(field_name="clients_card__tech_information__server_version", lookup_expr='iexact')
     update_date = filters.DateFilter(field_name="clients_card__tech_information__update_date")
     api = filters.BooleanFilter(field_name="clients_card__tech_information__api")
     ipad = filters.CharFilter(field_name="clients_card__tech_information__ipad", lookup_expr='iexact')
     android = filters.CharFilter(field_name="clients_card__tech_information__android", lookup_expr='iexact')
-    mdm = filters.CharFilter(field_name="clients_card__tech_information__mdm", lookup_expr='iexact')
+    # mdm = filters.CharFilter(field_name="clients_card__tech_information__mdm", lookup_expr='isnull', exclude=True)
+    mdm = filters.Filter(field_name="clients_card__tech_information__mdm", method='filter_by_mdm')
+
+    def filter_by_mdm(self, queryset, name, value):
+        # Если значение равно 'true' (независимо от регистра), мы фильтруем строки, в которых MDM не является пустой строкой.
+        if value.lower() == 'true':
+            lookup = '{}__{}'.format(name, 'gt')
+            return queryset.filter(**{lookup: ''})
+        # Если значение равно 'false' (независимо от регистра), мы фильтруем строки, в которых MDM является пустой строкой.
+        elif value.lower() == 'false':
+            lookup = '{}__{}'.format(name, 'exact')
+            return queryset.filter(**{lookup: ''})
+        else:
+            # Если значение не равно 'true' или 'false', мы возвращаем исходный queryset без фильтрации.
+            return queryset
+
     localizable_web = filters.BooleanFilter(field_name="clients_card__tech_information__localizable_web")
     localizable_ios = filters.BooleanFilter(field_name="clients_card__tech_information__localizable_ios")
     skins_web = filters.BooleanFilter(field_name="clients_card__tech_information__skins_web")
@@ -229,6 +266,7 @@ class ClientViewSet(viewsets.ModelViewSet):
     """
     queryset = ClientsList.objects.all()
     serializer_class = ClientSerializer
+    filter_backends = [filters.DjangoFilterBackend]
     filterset_class = ClientFilter
 
     def list(self, request, *args, **kwargs):
@@ -285,8 +323,10 @@ def add_client(request):
 
                 # Асинхронно запускаем скрипт для создания пользователя в JFrog
                 username = client.short_name
-                from api.tasks import add_user_jfrog_task
-                add_user_jfrog_task.apply_async((username, password), countdown=600)
+                thread = threading.Thread(target=create_user_in_jfrog, args=(username, password))
+                thread.start()
+                # from api.tasks import add_user_jfrog_task
+                # add_user_jfrog_task.apply_async((username, password), countdown=600)
 
                 contact_serializer = ContactsSerializer(data=request.data.get('contacts_card', []), many=True)
                 if contact_serializer.is_valid():
@@ -869,17 +909,35 @@ class ReleaseInfoFilter(filters.FilterSet):
         fields = ['release_number']
 
 class ReleaseInfoViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
-    authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]  # Используем все класса аутентификации
+    authentication_classes = [TokenAuthentication, JWTAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = ReleaseInfo.objects.all()
     serializer_class = ReleaseInfoSerializer
     filter_backends = [filters.DjangoFilterBackend]
     filterset_class = ReleaseInfoFilter
+    lookup_field = 'release_number'
 
-    @action(detail=False, url_path='versions')
-    def get_versions(self, request):
-        release_versions = ReleaseInfo.objects.values('date', 'release_number').distinct()
-        return Response(release_versions)
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+
+        release_versions = queryset.values('date', 'release_number').distinct()
+        versions_list = [{'Data': release['date'], 'Number': release['release_number']} for release in release_versions]
+
+        return Response(versions_list)
+
+    @action(detail=True, methods=['get'], url_path='version_info')
+    def version_info(self, request, *args, **kwargs):
+        release_number = self.kwargs['release_number']
+        queryset = self.filter_queryset(self.get_queryset())
+        releases = get_list_or_404(queryset, release_number=release_number)
+        serializer = self.get_serializer(releases, many=True)
+
+        for release in serializer.data:
+            if not release['copy_contact']:
+                release['copy_contact'] = 'Копии отсутствуют'
+
+        return Response(serializer.data)
 
 
 class ReportTicketViewSet(viewsets.ModelViewSet):
@@ -894,176 +952,3 @@ class ReportTicketViewSet(viewsets.ModelViewSet):
         if start_date is not None and end_date is not None:
             queryset = queryset.filter(creation_date__range=[start_date, end_date])
         return queryset
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# class ClientIdFilter(filters.BaseFilterBackend):
-#     def filter_queryset(self, request, queryset, view):
-#         client_id = request.query_params.get('client_id', None)
-#         if client_id is not None:
-#             queryset = queryset.filter(client_id__client_info__id=client_id)
-#         return queryset
-
-# class ClientsViewSet(viewsets.ModelViewSet):
-#     """
-#     ClientsViewSet предоставляет CRUD операции для модели ClientsList.
-#     """
-#     queryset = ClientsList.objects.all()  # Получение всех объектов ClientsList
-#     serializer_class = ClientsListSerializer  # Указание сериализатора для ClientsList
-#     permission_classes = [permissions.IsAuthenticated]  # Установка прав доступа для данного класса
-
-#     def list(self, request, *args, **kwargs):
-#         queryset = self.filter_queryset(self.get_queryset())
-
-#         page = self.paginate_queryset(queryset)
-#         if page is not None:
-#             serializer = self.get_serializer(page, many=True)
-#             return self.get_paginated_response(serializer.data)
-
-#         serializer = self.get_serializer(queryset, many=True)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-
-# class ContactsViewSet(viewsets.ModelViewSet):
-#     """
-#     ContactsViewSet предоставляет CRUD операции для модели ContactsCard.
-#     """
-#     serializer_class = ContactsSerializer  # Указание сериализатора для ContactsCard
-
-#     def get_queryset(self):
-#         """
-#         Возвращает queryset контактов для определенного клиента или всех контактов, если client_id не указан.
-#         """
-#         client_id = self.kwargs.get('client_id', None)  # Получение client_id из параметров запроса
-#         if client_id is not None:
-#             try:
-#                 client = ClientsList.objects.get(id=client_id)  # Получение объекта клиента по client_id
-#                 return ContactsCard.objects.filter(client_card__client_info=client)  # Фильтрация контактов по клиенту
-#             except ClientsList.DoesNotExist:  # Обработка исключения, если клиент с указанным client_id не найден
-#                 return ContactsCard.objects.none()  # Возвращение пустого queryset
-#         else:
-#             return ContactsCard.objects.all()  # Возвращение всех контактов
-
-#     def list_all(self, request, *args, **kwargs):
-#         """
-#         Возвращает список всех контактов с учетом пагинации.
-#         """
-#         queryset = self.filter_queryset(self.get_queryset().filter(client_card__isnull=False))  # Фильтрация контактов с привязкой к клиентам
-
-#         page = self.paginate_queryset(queryset)  # Применение пагинации к queryset
-#         if page is not None:
-#             serializer = self.get_serializer(page, many=True)  # Сериализация данных с пагинацией
-#             return self.get_paginated_response(serializer.data)  # Возвращение данных с пагинацией
-
-#         serializer = self.get_serializer(queryset, many=True)  # Сериализация всех данных
-#         return Response(serializer.data)  # Возвращение всех сериализованных данных
-
-# class ConnectInfoViewSet(viewsets.ModelViewSet):
-#     queryset = СonnectInfoCard.objects.all()
-#     serializer_class = СonnectInfoCardSerializer
-#     filter_backends = [ClientIdFilter]
-
-#     def get_permissions(self):
-#         # Устанавливаем разрешения для разных действий
-#         if self.action == 'create' and 'client_id' in self.kwargs:
-#             permission_classes = [permissions.IsAuthenticated]
-#         else:
-#             permission_classes = [permissions.IsAuthenticated]
-#         return [permission() for permission in permission_classes]
-
-#     def get_queryset(self):
-#         # Возвращаем соответствующий queryset в зависимости от наличия client_id
-#         client_id = self.kwargs.get('client_id', None)
-#         if client_id is not None:
-#             try:
-#                 client = ClientsList.objects.get(id=client_id)
-#                 return СonnectInfoCard.objects.filter(client_id__client_info=client)
-#             except ClientsList.DoesNotExist:
-#                 return СonnectInfoCard.objects.none()
-#         else:
-#             return СonnectInfoCard.objects.all()
-
-#     def create(self, request, *args, **kwargs):
-#         # Получаем client_id из аргументов
-#         client_id = kwargs.get('client_id', None)
-
-#         # Если client_id предоставлен, продолжаем
-#         if client_id is not None:
-
-#             # Пытаемся найти клиента с указанным client_id
-#             try:
-#                 client = ClientsCard.objects.get(client_info_id=client_id)
-
-#                 # Создаем сериализатор с переданными данными
-#                 serializer = self.get_serializer(data=request.data)
-
-#                 # Если сериализатор валиден, сохраняем данные и возвращаем ответ
-#                 if serializer.is_valid():
-#                     serializer.save(client_id=client)
-#                     return Response(serializer.data, status=status.HTTP_201_CREATED)
-#                 else:
-#                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-#             # Если клиент не найден, возвращаем ошибку 404
-#             except ClientsCard.DoesNotExist:
-#                 return Response({"error": "Клиент не найден"}, status=status.HTTP_404_NOT_FOUND)
-
-#         # Если client_id не предоставлен, возвращаем ошибку 400
-#         else:
-#             return Response({"error": "Клиент ID не предоставлен"}, status=status.HTTP_400_BAD_REQUEST)
-
-#     def update(self, request, *args, **kwargs):
-#         # Получение ID записи из URL
-#         connect_info_id = kwargs.get('pk', None)
-
-#         if connect_info_id is not None:
-#             try:
-#                 # Получение объекта СonnectInfoCard с указанным ID
-#                 connect_info = СonnectInfoCard.objects.get(id=connect_info_id)
-
-#                 # Сериализация объекта с новыми данными и разрешение частичного обновления
-#                 serializer = self.get_serializer(connect_info, data=request.data, partial=True)
-
-#                 if serializer.is_valid():
-#                     # Сохранение обновленного объекта
-#                     serializer.save()
-#                     return Response(serializer.data, status=status.HTTP_200_OK)
-#                 else:
-#                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#             except СonnectInfoCard.DoesNotExist:
-#                 return Response({"error": "ConnectInfo not found"}, status=status.HTTP_404_NOT_FOUND)
-#         else:
-#             return Response({"error": "ConnectInfo ID not provided"}, status=status.HTTP_400_BAD_REQUEST)
-
-#     def destroy(self, request, *args, **kwargs):
-#         # Получение ID записи из URL
-#         connect_info_id = kwargs.get('pk', None)
-
-#         if connect_info_id is not None:
-#             try:
-#                 # Получение объекта СonnectInfoCard с указанным ID
-#                 connect_info = СonnectInfoCard.objects.get(id=connect_info_id)
-
-#                 # Удаление объекта
-#                 connect_info.delete()
-
-#                 # Возврат ответа с кодом 204 (NO CONTENT), указывающим на успешное удаление
-#                 return Response(status=status.HTTP_204_NO_CONTENT)
-#             except СonnectInfoCard.DoesNotExist:
-#                 return Response({"error": "ConnectInfo not found"}, status=status.HTTP_404_NOT_FOUND)
-#         else:
-#             return Response({"error": "ConnectInfo ID not provided"}, status=status.HTTP_400_BAD_REQUEST)
-        

@@ -55,13 +55,11 @@ $(window).on('load', function () {
                 spinner.stop();
             }
 
-            // Когда выбран другой номер релиза
-            releaseSelect.on('change', function () {
-                const releaseNumber = this.value;
-
+            // Функция для отображения данных при выборе релиза
+            function showReleaseData(releaseNumber) {
                 // Отправляем запрос на сервер
                 $.ajax({
-                    url: `/api/data_release/?release_number=${releaseNumber}`,
+                    url: `/api/data_release/${releaseNumber}/version_info`,
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
                     },
@@ -75,30 +73,39 @@ $(window).on('load', function () {
                         console.error(textStatus, errorThrown);
                     }
                 });
+            }
+
+            // Обработчик события изменения выбранного релиза
+            releaseSelect.on('change', function () {
+                const releaseNumber = this.value;
+                showReleaseData(releaseNumber);
             });
 
             // Получаем список релизов и выбираем последний
             $.ajax({
-                url: '/api/data_release/versions',
+                url: '/api/data_release',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
                 },
                 dataType: 'json',
                 success: function (data) {
                     // Сортируем данные по дате
-                    data.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    data.sort((a, b) => new Date(b.Data) - new Date(a.Data));
+                    
+                    // Очищаем список релизов
+                    releaseSelect.empty();
                     
                     // Добавляем все релизы в список
                     data.forEach(release => {
-                        releaseSelect.append(new Option(release.release_number, release.release_number));
+                        releaseSelect.append(new Option(release.Number, release.Number));
                     });
 
                     // Выбираем последний релиз
-                    const latestRelease = data[0].release_number;
+                    const latestRelease = data[0].Number;
                     releaseSelect.val(latestRelease);
                     
-                    // Запускаем событие изменения, чтобы загрузить данные для последнего релиза
-                    releaseSelect.trigger('change');
+                    // Отображаем данные для последнего релиза
+                    showReleaseData(latestRelease);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     // Если ошибка, выводим информацию об ошибке в консоль
