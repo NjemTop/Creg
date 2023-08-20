@@ -2,31 +2,57 @@ import requests
 import json
 from datetime import datetime
 from main.models import ReportTicket
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def update_tickets():
-    url = "https://boardmaps.happyfox.com/api/1.1/json/tickets/"
-    auth = ('','')
-    headers = {'Content-Type': 'application/json'}
-    
-    # Calculate start_date and end_date
-    today = datetime.now().date()
-    start_date = today
-    end_date = today
-    
-    params = {
-        'q': f'last-staff-replied-on-or-after:"{start_date}" last-staff-replied-on-or-before:"{end_date}"',
-        'page': 1,
-        'size': 50
-    }
-    
-    res = requests.get(url, auth=auth, headers=headers, params=params)
-    if res.status_code != 200:
-        print(f'Response status code: {res.status_code}')
-        return
-    res_json = res.json()
+    """Функция для обновления тикетов"""
+    try:
+        # Настройки для запроса к API
+        url = "https://boardmaps.happyfox.com/api/1.1/json/tickets/"
+        auth = ('','')
+        headers = {'Content-Type': 'application/json'}
+        
+        # Получение текущей даты
+        today = datetime.now().date()
+        start_date = today
+        end_date = today
+        
+        # Параметры запроса к API
+        params = {
+            'q': f'last-staff-replied-on-or-after:"{start_date}" last-staff-replied-on-or-before:"{end_date}"',
+            'page': 1,
+            'size': 50
+        }
+        
+        # Выполнение запроса к API
+        res = requests.get(url, auth=auth, headers=headers, params=params)
+        if res.status_code != 200:
+            logger.error(f'Response status code: {res.status_code}')
+            return
+        
+        # Обработка JSON-ответа от API
+        res_json = res.json()
+        process_tickets(res_json.get('data', []))
+        
+    except Exception as error_message:
+        logger.error(f'Ошибка при выполнении задачи: {error_message}')
 
-    for ticket_data in res_json.get('data', []):
+
+def process_tickets(ticket_data_list):
+    """Функция для обработки списка тикетов"""
+    for ticket_data in ticket_data_list:
+        try:
+            update_single_ticket(ticket_data)
+        except Exception as error_message:
+            logger.error(f'Ошибка при обработке тикета: {error_message}')
+
+
+def update_single_ticket(ticket_data):
+    """Функция для обновления одного тикета"""
+    try:
         ticket_id = ticket_data['id']
         status = ticket_data['status']['name']
         subject = ticket_data['subject']
@@ -43,7 +69,7 @@ def update_tickets():
         module_boardmaps = ''  # need to map from ticket_data
         staff_message = ticket_data['messages_count']
 
-        # Find existing ticket or create new one
+        # Отправляем данные в таблицу для сохранения изменений о тикете
         ticket, created = ReportTicket.objects.update_or_create(
             ticket_id=ticket_id,
             defaults={
@@ -64,8 +90,17 @@ def update_tickets():
                 'staff_message': staff_message,
             }
         )
-
+        
         if created:
-            print(f'Created new ticket {ticket_id}')
+            logger.info(f'Создан новый тикет {ticket_id}')
         else:
-            print(f'Updated ticket {ticket_id}')
+            logger.info(f'Обновленный тикет {ticket_id}')
+            
+    except KeyError as key_error:
+        logger.error(f'Ошибка обработки ключа: {key_error}')
+        
+    except ValueError as value_error:
+        logger.error(f'Ошибка преобразования значения: {value_error}')
+        
+    except Exception as error_message:
+        logger.error(f'Произошла ошибка при обновлении тикета: {error_message}')
