@@ -7,6 +7,73 @@ body.main-page {
     background-size: cover;
 }
 
+/* Стиль для заголовка страницы */
+.section-title {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #8b8b8b;
+    padding-bottom: 10px;
+    text-align: center;
+    padding-top: 15px;
+}
+
+/* Центрирование названий диаграмм */
+.text-center {
+    text-align: center;
+}
+
+/* Уменьшение размера строки с календарём */
+.form-calendar-group {
+    margin-bottom: 10px;
+}
+
+/* Ограничение ширины столбца ID */
+table.table-contacts th.id-column, table.table-contacts td.id-column {
+    width: 5%;  /* Значение размера столбцов таблиц */
+    overflow: hidden; /* Скрываем текст, который не умещается в ячейке */
+    text-overflow: ellipsis; /* Отображаем многоточие, если текст не умещается */
+    white-space: nowrap; /* Запрещаем перенос текста внутри ячеек */
+}
+
+/* Ограничение ширины столбца ФИО */
+table.table-contacts th.name-column, table.table-contacts td.name-column {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Ограничение ширины столбца Должность */
+table.table-contacts th.position-column, table.table-contacts td.position-column {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Ограничение ширины столбца Почта */
+table.table-contacts th.email-column, table.table-contacts td.email-column {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Ограничение ширины столбца Отправка рассылки */
+table.table-contacts th.notification-column, table.table-contacts td.notification-column {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Ограничение ширины столбца Примечание */
+table.table-contacts th.notes-column, table.table-contacts td.notes-column {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 body, html {
     overflow-x: hidden; /* Запретит горизонтальную прокрутку */
     max-width: 100%; /* Ограничит максимальную ширину элементов до ширины вьюпорта */
@@ -134,7 +201,7 @@ body, html {
 
 /* Стили для кнопки "Применить" */
 .btn-primary {
-    margin-top: 1rem;
+    
 }
 
 .navbar-banner {
@@ -257,4 +324,33 @@ body, html {
         white-space: normal;
         word-break: break-word;
     }
+}
+
+/* Максимальная ширина текста внутри элемента pre */
+.max-width-text pre {
+    max-width: 99%; /* Максимальная ширина элемента pre */
+    overflow: hidden;
+    white-space: pre-wrap; /* Обеспечиваем перенос строк, но сохраняем пробелы */
+    word-wrap: break-word; /* Разрыв слов */
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.form-select-group {
+    max-width: 200px;
+}
+
+.select2-container {
+    width: 100% !important;
+}
+
+/* Стиль кнопки "подняться наверх" */
+.fa-chevron-circle-up {
+    color: rgb(110, 110, 119);
+    opacity: 0.5; /* Полупрозрачность элемента */
+    padding-right: 30px;
 }

@@ -2,14 +2,26 @@ import requests
 import json
 import string
 import random
+import logging
+import os
+from dotenv import load_dotenv
 
+
+load_dotenv()
+
+
+logger = logging.getLogger(__name__)
+
+JFROG_USER = os.environ.get('JFROG_USER')
+JFROG_PASSWORD = os.environ.get('JFROG_PASSWORD')
+JFROG_URL = os.environ.get('JFROG_URL')
 
 def authenticate():
     """
     Функция для авторизации в систему JFrog
     """
     # URL для авторизации
-    url = "https://dr.boardmaps.ru/ui/api/v1/ui/auth/login?_spring_security_remember_me=false"
+    url = f"{JFROG_URL}/api/v1/ui/auth/login?_spring_security_remember_me=false"
 
     # Заголовки для авторизации
     headers = {
@@ -19,8 +31,8 @@ def authenticate():
 
     # Данные для авторизации
     data = {
-        "user": "creg_system",
-        "password": "8QBmmf4GRP",
+        "user": JFROG_USER,
+        "password": JFROG_PASSWORD,
         "type": "login"
     }
 
@@ -29,17 +41,17 @@ def authenticate():
         response = requests.post(url, headers=headers, json=data)
         # Проверяем статус-код ответа 200, если нет, то выбросим в ошибку
         response.raise_for_status()
-    except requests.exceptions.HTTPError as errh:
-        print ("HTTP запрос вернул ошибку:",errh)
+    except requests.exceptions.HTTPError as error_message:
+        logger.warning(f"HTTP запрос вернул ошибку: {error_message}")
         return None
-    except requests.exceptions.ConnectionError as errc:
-        print ("Ошибка подключения:",errc)
+    except requests.exceptions.ConnectionError as error_message:
+        logger.warning(f"Ошибка подключения: {error_message}")
         return None
-    except requests.exceptions.Timeout as errt:
-        print ("Ошибка тайм-аута:",errt)
+    except requests.exceptions.Timeout as error_message:
+        logger.warning(f"Ошибка тайм-аута: {error_message}")
         return None
     except requests.exceptions.RequestException as error_message:
-        print ("Общая ошибка:",error_message)
+        logger.error(f"Общая ошибка: {error_message}")
         return None
 
     # Возвращаем cookies, полученные после авторизации
@@ -53,7 +65,7 @@ def create_user(username, password, cookies):
     а также "cookies" полученные ранее при авторизации в систему JFrog
     """
     # URL для создания пользователя
-    url = "https://dr.boardmaps.ru/ui/api/v1/access/api/ui/users"
+    url = f"{JFROG_URL}/api/v1/access/api/ui/users"
 
     # Заголовки для создания пользователя
     headers = {
@@ -83,16 +95,16 @@ def create_user(username, password, cookies):
         # Проверяем статус-код ответа 200, если нет, то выбросим в ошибку
         response.raise_for_status()
     except requests.exceptions.HTTPError as errh:
-        print ("HTTP запрос вернул ошибку:",errh)
+        logger.warning(f"HTTP запрос вернул ошибку: {errh}")
         return None
     except requests.exceptions.ConnectionError as errc:
-        print ("Ошибка подключения:",errc)
+        logger.warning(f"Ошибка подключения: {errc}")
         return None
     except requests.exceptions.Timeout as errt:
-        print ("Ошибка тайм-аута:",errt)
+        logger.warning(f"Ошибка тайм-аута: {errt}")
         return None
     except requests.exceptions.RequestException as error_message:
-        print ("Общая ошибка:",error_message)
+        logger.error(f"Общая ошибка: {error_message}")
         return None
 
     # Возвращаем статус-код ответа

@@ -1,16 +1,106 @@
-from django.shortcuts import render, redirect
-from .models import ClientsList, ReportTicket, ClientsCard, ContactsCard, ReleaseInfo, ServiseCard, TechInformationCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, TechNote
-from .forms import ClientListForm, AdvancedSearchForm, ContactFormSet, ServiseCardForm, TechInformationCardForm, ContactForm, IntegrationForm
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import ClientsList, ReportTicket, ReportDownloadjFrog, ClientsCard, ContactsCard, ReleaseInfo, ServiseCard, TechInformationCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, TechNote
+from .forms import ClientListForm, AdvancedSearchForm, ContactFormSet, ServiseCardForm, TechInformationCardForm, ContactForm, IntegrationForm, URLInputForm, ServerInputForm
 from django.db import transaction
+from django.db.models import QuerySet
+from django.core import serializers
+from django.forms.models import model_to_dict
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.conf import settings
+from django.utils import timezone
+from datetime import datetime, timedelta
 from django.http import HttpResponse, JsonResponse, HttpResponseServerError
 from django.template import loader
-from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+# import ldap
 import json
-from django.utils import timezone
+import os
+from urllib.parse import unquote
 from main.tasks import echo, send_test_email
 from celery.result import AsyncResult
 from django_celery_results.models import TaskResult
+from scripts.update_tickets import update_tickets
+from scripts.artifactory_downloads_log.monitor_log import analyze_logs_and_get_data
+from scripts.obfuscate_db.obfuscate_mssql import DatabaseCleanerMsSQL
+from scripts.obfuscate_db.obfuscate_postgresql import DatabaseCleanerPostgreSQL
+from collections import defaultdict
+import docx2txt
+
+
+# def check_password_in_ldap(username, password):
+#     try:
+#         # Настройки для подключения к LDAP-серверу
+#         ldap_server_uri = "ldap://corp.boardmaps.com"
+#         ldap_bind_dn = "CN=Creg,OU=Service,OU=DashboardUsers,DC=corp,DC=boardmaps,DC=com"
+#         ldap_bind_password = "pV4kh6d4c5JhM9"
+
+#         # Установка соединения с LDAP-сервером
+#         ldap_connection = ldap.initialize(ldap_server_uri)
+#         ldap_connection.simple_bind_s(ldap_bind_dn, ldap_bind_password)
+
+#         # Поиск пользователя по его sAMAccountName
+#         user_search_base = "ou=DashboardUsers,dc=corp,dc=boardmaps,dc=com"
+#         user_search_filter = f"(sAMAccountName={username})"
+#         result = ldap_connection.search_s(user_search_base, ldap.SCOPE_SUBTREE, user_search_filter)
+
+#         if result:
+#             # Если пользователь найден, проверяем пароль
+#             user_dn = result[0][0]
+#             ldap_connection.simple_bind_s(user_dn, password)
+#             ldap_connection.unbind_s()
+#             return True
+#     except ldap.INVALID_CREDENTIALS:
+#         pass
+#     except ldap.LDAPError as error_message:
+#         print(f"LDAP Error: {error_message}")
+#     finally:
+#         ldap_connection.unbind_s()
+
+#     return False
+
+def custom_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        remember = request.POST.get('rememberMe')
+
+        if not username or not password:
+            error_message = "Пожалуйста, введите имя пользователя и пароль"
+            return render(request, 'main/registration/login.html', {'error_message': error_message})
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                if not remember:
+                    request.session.set_expiry(0) # Установка сессии до закрытия браузера, если "Запомнить меня" не выбран
+                return redirect('home')
+            else:
+                error_message = "Ваш аккаунт отключен"
+
+        else:
+            # Проверяем пароль в LDAP
+            if check_password_in_ldap(username, password):
+                # Если пользователя с таким именем нет, создаем его и авторизуемся
+                hashed_password = make_password(password)  # Создание хеша пароля
+                user = User.objects.create(username=username, password=hashed_password)
+                login(request, user)  # Авторизуемся под созданным пользователем
+                return redirect('home')
+            else:
+                error_message = "Неправильное имя пользователя или пароль"
+
+        return render(request, 'main/registration/login.html', {'error_message': error_message})
+
+    # Если пользователь уже аутентифицирован, перенаправляем на главную страницу
+    if request.user.is_authenticated:
+        return redirect('home') # URL-паттерн
+
+    return render(request, 'main/registration/login.html')
 
 
 def test_task(request):
@@ -38,11 +128,39 @@ def test_send_email_task(request):
 
 def task_results(request):
     results = TaskResult.objects.all()
-    return render(request, 'main/results.html', {'results': results})
+    return render(request, 'main/test/task_results.html', {'results': results})
 
 
+def update_tickets_view(request):
+    if request.method == 'POST':
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+
+        try:
+            update_tickets(start_date, end_date)
+            return render(request, 'main/report/success.html')
+        except Exception as error_message:
+            error_message = f'Произошла ошибка: {str(error_message)}'
+            return render(request, 'main/report/error.html', {'error_message': error_message})
+
+    return render(request, 'main/test/update_tickets.html')
+
+def show_log_analysis(request):
+    return render(request, 'main/report/artifactory_downloads_log.html')
+
+def get_log_analysis_data(request):
+    status, client_data = analyze_logs_and_get_data()
+    if status == "Успешно":
+        return JsonResponse({'client_data': client_data})
+    else:
+        return JsonResponse({'error': status}, status=400)
+
+
+# @login_required
 def index(request):
-    return render(request, 'main/index.html')
+    # Добавляем переменную в контекст, которая указывает на то, что это главная страница
+    context = {'hide_footer': True}
+    return render(request, 'main/index.html', context)
 
 
 def clients(request):
@@ -54,7 +172,7 @@ def clients(request):
 def get_contacts(request, client_id):
     client = ClientsList.objects.get(id=client_id)
     contacts = client.clients_card.contact_cards.all()
-    template = loader.get_template('main/contacts_table.html')
+    template = loader.get_template('main/client/contacts_table.html')
     context = {'contacts': contacts}
     contacts_table = template.render(context, request)
     return HttpResponse(contacts_table)
@@ -75,7 +193,7 @@ def search_results(request):
             results = TechInformationCard.objects.all()
         except Exception as error:
             error_message = f"Произошла ошибка при получении всех записей: {str(error)}"
-            return render(request, 'main/error.html', {'error_message': error_message})
+            return render(request, 'main/report/error.html', {'error_message': error_message})
     # Если форма действительна
     elif form.is_valid():
         try:
@@ -88,10 +206,10 @@ def search_results(request):
                 results = TechInformationCard.objects.filter(server_version=server_version_input)
         except Exception as error:
             error_message = f"Произошла ошибка при обработке данных формы: {str(error)}"
-            return render(request, 'main/error.html', {'error_message': error_message})
+            return render(request, 'main/report/error.html', {'error_message': error_message})
     else:
         error_message = "Произошла ошибка при обработке формы."
-        return render(request, 'main/error.html', {'error_message': error_message})
+        return render(request, 'main/report/error.html', {'error_message': error_message})
 
     # Подготавливаем данные для отправки в шаблон
     rows = []
@@ -107,14 +225,14 @@ def search_results(request):
             rows.append(row)
         except Exception as error:
             error_message = f"Произошла ошибка при обработке результатов: {str(error)}"
-            return render(request, 'main/error.html', {'error_message': error_message})
+            return render(request, 'main/report/error.html', {'error_message': error_message})
 
     # Преобразуем список результатов в JSON
     results_json = json.dumps(rows)
     context = {'results_json': results_json}
 
     # Возвращаем шаблон search_results.html с данными для отображения результатов
-    return render(request, 'main/search_results.html', context)
+    return render(request, 'main/search/search_results.html', context)
 
 
 def update_integration(request, client_id):
@@ -176,7 +294,7 @@ def create_client(request):
         'contact_formset_total_form_count': contact_formset.total_form_count,  # Передача количества форм в формсете в контекст
         'contact_formset_max_num': contact_formset.max_num,  # Передача максимального количества форм в формсете в контекст
     }
-    return render(request, 'main/create_client.html', context)  # Возвращение ответа с рендерингом шаблона 'create_client.html' и передачей контекста
+    return render(request, 'main/client/create_client.html', context)
 
 
 def client(request, client_id):
@@ -219,21 +337,12 @@ def client(request, client_id):
 
     try:
         connect_info_list = ConnectInfoCard.objects.filter(client_card=client.clients_card)
-        # if not connect_info_list:
-        #     # Создаем пустую запись для ConnectInfoCard, если она не существует
-        #     ConnectInfoCard.objects.create(client_card=client.clients_card, contact_info_name="Нет данных",
-        #                                    contact_info_account="Нет данных",
-        #                                    contact_info_password="Нет данных")
     except ConnectInfoCard.DoesNotExist:
+        # Создаем пустую запись для ConnectInfoCard, если она не существует
         connect_info_list = []
 
     try:
         bm_servers_list = BMServersCard.objects.filter(client_card=client.clients_card)
-        # if not bm_servers_list:
-        #     # Создаем пустую запись для BMServersCard, если она не существует
-        #     BMServersCard.objects.create(client_card=client.clients_card, bm_servers_circuit="Нет данных",
-        #                                   bm_servers_servers_name="Нет данных",
-        #                                   bm_servers_servers_adress="Нет данных", bm_servers_role="Нет данных")
     except BMServersCard.DoesNotExist:
         # Создаем пустую запись для BMServersCard, если она не существует
         bm_servers_list = []
@@ -247,23 +356,28 @@ def client(request, client_id):
 
     try:
         tech_account_list = TechAccountCard.objects.filter(client_card=client.clients_card)
-        # if not tech_account_list:
-        #     # Создаем пустую запись для TechAccountCard, если она не существует
-        #     TechAccountCard.objects.create(client_card=client.clients_card, contact_info_disc="Нет данных",
-        #                                    contact_info_account="Нет данных",
-        #                                    contact_info_password="Нет данных")
     except TechAccountCard.DoesNotExist:
         # Создаем пустую запись для TechAccountCard, если она не существует
         tech_account_list = []
 
+    # Объявляем переменную file_name с пустым значением по умолчанию
+    file_name = ""
+    
     try:
         connection_info = ConnectionInfo.objects.get(client_card__client_info=client)
-        file_path = connection_info.file_path.url
-        text = connection_info.text
-    except ConnectionInfo.DoesNotExist:
-        file_path = "Нет документа"
-        text = "Нет данных"
-    except ValueError:
+        if connection_info.file_path:
+            file_path = connection_info.file_path.url
+            # Получение названия файла из полного пути
+            file_name = os.path.basename(connection_info.file_path.name) if connection_info.file_path else ""
+        else:
+            file_path = "Нет документа"
+
+        if connection_info.text:
+            text = connection_info.text
+        else:
+            text = "Нет данных"
+
+    except (ConnectionInfo.DoesNotExist, ValueError):
         file_path = "Нет документа"
         text = "Нет данных"
 
@@ -273,7 +387,7 @@ def client(request, client_id):
         # Создаем пустую запись для TechNote, если она не существует
         tech_note = TechNote.objects.create(client_card=client.clients_card, tech_note_text="Нет данных")
 
-    return render(request, 'main/client.html', {
+    return render(request, 'main/client/client.html', {
         'title': 'Информация о клиенте',
         'client': client,
         'contacts_list': contacts_list,
@@ -285,9 +399,29 @@ def client(request, client_id):
         'servise': servise,
         'tech_account_list': tech_account_list,
         'file_path': file_path,
+        'file_name': file_name,
         'text': text,
         'tech_note': tech_note,
     })
+
+
+def document_preview(request, file_path):
+    try:
+        decoded_file_path = unquote(file_path)
+
+        # Убираем начальную часть пути, соответствующую начальной директории
+        relative_file_path = decoded_file_path.split('uploaded_files/', 1)[-1]
+
+        full_file_path = os.path.join(settings.MEDIA_ROOT, 'uploaded_files', relative_file_path.replace("/", os.sep))
+        
+        if not os.path.exists(full_file_path):
+            return HttpResponse("File not found", content_type='text/plain', status=404)
+
+        content = docx2txt.process(full_file_path)
+        
+        return render(request, 'main/client/document_preview.html', {'content': content})
+    except Exception as e:
+        return HttpResponse(str(e), content_type='text/plain', status=500)
 
 
 def add_contact(request, client_id):
@@ -303,22 +437,134 @@ def add_contact(request, client_id):
     else:
         contact_form = ContactForm()
     
-    return render(request, 'main/add_contact.html', {'title': 'Добавить контакт', 'client': client, 'contact_form': contact_form})
+    return render(request, 'main/client/add_contact.html', {'title': 'Добавить контакт', 'client': client, 'contact_form': contact_form})
 
 
 def upload_file(request):
     clients = ClientsList.objects.all()
-    return render(request, 'main/upload_file.html', {'clients': clients})
+    return render(request, 'main/client/upload_file.html', {'clients': clients})
 
 
 def release_info(request):
     release_infos = ReleaseInfo.objects.order_by('-date')
-    return render(request, 'main/release_info.html', {'release_infos': release_infos})
+    return render(request, 'main/report/release_info.html', {'release_infos': release_infos})
 
 
 def report(request):
     now = timezone.now()
-    start_week = now - timezone.timedelta(days=now.weekday())  # начало недели (понедельник)
+    # Первый день текущего года
+    start_year = timezone.datetime(year=now.year, month=1, day=1)
+    start_date = start_year.strftime('%Y-%m-%d')
+    end_date = now.strftime('%Y-%m-%d')
+
+    report_tickets = list(ReportTicket.objects.filter(creation_date__range=[start_date, end_date]).values())
+    report_tickets_json = json.dumps(report_tickets, default=str)
+    return render(request, 'main/report/report.html', {'report_tickets': report_tickets_json})
+
+def get_report_data(request):
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    
+    report_tickets = ReportTicket.objects.filter(report_date__range=[start_date, end_date]).values()
+    return JsonResponse(list(report_tickets), safe=False)
+
+# def report(request):
+#     now = timezone.now()
+#     start_week = now - timezone.timedelta(days=now.weekday())  # начало недели (понедельник)
+#     report_tickets = list(ReportTicket.objects.filter(creation_date__range=[start_week, now]).values())
+#     report_tickets_json = json.dumps(report_tickets, default=str)  # default=str используется для преобразования дат в строки
+#     return render(request, 'main/report.html', {'report_tickets': report_tickets_json})
+
+def report_tickets(request):
+    report_tickets = list(ReportTicket.objects.all().values())
+
+    report_tickets_json = json.dumps(report_tickets, default=str)
+    return render(request, 'main/report/report_tickets.html', {'report_tickets': report_tickets_json})
+
+def test(request):
+    now = timezone.now()
+    start_week = now - timezone.timedelta(days=now.weekday())
+    start_date = start_week.strftime('%Y-%m-%d')
+    end_date = now.strftime('%Y-%m-%d')
+
     report_tickets = list(ReportTicket.objects.filter(creation_date__range=[start_week, now]).values())
-    report_tickets_json = json.dumps(report_tickets, default=str)  # default=str используется для преобразования дат в строки
-    return render(request, 'main/report.html', {'report_tickets': report_tickets_json})
+    report_tickets_json = json.dumps(report_tickets, default=str)
+    return render(request, 'main/test/test.html', {'report_tickets': report_tickets_json})
+
+
+def report_jfrog(request):
+    return render(request, 'main/report/report_jfrog.html')
+
+def get_report_jfrog(request):
+    end_date = timezone.now()
+    start_date = end_date - timedelta(days=2)
+
+    if 'start' in request.GET and 'end' in request.GET:
+        start_date = datetime.strptime(request.GET['start'], '%Y-%m-%d')
+        end_date = datetime.strptime(request.GET['end'], '%Y-%m-%d')
+
+    # Получаем QuerySet с фильтром по дате
+    reports = ReportDownloadjFrog.objects.filter(date__range=[start_date, end_date])
+
+    # Добавляем фильтр по учётным записям, если параметр присутствует
+    if 'account' in request.GET:
+        accounts = request.GET.getlist('account')  # Получает список всех 'account' параметров из URL
+        reports = reports.filter(account_name__in=accounts)
+
+    # Добавляем фильтр по версиям, если параметр присутствует
+    if 'version' in request.GET:
+        versions = request.GET.getlist('version')  # Получает список всех 'version' параметров из URL
+        reports = reports.filter(version_download__in=versions)
+
+    reports_list = [model_to_dict(report) for report in reports]
+
+    return JsonResponse(reports_list, safe=False)
+
+def get_unique_accounts(request):
+    accounts = ReportDownloadjFrog.objects.values_list('account_name', flat=True).distinct()
+    return JsonResponse(list(accounts), safe=False)
+
+def get_unique_versions(request):
+    versions = ReportDownloadjFrog.objects.values_list('version_download', flat=True).distinct()
+    return JsonResponse(list(versions), safe=False)
+
+
+def obfuscate_mssql(request):
+    form = URLInputForm(request.POST or None)
+
+    if request.method == 'POST' and form.is_valid():
+        service_url = form.cleaned_data['service_url']
+        cleaner = DatabaseCleanerMsSQL(service_url)
+        try:
+            cleaner.connect()
+            cleaner.clean()
+            cleaner.close()
+            # Если всё прошло успешно, используем шаблон успеха
+            return render(request, 'main/report/success.html')
+        except Exception as e:
+            error_message = str(e)
+            # Передаем ошибку в шаблон ошибки
+            return render(request, 'main/report/error.html', {'error_message': error_message})
+
+    # Если GET запрос или форма не валидна, показываем форму снова
+    return render(request, 'main/test/obfuscate_mssql.html', {'form': form})
+
+def obfuscate_postgresql(request):
+    form = ServerInputForm(request.POST or None)
+
+    if request.method == 'POST' and form.is_valid():
+        service_url = form.cleaned_data['service_url']
+        cleaner = DatabaseCleanerPostgreSQL(service_url)
+        try:
+            cleaner.connect()
+            cleaner.clean()
+            cleaner.close()
+            # Если всё прошло успешно, используем шаблон успеха
+            return render(request, 'main/report/success.html')
+        except Exception as e:
+            error_message = str(e)
+            # Передаем ошибку в шаблон ошибки
+            return render(request, 'main/report/error.html', {'error_message': error_message})
+
+    # Если GET запрос или форма не валидна, показываем форму снова
+    return render(request, 'main/test/obfuscate_postgresql.html', {'form': form})

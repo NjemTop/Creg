@@ -4,24 +4,18 @@ from celery import Celery
 import logging
 from celery.signals import after_setup_logger
 from django.conf import settings
-from dotenv import load_dotenv
 
-# Загружаем переменные окружения из файла .env
-load_dotenv()
 
 # Устанавливаем переменную окружения DJANGO_SETTINGS_MODULE
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crag.settings')
 
-app = Celery('crag', broker=os.getenv('CELERY_BROKER_URL'))
+app = Celery('crag', broker=settings.CELERY_BROKER_URL)
 
 # Используем настройки Django для конфигурации Celery
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
-# Установка backend для результатов задач в Celery
-app.conf.update(result_backend='django-db')
-
 # Автоматическая загрузка задач из файла tasks.py каждого приложения
-app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+app.autodiscover_tasks()
 
 
 @after_setup_logger.connect

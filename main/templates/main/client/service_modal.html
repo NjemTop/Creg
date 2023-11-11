@@ -1,0 +1,41 @@
+{% for client in clients %}
+<div class="modal fade" id="serviceModal_{{ client.id }}" tabindex="-1" role="dialog" aria-labelledby="serviceModalLabel_{{ client.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="background-color: #f8f9fa;">
+            <div class="modal-header d-flex justify-content-center">
+                <h5 class="modal-title" id="serviceModalLabel_{{ client.id }}" style="color: #6c757d;">Обслуживание</h5>
+                <button type="button" class="close custom-close" data-bs-dismiss="modal" aria-label="Закрыть" style="position: absolute; right: 15px;">
+                    <span aria-hidden="true" style="color: #6c757d; font-size: 1.5rem;">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label for="manager_{{ client.id }}" style="font-size: 18px; color: #6c757d;">Менеджер</label>
+                <select id="manager_{{ client.id }}" class="form-control manager-select">
+                    <option>Ekaterina Shneyder</option>
+                    <option>Tatiana Shindikova</option>
+                    <option>Другое</option>
+                </select>
+                <input type="text" id="manager_other_{{ client.id }}" class="form-control" style="display: none;" />
+
+                <label for="service_pack_{{ client.id }}" style="font-size: 18px; color: #6c757d;">Статус план</label>
+                <select id="service_pack_{{ client.id }}" class="form-control">
+                    <option>Bronze</option>
+                    <option>Silver</option>
+                    <option>Gold</option>
+                    <option>Platinum</option>
+                </select>
+
+                <label for="loyalty_{{ client.id }}" style="font-size: 18px; color: #6c757d;">Лояльность</label>
+                <select id="loyalty_{{ client.id }}" class="form-control">
+                    <option>Low</option>
+                    <option>Medium</option>
+                    <option>High</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary apply-changes" data-client-id="{{ client.id }}">Применить</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}

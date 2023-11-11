@@ -16,7 +16,7 @@ class ContactsCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
     class Meta:
         model = ContactsCard
-        fields = ('client_id', 'contact_name', 'contact_position', 'contact_email', 'notification_update', 'contact_notes')
+        fields = ('client_id', 'contact_name', 'contact_position', 'contact_email', 'contact_number', 'notification_update', 'contact_notes')
 
 class ConnectInfoCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
@@ -163,7 +163,7 @@ class ContactsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ContactsCard
-        fields = ('id', 'contact_name', 'contact_position', 'contact_email', 'notification_update', 'contact_notes')
+        fields = ('id', 'contact_name', 'contact_position', 'contact_email', 'contact_number', 'notification_update', 'contact_notes')
 
     def get_id(self, obj):
         if self.context.get('request', None) and self.context['request'].method == 'POST':
@@ -559,7 +559,31 @@ class ForAutomaticEmailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClientsList
-        fields = ['client_name', 'contact_status', 'contacts_card']
+        fields = ['client_name', 'contact_status', 'short_name', 'contacts_card']
+
+    def get_contacts_card(self, obj):
+        contacts = ContactsCard.objects.filter(client_card__client_info=obj)
+        return [{"contact_name": contact.contact_name, "contact_email": contact.contact_email, "notification_update": contact.notification_update} for contact in contacts]
+
+class Version2ClientsSerializer(serializers.ModelSerializer):
+
+    contacts_card = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ClientsList
+        fields = ['client_name', 'contact_status', 'short_name', 'contacts_card']
+
+    def get_contacts_card(self, obj):
+        contacts = ContactsCard.objects.filter(client_card__client_info=obj)
+        return [{"contact_name": contact.contact_name, "contact_email": contact.contact_email, "notification_update": contact.notification_update} for contact in contacts]
+
+class Version3ClientsSerializer(serializers.ModelSerializer):
+    
+    contacts_card = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ClientsList
+        fields = ['client_name', 'contact_status', 'short_name', 'contacts_card']
 
     def get_contacts_card(self, obj):
         contacts = ContactsCard.objects.filter(client_card__client_info=obj)

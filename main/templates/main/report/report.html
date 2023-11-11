@@ -1,0 +1,117 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load json_filters %} 
+
+{% block title %}
+{{ block.super }} - Отчёты
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/report/report.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h2 class="section-title mb-4">Отчеты</h2>
+    
+    <!-- Шапка выборки -->
+    <div class="report-header mb-4">
+        <div class="row">
+            <!-- Левый столбец -->
+            <div class="col-sm-5">
+                <div class="row mb-3">
+                    <label for="reportGroup" class="col-sm-6 col-form-label input-limited">Выберите группу отчетов:</label>
+                    <div class="col-sm-6">
+                        <select class="form-select input-limited" id="reportGroup">
+                            <option value="jFrog">Отчет по скачиванию с jFrog</option>
+                            <option value="release">Отчёт по отправке релиза</option>
+                            <option value="tickets" selected>Отчеты по тикетам</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row mb-3" id="reportTypeRow">
+                    <label for="reportType" class="col-sm-6 col-form-label input-limited">Выберите отчет:</label>
+                    <div class="col-sm-6">
+                        <select class="form-select input-limited" id="reportType">
+                            <option value="create_close" selected>Создание/закрытие тикетов</option>
+                            <option value="open">Открытые тикеты (в работе)</option>
+                            <option value="ci">Переводы в CI (баги)</option>
+                            <option value="movement">Движение по тикетам</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Правый столбец -->
+            <div class="col-sm-5">
+                <div class="row mb-3">
+                    <label for="dateRange" class="col-sm-6 col-form-label input-limited">Выберите период:</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control input-limited" id="dateRange" name="dateRange" placeholder="Диапазон дат...">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <label for="dataStep" class="col-sm-6 col-form-label input-limited">Сводные данные в разрезе / шаг в:</label>
+                    <div class="col-sm-6">
+                        <select class="form-select input-limited" id="dataStep">
+                            <option value="day" selected>День</option>
+                            <option value="week">Неделя</option>
+                            <option value="month">Месяц</option>
+                            <option value="year">Год</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="col-sm-10 offset-sm-1">
+                    <button class="btn btn-primary" id="applyButton">Применить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="reportResults" class="row">
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+            <div class="tickets-info">
+                <!-- Тикеты -->
+                <div class="ticket-count">
+                    <span id="openTicketsCount" class="number">Загрузка...</span>
+                    <span class="description">Открыто тикетов</span>
+                </div>
+                <div class="ticket-count">
+                    <span id="translatedCount" class="number">6</span>
+                    <span class="description">Переведено в CI/CR</span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <!-- Диаграмма -->
+                <div class="chart">
+                    <h4 class="chart-name">Название диаграммы</h4>
+                    <canvas id="ticketsChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+            <div class="lists">
+                <!-- Топ модулей -->
+                <div class="modules-list">
+                    <h5>Топ модулей</h5>
+                    <ol>
+                    </ol>
+                </div>
+                <!-- Топ причин -->
+                <div class="reasons-list">
+                    <h5>Топ причин возникновения</h5>
+                    <ol>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" id="report_tickets">
+        {{ report_tickets|safe }}
+    </script>    
+    <script type="module" src="{% static 'js/report/report.js' %}"></script>
+{% endblock %}

@@ -40,6 +40,8 @@ urlpatterns = [
     path('tech_note/client/<int:client_id>', views.TechNoteByClientIdView.as_view(), name='tech_note_by_client'),
     path('tech_note/detail/<int:pk>', views.TechNoteDetailsView.as_view(), name='tech_note_details'),
     path('clients_list', views.ForAutomaticEmailView.as_view(), name='clients_list'),
+    path('version2_clients', views.Version2ClientsView.as_view(), name='version2_clients'),
+    path('version3_clients', views.Version3ClientsView.as_view(), name='version3_clients'),
     path('data_release/<str:release_number>/version_info', views.ReleaseInfoViewSet.as_view({'get': 'version_info'}), name='version-info'),
 ] + router.urls
 

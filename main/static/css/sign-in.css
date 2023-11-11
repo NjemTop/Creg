@@ -1,25 +1,48 @@
-html,
-body {
+/* Стили для страницы входа */
+html, body {
   height: 100%;
 }
 
 .form-signin {
   max-width: 330px;
   padding: 1rem;
+  margin: 0 auto;
 }
 
 .form-signin .form-floating:focus-within {
   z-index: 2;
 }
 
-.form-signin input[type="email"] {
-  margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
-
+.form-signin input[type="text"],
 .form-signin input[type="password"] {
   margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+  border-radius: 0;
+}
+
+.form-check-label {
+  font-weight: normal;
+}
+
+/* Стили для чекбокса */
+.form-check {
+  display: flex;
+  align-items: center;
+}
+
+.form-check-input {
+  margin-top: 0;
+  margin-right: 5px;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+/* Дополнительные стили для кнопки и подвала */
+.btn-primary {
+  margin-top: 10px;
+}
+
+.text-body-secondary {
+  margin-top: 20px;
+  text-align: center;
 }

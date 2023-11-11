@@ -19,7 +19,12 @@ from urllib.parse import unquote
 import datetime
 import logging
 import threading
+import os
+from dotenv import load_dotenv
 from scripts.add_user_JFrog import generate_random_password, authenticate, create_user
+from scripts.create_client_TFS import trigger_tfs_pipeline
+from scripts.create_client_nextcloud import NextCloudManager
+from .email_send import send_email_alert_async
 from django.shortcuts import get_object_or_404, get_list_or_404
 from .swagger_schemas import request_schema, response_schema
 from drf_yasg.utils import swagger_auto_schema
@@ -40,13 +45,24 @@ from .serializers import (
     TechInformationSerializer,
     TechNoteSerializer,
     ForAutomaticEmailSerializer,
+    Version2ClientsSerializer,
+    Version3ClientsSerializer,
     ReleaseInfoSerializer,
     ReportTicketSerializer,
 )
 
 
+load_dotenv()
+
 # Настройка логирования
 logger = logging.getLogger(__name__)
+
+NEXTCLOUD_URL = os.environ.get('NEXTCLOUD_URL')
+NEXTCLOUD_USER = os.environ.get('NEXTCLOUD_USER')
+NEXTCLOUD_PASSWORD = os.environ.get('NEXTCLOUD_PASSWORD')
+
+# Инициализация экземпляра NextCloud
+create_nextcloud_account = NextCloudManager(NEXTCLOUD_URL, NEXTCLOUD_USER, NEXTCLOUD_PASSWORD)
 
 
 def create_user_in_jfrog(username, password):
@@ -294,6 +310,9 @@ def add_client(request):
     """
     Endpoint для создания нового клиента со всей необходимой ему информацией.
     """
+
+    additional_data = {}
+
     if request.method == 'POST':
         client_data = request.data.get("client_name")
         contacts_data = request.data.get("contacts_card")
@@ -323,15 +342,27 @@ def add_client(request):
 
                 # Асинхронно запускаем скрипт для создания пользователя в JFrog
                 username = client.short_name
-                thread = threading.Thread(target=create_user_in_jfrog, args=(username, password))
-                thread.start()
+                jfrog_thread = threading.Thread(target=create_user_in_jfrog, args=(username, password))
+                jfrog_thread.start()
+
+                # Асинхронно запускаем скрипт для создания пользователя в TFS
+                client_name = client.client_name
+                tfs_thread = threading.Thread(target=trigger_tfs_pipeline, args=(client_name,))
+                tfs_thread.start()
+
+                # Асинхронно запускаем скрипт для создания пользователя в NextCloud
+                nextcloud_thread = threading.Thread(target=create_nextcloud_account.execute_all, args=(client.client_name, client.short_name, client.short_name))
+                nextcloud_thread.start()
+
                 # from api.tasks import add_user_jfrog_task
                 # add_user_jfrog_task.apply_async((username, password), countdown=600)
 
                 contact_serializer = ContactsSerializer(data=request.data.get('contacts_card', []), many=True)
                 if contact_serializer.is_valid():
                     contact_serializer.save(client_card=client_card)  # Передаем объект ClientsCard
+                    additional_data['Контакты клиента'] = str(contacts_data) # Добавляем информацию в словарь
                 else:
+                    logger.error(f'Ошибка записи данных об информации о контактах {contact_serializer.errors}')
                     client.delete()
 
                 if connect_info_data:
@@ -339,7 +370,9 @@ def add_client(request):
                         connect_info_serializer = ConnectInfoSerializer(data=connect_info)
                         if connect_info_serializer.is_valid():
                             connect_info_serializer.save(client_card=client_card)
+                            additional_data['Информация о подключениях к клиенту'] = str(connect_info) # Добавляем информацию в словарь
                         else:
+                            logger.error(f'Ошибка записи данных о подключениях {connect_info_serializer.errors}')
                             client.delete()
 
                 if bm_servers_data:
@@ -347,7 +380,9 @@ def add_client(request):
                         bm_server_serializer = BMServersSerializer(data=bm_server, context={'request': request})
                         if bm_server_serializer.is_valid():
                             bm_server_serializer.save(client_card=client_card)
+                            additional_data['Сервера BoardMaps'] = str(bm_server) # Добавляем информацию в словарь
                         else:
+                            logger.error(f'Ошибка записи данных о серварах ВМ {bm_server_serializer.errors}')
                             client.delete()
 
                 if tech_account_data:
@@ -355,33 +390,58 @@ def add_client(request):
                         tech_account_serializer = TechAccountSerializer(data=tech_account)
                         if tech_account_serializer.is_valid():
                             tech_account_serializer.save(client_card=client_card)
+                            additional_data['Техническая учётная запись'] = str(tech_account) # Добавляем информацию в словарь
                         else:
+                            logger.error(f'Ошибка записи данных о тех. УЗ {tech_account_serializer.errors}')
                             client.delete()
 
                 if integration_data:
                     integration_serializer = IntegrationSerializer(data=integration_data)
                     if integration_serializer.is_valid():
                         integration_serializer.save(client_card=client_card)
+                        # Добавляем информацию в словарь для отправки алерта на почту
+                        additional_data['Интеграции'] = str(integration_data)
                     else:
-                        print(integration_serializer.errors)
+                        logger.error(f'Ошибка записи данных о интеграциях {integration_serializer.errors}')
                 
                 if module_data:
                     module_serializer = ModuleSerializer(data=module_data)
                     if module_serializer.is_valid():
                         module_serializer.save(client_card=client_card)
+                        additional_data['Модули'] = str(module_data) # Добавляем информацию в словарь
                     else:
-                        print(module_serializer.errors)
+                        logger.error(f'Ошибка записи данных о модулях {module_serializer.errors}')
 
                 if service_data:
                     service_serializer = ServiseSerializer(data=service_data)
                     if service_serializer.is_valid():
                         service_serializer.save(client_card=client_card)
+                        additional_data['Обслуживание'] = str(service_data) # Добавляем информацию в словарь
+                    else:
+                        logger.error(f'Ошибка записи данных об обслуживании  {service_serializer.errors}')
 
                 if tech_information_data:
+                    # Проверяем наличие даты обновления
+                    if 'update_date' not in tech_information_data:
+                        tech_information_data['update_date'] = datetime.date.today()  # Устанавливаем текущую дату, если не указана
                     tech_information_serializer = TechInformationSerializer(data=tech_information_data)
                     if tech_information_serializer.is_valid():
                         tech_information_serializer.save(client_card=client_card)
+                        additional_data['Техническая информация'] = str(tech_information_data) # Добавляем информацию в словарь
+                    else:
+                        logger.error(f'Ошибка записи данных о тех. информации {tech_information_serializer.errors}')
+                
+                # Отправляем алерт на почту
+                client_data = {
+                    'client_name': client.client_name,
+                    'short_name': client.short_name,
+                    'password': password,
+                }
+                email_thread = threading.Thread(target=send_email_alert_async, args=(client_data, additional_data))
+                email_thread.start()
 
+                # Логируем запись созданного клиента
+                logger.info(f"Клиент {client.client_name} создан в БД! ID клиента {client.pk}.")
                 # Выводим информацию о созданном клиенте
                 return Response({"message": f"Клиент {client.client_name} создан в БД! ID клиента {client.pk}."},
                                 status=status.HTTP_201_CREATED)
@@ -899,6 +959,14 @@ class TechNoteDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.D
 class ForAutomaticEmailView(generics.ListAPIView):
     queryset = ClientsList.objects.all()
     serializer_class = ForAutomaticEmailSerializer
+
+class Version2ClientsView(generics.ListAPIView):
+    queryset = ClientsList.objects.filter(clients_card__tech_information__server_version__startswith='2')
+    serializer_class = Version2ClientsSerializer
+
+class Version3ClientsView(generics.ListAPIView):
+    queryset = ClientsList.objects.filter(clients_card__tech_information__server_version__startswith='3')
+    serializer_class = Version3ClientsSerializer
 
 
 class ReleaseInfoFilter(filters.FilterSet):

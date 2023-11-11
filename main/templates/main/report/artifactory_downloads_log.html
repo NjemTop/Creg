@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчёт по скачиванию данных из jFrog</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f7c29ef6;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Учётная запись jFrog</th>
+                <th>Версия скачивания</th>
+                <th>IP-адрес</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+        </tbody>
+    </table>
+    <button id="toggleTableBtn">Запустить</button>
+    <div id="message">Нажмите кнопку, чтобы загрузить данные.</div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const toggleTableBtn = document.getElementById("toggleTableBtn");
+            const messageDiv = document.getElementById("message");
+            const table = document.querySelector("table tbody");
+
+            toggleTableBtn.addEventListener("click", function() {
+                messageDiv.textContent = "Загрузка данных, подождите...";
+                fetch('/get_log_analysis_data/')
+                .then(response => response.json())
+                .then(data => {
+                    table.innerHTML = "";
+                    data.client_data.forEach(client => {
+                        let row = table.insertRow();
+                        let cell1 = row.insertCell(0);
+                        let cell2 = row.insertCell(1);
+                        let cell3 = row.insertCell(2);
+                        let cell4 = row.insertCell(3);
+
+                        // Форматируем дату
+                        const date = new Date(client.log_date);
+                        const formattedDate = date.toLocaleDateString("ru-RU", {
+                            day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                        });
+
+                        cell1.innerHTML = formattedDate;
+                        cell2.innerHTML = client.account_name;
+                        cell3.innerHTML = client.version;
+                        cell4.innerHTML = client.ip_address;
+                    });
+                    messageDiv.textContent = "Данные загружены.";
+                })
+                .catch(error => {
+                    messageDiv.textContent = "Ошибка при загрузке данных.";
+                });
+            });
+        });
+    </script>
+</body>
+</html>

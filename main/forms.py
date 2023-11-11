@@ -150,3 +150,10 @@ class IntegrationForm(forms.ModelForm):
 class AdvancedSearchForm(forms.Form):
     serverVersionCheckbox = forms.BooleanField(label='Версия сервера', required=False)
     serverVersionInput = forms.CharField(label='Введите версию сервера', max_length=255, required=False)
+
+
+class URLInputForm(forms.Form):
+    service_url = forms.URLField(label='URL адрес стенда', required=True)
+
+class ServerInputForm(forms.Form):
+    service_url = forms.CharField(label='Адрес сервера, где развёрнут стенд', required=True)

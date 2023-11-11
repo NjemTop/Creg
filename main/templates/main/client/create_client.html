@@ -1,0 +1,176 @@
+{% extends 'main/base.html' %}
+{% load custom_tags %}
+{% load static %}
+
+{% block title %}
+    Создать клиента
+{% endblock %}
+
+{% block content %}
+    <style>
+        .form-row {
+            display: flex;
+            justify-content: center;
+            width: 50%; /* Уменьшаем ширину строки в два раза */
+            margin: 0 auto; /* Центрируем строку на странице */
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555555;
+            background-color: #ffffff;
+            background-image: none;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        }
+
+        .form-select.custom-input {
+            width: auto;
+            display: inline-block;
+        }
+    </style>
+
+    <form method="post" class="needs-validation">
+        {% csrf_token %}
+        <div class="mb-3 form-row">
+            <label for="client_name" class="form-label">Наименование клиента <span class="text-danger">*</span></label>
+            {{ form_client.client_name|add_class:'form-control' }}
+        </div>
+        <div class="row mb-3 form-row">
+            <div class="col-md-6">
+                <label for="manager" class="form-label">Менеджер <span class="text-danger">*</span></label>
+                <select name="manager" id="manager" class="form-select">
+                    <option value="">Выберите менеджера</option>
+                    <option value="Tatiana Shindikova">Tatiana Shindikova</option>
+                    <option value="Ekaterina Shneyder">Ekaterina Shneyder</option>
+                    <option value="Другое">Другое</option>
+                </select>
+                <input type="text" name="manager_custom" id="manager_custom" class="form-control custom-input" placeholder="Введите название" style="display: none;">
+            </div>
+            <div class="col-md-6">
+                <label for="service_pack" class="form-label">Сервис план <span class="text-danger">*</span></label>
+                <select name="service_pack" id="service_pack" class="form-select">
+                    <option value="">Выберите статус плана</option>
+                    <option value="Bronze">Bronze</option>
+                    <option value="Silver">Silver</option>
+                    <option value="Gold">Gold</option>
+                    <option value="Platinum">Platinum</option>
+                </select>
+            </div>
+        </div>
+        <div class="mb-3 form-row">
+            <label for="loyal" class="form-label">Лояльность</label>
+            <select name="loyal" id="loyal" class="form-select">
+                <option value="">Выберите уровень лояльности</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+        </div>
+        <hr>
+        <div class="mb-3">
+            <label class="form-label">Контакты клиента</label>
+            <div id="contact_form_set">
+                {{ contact_formset.management_form }}
+                {% for form in contact_formset %}
+                    <div class="contact-form mb-3">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="{{ form.prefix }}-contact_name">ФИО <span class="text-danger">*</span></label>
+                                {{ form.contact_name|add_class:'form-control' }}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.prefix }}-contact_position">Должность <span class="text-danger">*</span></label>
+                                {{ form.contact_position|add_class:'form-control' }}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.prefix }}-contact_email">Почта <span class="text-danger">*</span></label>
+                                {{ form.contact_email|add_class:'form-control' }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="{{ form.prefix }}-notification_update">Отправка рассылки <span class="text-danger">*</span></label>
+                                <select name="{{ form.prefix }}-notification_update" id="{{ form.prefix }}-notification_update" class="form-select">
+                                    <option value="">Выберите тип рассылки</option>
+                                    <option value="Основной контакт рассылки">Основной контакт рассылки</option>
+                                    <option value="Копия рассылки">Копия рассылки</option>
+                                    <option value="Рассылка не нужна">Рассылка не нужна</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.prefix }}-contact_notes">Заметки</label>
+                                {{ form.contact_notes|add_class:'form-control' }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" id="add_contact" class="btn btn-primary mt-2"
+                data-contact-formset-total-form-count="{{ contact_formset_total_form_count }}"
+                data-contact-formset-max-num="{{ contact_formset_max_num }}">Добавить контакт</button>
+        </div>
+        <div class="mb-3">
+            <h5>Техническая информация</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="server_version" class="form-label">Версия сервера</label>
+                    {{ tech_info_form.server_version|add_class:'form-control' }}
+                </div>
+                <div class="col-md-6">
+                    <label for="update_date" class="form-label">Дата обновления</label>
+                    {{ tech_info_form.update_date|add_class:'form-control' }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="ipad" class="form-label">iPad</label>
+                    {{ tech_info_form.ipad|add_class:'form-control' }}
+                </div>
+                <div class="col-md-6">
+                    <label for="android" class="form-label">Android</label>
+                    {{ tech_info_form.android|add_class:'form-control' }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="mdm" class="form-label">MDM</label>
+                    {{ tech_info_form.mdm|add_class:'form-control' }}
+                </div>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="api" name="api">
+                <label class="form-check-label" for="api">API</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="localizable_web" name="localizable_web">
+                <label class="form-check-label" for="localizable_web">Локализация Web</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="localizable_ios" name="localizable_ios">
+                <label class="form-check-label" for="localizable_ios">Локализация iOS</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="skins_web" name="skins_web">
+                <label class="form-check-label" for="skins_web">Скины Web</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="skins_ios" name="skins_ios">
+                <label class="form-check-label" for="skins_ios">Скины iOS</label>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Добавить</button>
+        <span>{{ error }}</span>
+    </form>
+
+    <script src="{% static 'js/client/create_client.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,26 @@
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.form-select-group {
+    max-width: 200px;
+}
+
+/* Уменьшение размера строки с календарём */
+.form-calendar-group {
+    margin-bottom: 10px;
+}
+
+.select2-container {
+    width: 100% !important;
+}
+
+.form-control, #report-date-range {
+    vertical-align: middle; /* Выравнивание по вертикали */
+    height: 38px;  /* Явная высота */
+    padding: 6px 12px;  /* Подгоните padding */
+    font-size: 14px;  /* Размер шрифта */
+    line-height: 26px;  /* Высота строки, подгоните под нужный размер */
+}

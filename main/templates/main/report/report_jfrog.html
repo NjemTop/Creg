@@ -1,0 +1,39 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/report/report_jfrog.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h2 class="section-title">Отчет по скачиванию с jFrog</h2>
+    <div class="filter-group">
+        <div class="form-calendar-group">
+            <label for="report-date-range">Период:</label>
+            <input type="text" id="report-date-range" class="form-control" />
+        </div>
+        <div class="form-select-group">
+            <label for="account-select">Учётные записи:</label>
+            <select id="account-select" class="form-control" multiple>
+            </select>
+        </div>
+        <div class="form-select-group">
+            <label for="version-select">Версии:</label>
+            <select id="version-select" class="form-control" multiple>
+            </select>
+        </div>
+        <button id="apply-filters" class="btn btn-outline-warning">Применить фильтры</button>
+    </div>
+
+    <div id="app" class="container" style="max-width: 100%;">
+        <vue-good-table
+            :columns="columns"
+            :rows="rows"
+            :line-numbers="true"
+            :search-options="{ enabled: true, placeholder: 'Поиск по таблице' }"
+            :pagination-options="{ enabled: true, mode: 'pages' }"
+        >
+        </vue-good-table>
+    </div>
+    <script type="module" src="{% static 'js/report/report_jfrog.js' %}"></script>
+{% endblock %}

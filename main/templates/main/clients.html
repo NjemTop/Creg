@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<h1 class="mt-4 display-4 text-center">Список всех клиентов</h1>
+<h2 class="section-title">Список всех клиентов</h2>
 
 <div class="row">
     <div class="col-md-12">
@@ -15,7 +15,7 @@
                 <thead>
                     <tr>
                         <th scope="col" class="wider-column">Имя клиента</th>
-                        <th scope="col" class="wider-icon-column">Статус контакта</th>
+                        <th scope="col" class="wider-icon-column">Статус клиента</th>
                         <th scope="col" class="wider-icon-column">Карточка клиента</th>
                         <th scope="col" class="wider-icon-column">Обслуживание</th>
                         <th scope="col" class="wider-icon-column">Тех. информация</th>
@@ -53,11 +53,11 @@
                     {% endfor %}
                 </tbody>
             </table>
-            {% include 'main/client_card_modal.html' with clients=clients %}
-            {% include 'main/service_modal.html' with clients=clients %}
-            {% include 'main/tech_information_modal.html' with clients=clients %}
-            {% include 'main/contact_modal.html' with clients=clients %}
-            {% include 'main/integration_modal.html' with clients=clients %}
+            {% include 'main/client/client_card_modal.html' with clients=clients %}
+            {% include 'main/client/service_modal.html' with clients=clients %}
+            {% include 'main/client/tech_information_modal.html' with clients=clients %}
+            {% include 'main/client/contact_modal.html' with clients=clients %}
+            {% include 'main/client/integration_modal.html' with clients=clients %}
         {% else %}
             <p>Нет доступных клиентов.</p>
         {% endif %}
@@ -65,10 +65,10 @@
 </div>
 
 <!-- Подключаем файлы JavaScript -->
-<script src="{% static 'js/client_status.js' %}"></script>
-<script src="{% static 'js/service_modal.js' %}"></script>
-<script src="{% static 'js/tech_information_modal.js' %}"></script>
-<script src="{% static 'js/client_card_modal.js' %}"></script>
-<script src="{% static 'js/contact_modal.js' %}"></script>
+<script src="{% static 'js/client/client_status.js' %}"></script>
+<script src="{% static 'js/client/service_modal.js' %}"></script>
+<script src="{% static 'js/client/tech_information_modal.js' %}"></script>
+<script src="{% static 'js/client/client_card_modal.js' %}"></script>
+<script src="{% static 'js/client/contact_modal.js' %}"></script>
 
 {% endblock %}

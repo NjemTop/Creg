@@ -1,0 +1,48 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+Информация об отправке релиза
+{% endblock %}
+
+{% block content %}
+    <h2 class="section-title">Информация об отправке релиза </h2>
+
+    <!-- Выпадающий список для выбора номера релиза -->
+    <div class="row">
+        <div class="col-md-6">
+           <p>Версия 2.x:</p>
+            <select id="release-number-select" class="form-control">
+            </select>
+        </div>
+        <div class="col-md-6">
+            <p>Версия 3.x:</p>
+            <select id="release-number-select" class="form-control">
+            </select>
+        </div>
+    </div>
+
+    <div id="loading-spinner" class="d-flex justify-content-center">
+        <div id="spinner"></div>
+    </div>
+    <br>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Дата рассылки</th>
+                <th>Номер релиза</th>
+                <th>Наименование клиента</th>
+                <th>Основной контакт</th>
+                <th>Копия</th>
+            </tr>
+        </thead>
+        <tbody id="release-info-table-body">
+            <tr id="no-data-row">
+                <td colspan="5">Загрузка данных...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Подключаем файл JavaScript -->
+    <script src="{% static 'js/report/release_info.js' %}"></script>
+{% endblock %}

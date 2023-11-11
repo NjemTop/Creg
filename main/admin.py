@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import ClientsList, ReportTicket, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote, ReleaseInfo, Favicon
+from .models import ClientsList, ReportTicket, ReportDownloadjFrog, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote, ReleaseInfo, Favicon
 from .models import backup_file_path, DatabaseBackup
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -136,6 +136,7 @@ admin.site.register(TechInformationCard)
 admin.site.register(TechNote)
 admin.site.register(ReleaseInfo)
 admin.site.register(ReportTicket)
+admin.site.register(ReportDownloadjFrog)
 
 
 @admin.register(Favicon)

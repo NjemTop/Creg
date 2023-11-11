@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+</head>
+<body>
+    <h1>Upload File</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" name="file" id="file">
+        <label for="client_id">Выберите клиента:</label>
+        <select name="client_id" id="client_id">
+            {% for client in clients %}
+                <option value="{{ client.id }}">{{ client.client_name }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <input type="hidden" name="client_id" id="client_id" value="9">
+        <button type="submit">Upload</button>
+    </form>
+
+    {% if user.is_authenticated %}
+    <p>Вы вошли как {{ user.username }}</p>
+    {% else %}
+    <form method="POST" action="{% url 'custom_login' %}">
+        {% csrf_token %}
+        <label for="username">Имя пользователя:</label>
+        <input type="text" name="username" required>
+        <br>
+        <label for="password">Пароль:</label>
+        <input type="password" name="password" required>
+        <br>
+        <button type="submit">Войти</button>
+    </form>
+    {% endif %}
+
+    <script>
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        const csrfToken = getCookie('csrftoken');
+
+        document.getElementById('upload-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const clientId = document.getElementById('client_id').value;
+            const formData = new FormData(event.target);
+            const response = await fetch(`/api/connection_info/upload/${clientId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Authorization': 'Basic YWRtaW46ZWtTa2FhaVduSw=='
+                },
+                body: formData,
+                credentials: 'include',
+            });
+            if (response.ok) {
+                console.log('File uploaded successfully');
+                alert('File uploaded successfully');
+            } else {
+                console.log('Error:', response.status, response.statusText);
+                alert('Error: ' + response.status + ' ' + response.statusText);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -122,6 +122,7 @@ class ContactsCard(models.Model):
     contact_name = models.CharField(verbose_name="ФИО", max_length=255)
     contact_position = models.CharField(verbose_name="Должность", max_length=255, null=True, blank=True)
     contact_email = models.EmailField(verbose_name="Почта", max_length=255)
+    contact_number = models.CharField(verbose_name="Телефон", max_length=255, null=True, blank=True)
     notification_update = models.CharField(verbose_name="Отправка рассылки", max_length=255, null=True, blank=True)
     contact_notes = models.TextField(verbose_name="Примечание", null=True, blank=True)
 
@@ -195,8 +196,8 @@ class Integration(models.Model):
     zoom = models.BooleanField(verbose_name='Zoom', null=True, blank=True, default=False)
     teams = models.BooleanField(verbose_name='Teams', null=True, blank=True, default=False)
     smtp = models.BooleanField(verbose_name='SMTP', null=True, blank=True, default=False)
-    cryptopro_dss = models.BooleanField(verbose_name='Cripto_DSS', null=True, blank=True, default=False)
-    cryptopro_csp = models.BooleanField(verbose_name='Cripto_CSP', null=True, blank=True, default=False)
+    cryptopro_dss = models.BooleanField(verbose_name='Crypto_DSS', null=True, blank=True, default=False)
+    cryptopro_csp = models.BooleanField(verbose_name='Crypto_CSP', null=True, blank=True, default=False)
     smpp = models.BooleanField(verbose_name='SMPP', null=True, blank=True, default=False)
     limesurvey = models.BooleanField(verbose_name='Анкетирование', null=True, blank=True, default=False)
 
@@ -359,6 +360,7 @@ class ReportTicket(models.Model):
     creation_date = models.DateField(verbose_name='Создан', null=True, blank=True)
     status = models.CharField(verbose_name='Статус', max_length=100, null=True, blank=True)
     client_name = models.CharField(verbose_name='Название клиента', max_length=100, null=True, blank=True)
+    initiator = models.CharField(verbose_name='Инициатор', max_length=100, null=True, blank=True)
     priority = models.CharField(verbose_name='Приоритет', max_length=100, null=True, blank=True)
     assignee_name = models.CharField(verbose_name='Исполнитель', max_length=100, null=True, blank=True)
     updated_at = models.DateField(verbose_name='Дата обновления', null=True, blank=True)
@@ -377,3 +379,18 @@ class ReportTicket(models.Model):
 
     def __str__(self):
         return str(self.ticket_id) if self.ticket_id else ''
+
+class ReportDownloadjFrog(models.Model):
+    """Класс для таблицы БД информации о скачивании с jFrog"""
+    date = models.DateField(verbose_name='Дата')
+    account_name = models.CharField(verbose_name='Учётная запись jFrog', max_length=100, null=True, blank=True)
+    version_download = models.CharField(verbose_name='Версия скачивания', max_length=100, null=True, blank=True)
+    ip_address = models.CharField(verbose_name='IP-адрес', max_length=20, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Отчёт о скачивании с jFrog"
+        verbose_name_plural = "Отчёты о скачивании с jFrog"
+        db_table = "report_download_jfrog"
+
+    def __str__(self):
+        return str(self.date) if self.date else ''
