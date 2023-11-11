@@ -39,6 +39,13 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
+      
+      # Шаг для установки зависимостей LDAP
+      - name: Install LDAP dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libldap2-dev libsasl2-dev libssl-dev gcc
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
