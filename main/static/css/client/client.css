@@ -1,5 +1,5 @@
 body.client-page {
-    background: url('/media/favicons/DALL·E_2023_11_11_15_13_48_Create_a_4K_background_image_for_a_website.png') no-repeat fixed; 
+    background: url('/media/favicons/Koty12.png') no-repeat fixed; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -25,6 +25,12 @@ body.client-page {
     padding: 10px;
     border: 1px solid #5a5959;
     vertical-align: middle;
+}
+
+/* Стиль для блоков ввода в режиме редактора */
+.table .editField {
+    width: 100%;
+    box-sizing: border-box; /* Учитывает padding и border в ширине элемента */
 }
 
 @media (max-width: 768px) {

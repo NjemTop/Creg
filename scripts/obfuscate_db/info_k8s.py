@@ -76,3 +76,17 @@ def get_postgresql_info(hostname, ssh_username, ssh_password, namespace='default
         print(f"Ошибка: {str(e)}")
 
     return None
+
+
+# hostname = "SUP-KUBE-APP03p.corp.boardmaps.com"
+# ssh_username = "ubuntu"
+# ssh_password = "Public3772"
+
+# postgres_info = get_postgresql_info(hostname, ssh_username, ssh_password)
+
+# if postgres_info:
+#     print("Информация о базе данных PostgreSQL:")
+#     print(f"Database: {postgres_info['postgres_db']}")
+#     print(f"User: {postgres_info['postgres_user']}")
+#     print(f"Password: {postgres_info['postgres_password']}")
+#     print(f"Pod_name: {postgres_info['pod_name']}")

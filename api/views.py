@@ -29,7 +29,9 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from .swagger_schemas import request_schema, response_schema
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote, ReleaseInfo, ReportTicket
+from main.models import (ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, 
+BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, ServiseCard, 
+TechInformationCard, TechNote, ReleaseInfo, ReportTicket, UsersBoardMaps)
 from .mixins import CustomResponseMixin, CustomCreateModelMixin, CustomQuerySetFilterMixin
 from .response_helpers import file_upload_error_response, custom_update_response, custom_delete_response
 from .serializers import (
@@ -49,6 +51,7 @@ from .serializers import (
     Version3ClientsSerializer,
     ReleaseInfoSerializer,
     ReportTicketSerializer,
+    UsersBoardMapsSerializer,
 )
 
 
@@ -1020,3 +1023,10 @@ class ReportTicketViewSet(viewsets.ModelViewSet):
         if start_date is not None and end_date is not None:
             queryset = queryset.filter(creation_date__range=[start_date, end_date])
         return queryset
+
+class UsersBoardMapsView(generics.ListAPIView):
+    """
+    Класс вывода информации о сотрудниках BoardMaps
+    """
+    queryset = UsersBoardMaps.objects.all()
+    serializer_class = UsersBoardMapsSerializer

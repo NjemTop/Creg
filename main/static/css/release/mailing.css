@@ -1,0 +1,21 @@
+.mailing-header {
+    margin-bottom: 20px;
+}
+
+label {
+    margin-right: 10px;
+}
+
+.input-limited {
+    max-width: 230px;
+}
+
+/* Стиль для скрытия раздела "Выберите отчет" */
+.hidden {
+    display: none;
+}
+
+.col-xs-12 {
+    padding-right: 5px;
+    padding-left: 5px;
+}

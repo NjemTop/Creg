@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             reportTypeRow.style.visibility = 'hidden';
             reportTypeRow.style.height = '0'; // установить высоту элемента в 0, чтобы он не занимал места
-        }        
+        }
     });
 
     reportTypeSelect.addEventListener('change', function() {

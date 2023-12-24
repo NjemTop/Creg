@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import ClientsList, ReportTicket, ReportDownloadjFrog, ClientsCard, ContactsCard, ReleaseInfo, ServiseCard, TechInformationCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, TechNote
+from .models import ClientsList, ReportTicket, ReportDownloadjFrog, UsersBoardMaps, ClientsCard, ContactsCard, ReleaseInfo, ServiseCard, TechInformationCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, TechNote
 from .forms import ClientListForm, AdvancedSearchForm, ContactFormSet, ServiseCardForm, TechInformationCardForm, ContactForm, IntegrationForm, URLInputForm, ServerInputForm
 from django.db import transaction
 from django.db.models import QuerySet
@@ -360,32 +360,28 @@ def client(request, client_id):
         # Создаем пустую запись для TechAccountCard, если она не существует
         tech_account_list = []
 
-    # Объявляем переменную file_name с пустым значением по умолчанию
+    # Инициализация переменных
     file_name = ""
-    
+    file_path = "Нет документа"
+    text = "Нет данных"
+
     try:
         connection_info = ConnectionInfo.objects.get(client_card__client_info=client)
-        if connection_info.file_path:
-            file_path = connection_info.file_path.url
-            # Получение названия файла из полного пути
-            file_name = os.path.basename(connection_info.file_path.name) if connection_info.file_path else ""
-        else:
-            file_path = "Нет документа"
-
-        if connection_info.text:
-            text = connection_info.text
-        else:
-            text = "Нет данных"
-
+        file_path = connection_info.file_path.url if connection_info.file_path else "Нет документа"
+        # Получение названия файла из полного пути
+        file_name = os.path.basename(connection_info.file_path.name) if connection_info.file_path else ""
+        text = connection_info.text if connection_info.text else "Нет данных"
     except (ConnectionInfo.DoesNotExist, ValueError):
-        file_path = "Нет документа"
-        text = "Нет данных"
+        connection_info = None
 
     try:
         tech_note = TechNote.objects.get(client_card=client.clients_card)
     except TechNote.DoesNotExist:
         # Создаем пустую запись для TechNote, если она не существует
         tech_note = TechNote.objects.create(client_card=client.clients_card, tech_note_text="Нет данных")
+        
+    # Добавьте выборку менеджеров
+    managers = UsersBoardMaps.objects.filter(position='Менеджер')
 
     return render(request, 'main/client/client.html', {
         'title': 'Информация о клиенте',
@@ -398,10 +394,12 @@ def client(request, client_id):
         'bm_servers_list': bm_servers_list,
         'servise': servise,
         'tech_account_list': tech_account_list,
-        'file_path': file_path,
-        'file_name': file_name,
+        'connection_info': connection_info,
         'text': text,
+        'file_name': file_name,
+        'file_path': file_path,
         'tech_note': tech_note,
+        'managers': managers,
     })
 
 
@@ -568,3 +566,7 @@ def obfuscate_postgresql(request):
 
     # Если GET запрос или форма не валидна, показываем форму снова
     return render(request, 'main/test/obfuscate_postgresql.html', {'form': form})
+
+
+def mailing(request):
+    return render(request, 'main/release/mailing.html')

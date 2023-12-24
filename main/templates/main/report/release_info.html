@@ -5,6 +5,10 @@
 Информация об отправке релиза
 {% endblock %}
 
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/report/release_info.css' %}">
+{% endblock %}
+
 {% block content %}
     <h2 class="section-title">Информация об отправке релиза </h2>
 
@@ -12,12 +16,14 @@
     <div class="row">
         <div class="col-md-6">
            <p>Версия 2.x:</p>
-            <select id="release-number-select" class="form-control">
+            <select id="release-number-select-2x" class="form-control">
+            <option value="" disabled selected>Выберите необходимый релиз</option>
             </select>
         </div>
         <div class="col-md-6">
             <p>Версия 3.x:</p>
-            <select id="release-number-select" class="form-control">
+            <select id="release-number-select-3x" class="form-control">
+            <option value="" disabled selected>Выберите необходимый релиз</option>
             </select>
         </div>
     </div>
@@ -45,4 +51,5 @@
 
     <!-- Подключаем файл JavaScript -->
     <script src="{% static 'js/report/release_info.js' %}"></script>
+    <script src="{% static 'js/toastify-settings.js' %}"></script>
 {% endblock %}

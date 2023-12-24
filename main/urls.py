@@ -37,6 +37,7 @@ urlpatterns = [
     path('update_integration/<int:client_id>/', views.update_integration, name='update_integration'),
     path('search_results/', views.search_results, name='search_results'),
     path('report/', views.report, name='report'),
+    path('mailing/', views.mailing, name='mailing'),
     path('report_tickets/', views.report_tickets, name='report_tickets'),
     path('get_report_data/', views.get_report_data, name='get_report_data'),
     path('report_jfrog/', views.report_jfrog, name='report_jfrog'),

@@ -25,3 +25,6 @@ main/migrations/0004_alter_clientscard_bm_servers_and_more.py
 main/migrations/0005_releaseinfo.py
 main/migrations/0006_alter_releaseinfo_release_number.py
 main/migrations/0003_alter_bmserverscard_bm_servers_circuit_and_more.py
+main/migrations/0005_usersboardmaps.py
+main/migrations/0006_alter_connectioninfo_options_and_more.py
+main/migrations/0007_servisecard_manager_new.py

@@ -43,6 +43,7 @@ urlpatterns = [
     path('version2_clients', views.Version2ClientsView.as_view(), name='version2_clients'),
     path('version3_clients', views.Version3ClientsView.as_view(), name='version3_clients'),
     path('data_release/<str:release_number>/version_info', views.ReleaseInfoViewSet.as_view({'get': 'version_info'}), name='version-info'),
+    path('usersboardmaps', views.UsersBoardMapsView.as_view(), name='usersboardmaps'),
 ] + router.urls
 
 app_name = 'rest_api'

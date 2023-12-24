@@ -1,0 +1,454 @@
+INFO 2023-12-11 15:35:14,054 apps 2408 14280 AXES: BEGIN version 6.1.0, blocking by ip_address
+DEBUG 2023-12-11 15:35:15,519 _gss 2408 14280 Python gssapi not available, cannot use any GSSAPIProxy protocols: No module named 'gssapi'
+DEBUG 2023-12-11 15:35:15,520 _gss 2408 14280 Python gssapi IOV extension not available: No module named 'gssapi'
+INFO 2023-12-11 15:35:26,879 apps 25060 15276 AXES: BEGIN version 6.1.0, blocking by ip_address
+INFO 2023-12-11 15:35:27,988 apps 4332 28648 AXES: BEGIN version 6.1.0, blocking by ip_address
+INFO 2023-12-11 15:35:28,006 autoreload 4332 28648 Watching for file changes with StatReloader
+INFO 2023-12-11 15:35:28,006 autoreload 4332 28648 Watching for file changes with StatReloader
+DEBUG 2023-12-11 15:35:28,142 _gss 4332 28648 Python gssapi not available, cannot use any GSSAPIProxy protocols: No module named 'gssapi'
+DEBUG 2023-12-11 15:35:28,143 _gss 4332 28648 Python gssapi IOV extension not available: No module named 'gssapi'
+INFO 2023-12-11 16:02:13,158 autoreload 4332 28648 D:\Script\BoardMaps\TFS\Crag\logger\log_config.py changed, reloading.
+INFO 2023-12-11 16:02:13,158 autoreload 4332 28648 D:\Script\BoardMaps\TFS\Crag\logger\log_config.py changed, reloading.
+INFO 2023-12-11 16:02:14,372 apps 25784 22680 AXES: BEGIN version 6.1.0, blocking by ip_address
+INFO 2023-12-11 16:02:14,391 autoreload 25784 22680 Watching for file changes with StatReloader
+INFO 2023-12-11 16:02:14,391 autoreload 25784 22680 Watching for file changes with StatReloader
+DEBUG 2023-12-11 16:02:14,543 _gss 25784 22680 Python gssapi not available, cannot use any GSSAPIProxy protocols: No module named 'gssapi'
+DEBUG 2023-12-11 16:02:14,544 _gss 25784 22680 Python gssapi IOV extension not available: No module named 'gssapi'
+INFO 2023-12-11 16:24:00,697 basehttp 25784 9624 "GET /client/1/ HTTP/1.1" 200 40552
+INFO 2023-12-11 16:24:00,697 basehttp 25784 9624 "GET /client/1/ HTTP/1.1" 200 40552
+INFO 2023-12-11 16:24:00,965 basehttp 25784 9624 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 16:24:00,965 basehttp 25784 9624 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 16:24:00,974 basehttp 25784 9624 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22338
+INFO 2023-12-11 16:24:00,974 basehttp 25784 9624 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22338
+INFO 2023-12-11 16:24:00,987 basehttp 25784 9624 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+INFO 2023-12-11 16:24:00,987 basehttp 25784 9624 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+INFO 2023-12-11 16:24:00,997 basehttp 25784 9624 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+INFO 2023-12-11 16:24:00,997 basehttp 25784 9624 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+INFO 2023-12-11 16:24:01,080 basehttp 25784 22916 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 16:24:01,080 basehttp 25784 22916 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 16:24:01,101 basehttp 25784 20624 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 16:24:01,101 basehttp 25784 20624 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 16:24:01,108 basehttp 25784 23692 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 16:24:01,108 basehttp 25784 23692 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 16:24:01,115 basehttp 25784 440 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 16:24:01,115 basehttp 25784 440 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 16:24:01,119 basehttp 25784 25516 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+INFO 2023-12-11 16:24:01,119 basehttp 25784 25516 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+WARNING 2023-12-11 16:24:01,122 log 25784 25516 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 16:24:01,122 log 25784 25516 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 16:24:01,123 basehttp 25784 25516 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 16:24:01,123 basehttp 25784 25516 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 16:24:01,137 basehttp 25784 25516 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 16:24:01,137 basehttp 25784 25516 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 16:24:01,344 basehttp 25784 25516 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 16:24:01,344 basehttp 25784 25516 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 16:24:02,717 basehttp 25784 25516 "GET / HTTP/1.1" 200 14135
+INFO 2023-12-11 16:24:02,717 basehttp 25784 25516 "GET / HTTP/1.1" 200 14135
+INFO 2023-12-11 16:24:02,764 basehttp 25784 25516 "GET /media/favicons/background_image.jpg HTTP/1.1" 200 131898
+INFO 2023-12-11 16:24:02,764 basehttp 25784 25516 "GET /media/favicons/background_image.jpg HTTP/1.1" 200 131898
+INFO 2023-12-11 16:24:03,817 basehttp 25784 25516 "GET /mailing/ HTTP/1.1" 200 19808
+INFO 2023-12-11 16:24:03,817 basehttp 25784 25516 "GET /mailing/ HTTP/1.1" 200 19808
+INFO 2023-12-11 16:24:03,845 basehttp 25784 25516 "GET /static/css/release/mailing.css HTTP/1.1" 200 322
+INFO 2023-12-11 16:24:03,845 basehttp 25784 25516 "GET /static/css/release/mailing.css HTTP/1.1" 200 322
+INFO 2023-12-11 16:24:03,853 basehttp 25784 440 "GET /static/js/release/mailing.js HTTP/1.1" 200 11368
+INFO 2023-12-11 16:24:03,853 basehttp 25784 23692 "GET /static/js/release/test_send_mailing.js HTTP/1.1" 200 3906
+INFO 2023-12-11 16:24:03,853 basehttp 25784 440 "GET /static/js/release/mailing.js HTTP/1.1" 200 11368
+INFO 2023-12-11 16:24:03,853 basehttp 25784 23692 "GET /static/js/release/test_send_mailing.js HTTP/1.1" 200 3906
+INFO 2023-12-11 16:24:03,940 basehttp 25784 440 "GET /apiv2/get_template_content/index_2x.html HTTP/1.1" 301 0
+INFO 2023-12-11 16:24:03,940 basehttp 25784 440 "GET /apiv2/get_template_content/index_2x.html HTTP/1.1" 301 0
+INFO 2023-12-11 16:24:03,963 basehttp 25784 23692 "GET /apiv2/get_template_content/index_2x.html/ HTTP/1.1" 200 117936
+INFO 2023-12-11 16:24:03,963 basehttp 25784 23692 "GET /apiv2/get_template_content/index_2x.html/ HTTP/1.1" 200 117936
+INFO 2023-12-11 16:24:51,047 basehttp 25784 23692 "GET /mailing/ HTTP/1.1" 200 19808
+INFO 2023-12-11 16:24:51,047 basehttp 25784 23692 "GET /mailing/ HTTP/1.1" 200 19808
+INFO 2023-12-11 16:24:51,202 basehttp 25784 23692 "GET /apiv2/get_template_content/index_2x.html/ HTTP/1.1" 200 117936
+INFO 2023-12-11 16:24:51,202 basehttp 25784 23692 "GET /apiv2/get_template_content/index_2x.html/ HTTP/1.1" 200 117936
+INFO 2023-12-11 16:25:10,793 basehttp 25784 23692 "GET /apiv2/get_template_content/index_2x.html/ HTTP/1.1" 200 117936
+INFO 2023-12-11 16:25:10,793 basehttp 25784 23692 "GET /apiv2/get_template_content/index_2x.html/ HTTP/1.1" 200 117936
+WARNING 2023-12-11 16:25:10,894 log 25784 23692 Not Found: /favicon.ico
+WARNING 2023-12-11 16:25:10,894 log 25784 23692 Not Found: /favicon.ico
+WARNING 2023-12-11 16:25:10,896 basehttp 25784 23692 "GET /favicon.ico HTTP/1.1" 404 8818
+WARNING 2023-12-11 16:25:10,896 basehttp 25784 23692 "GET /favicon.ico HTTP/1.1" 404 8818
+INFO 2023-12-11 16:25:16,774 basehttp 25784 23692 "GET /apiv2/get_template_content/index_3x_hotfix_server.html/ HTTP/1.1" 200 117224
+INFO 2023-12-11 16:25:16,774 basehttp 25784 23692 "GET /apiv2/get_template_content/index_3x_hotfix_server.html/ HTTP/1.1" 200 117224
+INFO 2023-12-11 16:25:23,974 basehttp 25784 23692 "GET /apiv2/get_template_content/index_3x.html/ HTTP/1.1" 200 118498
+INFO 2023-12-11 16:25:23,974 basehttp 25784 23692 "GET /apiv2/get_template_content/index_3x.html/ HTTP/1.1" 200 118498
+INFO 2023-12-11 16:31:38,714 basehttp 25784 11768 "GET /mailing/ HTTP/1.1" 200 19808
+INFO 2023-12-11 16:31:38,714 basehttp 25784 11768 "GET /mailing/ HTTP/1.1" 200 19808
+INFO 2023-12-11 16:31:38,744 basehttp 25784 11768 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 16:31:38,744 basehttp 25784 11768 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 16:31:38,752 basehttp 25784 12144 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 16:31:38,752 basehttp 25784 10748 "GET /static/css/release/mailing.css HTTP/1.1" 200 322
+INFO 2023-12-11 16:31:38,754 basehttp 25784 11768 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+INFO 2023-12-11 16:31:38,752 basehttp 25784 12144 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 16:31:38,754 basehttp 25784 25100 "GET /static/js/release/test_send_mailing.js HTTP/1.1" 200 3906
+INFO 2023-12-11 16:31:38,755 basehttp 25784 23784 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+INFO 2023-12-11 16:31:38,752 basehttp 25784 10748 "GET /static/css/release/mailing.css HTTP/1.1" 200 322
+INFO 2023-12-11 16:31:38,754 basehttp 25784 11768 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+INFO 2023-12-11 16:31:38,754 basehttp 25784 25100 "GET /static/js/release/test_send_mailing.js HTTP/1.1" 200 3906
+INFO 2023-12-11 16:31:38,759 basehttp 25784 12144 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+INFO 2023-12-11 16:31:38,755 basehttp 25784 23784 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+INFO 2023-12-11 16:31:38,759 basehttp 25784 12144 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+INFO 2023-12-11 16:31:38,770 basehttp 25784 22360 "GET /static/js/release/mailing.js HTTP/1.1" 200 11993
+INFO 2023-12-11 16:31:38,770 basehttp 25784 22360 "GET /static/js/release/mailing.js HTTP/1.1" 200 11993
+INFO 2023-12-11 16:31:39,196 basehttp 25784 22360 "GET /apiv2/get_template_content/index_2x.html HTTP/1.1" 301 0
+INFO 2023-12-11 16:31:39,196 basehttp 25784 22360 "GET /apiv2/get_template_content/index_2x.html HTTP/1.1" 301 0
+INFO 2023-12-11 16:31:39,238 basehttp 25784 12144 "GET /apiv2/get_template_content/index_2x.html/ HTTP/1.1" 200 117936
+INFO 2023-12-11 16:31:39,238 basehttp 25784 12144 "GET /apiv2/get_template_content/index_2x.html/ HTTP/1.1" 200 117936
+INFO 2023-12-11 16:31:39,280 basehttp 25784 12144 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 16:31:39,280 basehttp 25784 12144 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 16:31:41,624 basehttp 25784 12144 "GET /apiv2/get_template_content/index_3x.html HTTP/1.1" 301 0
+INFO 2023-12-11 16:31:41,624 basehttp 25784 12144 "GET /apiv2/get_template_content/index_3x.html HTTP/1.1" 301 0
+INFO 2023-12-11 16:31:41,646 basehttp 25784 23784 "GET /apiv2/get_template_content/index_3x.html/ HTTP/1.1" 200 118498
+INFO 2023-12-11 16:31:41,646 basehttp 25784 23784 "GET /apiv2/get_template_content/index_3x.html/ HTTP/1.1" 200 118498
+INFO 2023-12-11 16:31:43,567 basehttp 25784 23784 "GET /apiv2/get_template_content/index_2x_hotfix_server.html HTTP/1.1" 301 0
+INFO 2023-12-11 16:31:43,567 basehttp 25784 23784 "GET /apiv2/get_template_content/index_2x_hotfix_server.html HTTP/1.1" 301 0
+WARNING 2023-12-11 16:31:43,609 log 25784 25100 Not Found: /apiv2/get_template_content/index_2x_hotfix_server.html/
+WARNING 2023-12-11 16:31:43,609 log 25784 25100 Not Found: /apiv2/get_template_content/index_2x_hotfix_server.html/
+WARNING 2023-12-11 16:31:43,611 basehttp 25784 25100 "GET /apiv2/get_template_content/index_2x_hotfix_server.html/ HTTP/1.1" 404 30
+WARNING 2023-12-11 16:31:43,611 basehttp 25784 25100 "GET /apiv2/get_template_content/index_2x_hotfix_server.html/ HTTP/1.1" 404 30
+INFO 2023-12-11 16:31:46,332 basehttp 25784 25100 "GET /apiv2/get_template_content/index_3x_hotfix_server.html HTTP/1.1" 301 0
+INFO 2023-12-11 16:31:46,332 basehttp 25784 25100 "GET /apiv2/get_template_content/index_3x_hotfix_server.html HTTP/1.1" 301 0
+INFO 2023-12-11 16:31:46,364 basehttp 25784 11768 "GET /apiv2/get_template_content/index_3x_hotfix_server.html/ HTTP/1.1" 200 117224
+INFO 2023-12-11 16:31:46,364 basehttp 25784 11768 "GET /apiv2/get_template_content/index_3x_hotfix_server.html/ HTTP/1.1" 200 117224
+INFO 2023-12-11 16:31:52,981 basehttp 25784 11768 "GET /apiv2/get_template_content/index_iPad.html HTTP/1.1" 301 0
+INFO 2023-12-11 16:31:52,981 basehttp 25784 11768 "GET /apiv2/get_template_content/index_iPad.html HTTP/1.1" 301 0
+WARNING 2023-12-11 16:31:52,984 log 25784 10748 Not Found: /apiv2/get_template_content/index_iPad.html/
+WARNING 2023-12-11 16:31:52,984 log 25784 10748 Not Found: /apiv2/get_template_content/index_iPad.html/
+WARNING 2023-12-11 16:31:52,986 basehttp 25784 10748 "GET /apiv2/get_template_content/index_iPad.html/ HTTP/1.1" 404 30
+WARNING 2023-12-11 16:31:52,986 basehttp 25784 10748 "GET /apiv2/get_template_content/index_iPad.html/ HTTP/1.1" 404 30
+INFO 2023-12-11 16:31:54,218 basehttp 25784 10748 "GET /apiv2/get_template_content/index_Android.html HTTP/1.1" 301 0
+INFO 2023-12-11 16:31:54,218 basehttp 25784 10748 "GET /apiv2/get_template_content/index_Android.html HTTP/1.1" 301 0
+WARNING 2023-12-11 16:31:54,233 log 25784 24164 Not Found: /apiv2/get_template_content/index_Android.html/
+WARNING 2023-12-11 16:31:54,233 log 25784 24164 Not Found: /apiv2/get_template_content/index_Android.html/
+WARNING 2023-12-11 16:31:54,235 basehttp 25784 24164 "GET /apiv2/get_template_content/index_Android.html/ HTTP/1.1" 404 30
+WARNING 2023-12-11 16:31:54,235 basehttp 25784 24164 "GET /apiv2/get_template_content/index_Android.html/ HTTP/1.1" 404 30
+WARNING 2023-12-11 16:31:56,436 log 25784 24164 Not Found: /apiv2/get_template_content/index_2x_hotfix_server.html/
+WARNING 2023-12-11 16:31:56,436 log 25784 24164 Not Found: /apiv2/get_template_content/index_2x_hotfix_server.html/
+WARNING 2023-12-11 16:31:56,437 basehttp 25784 24164 "GET /apiv2/get_template_content/index_2x_hotfix_server.html/ HTTP/1.1" 404 30
+WARNING 2023-12-11 16:31:56,437 basehttp 25784 24164 "GET /apiv2/get_template_content/index_2x_hotfix_server.html/ HTTP/1.1" 404 30
+INFO 2023-12-11 16:32:04,494 basehttp 25784 24164 "GET /apiv2/get_template_content/index_3x_hotfix_server.html/ HTTP/1.1" 200 117224
+INFO 2023-12-11 16:32:04,494 basehttp 25784 24164 "GET /apiv2/get_template_content/index_3x_hotfix_server.html/ HTTP/1.1" 200 117224
+INFO 2023-12-11 16:32:05,882 basehttp 25784 24164 "GET /apiv2/download_template/index_3x_hotfix_server.html HTTP/1.1" 301 0
+INFO 2023-12-11 16:32:05,882 basehttp 25784 24164 "GET /apiv2/download_template/index_3x_hotfix_server.html HTTP/1.1" 301 0
+INFO 2023-12-11 16:32:05,887 basehttp 25784 26428 "GET /apiv2/download_template/index_3x_hotfix_server.html/ HTTP/1.1" 200 117224
+INFO 2023-12-11 16:32:05,887 basehttp 25784 26428 "GET /apiv2/download_template/index_3x_hotfix_server.html/ HTTP/1.1" 200 117224
+WARNING 2023-12-11 16:32:08,313 log 25784 26428 Not Found: /apiv2/get_template_content/index_iPad.html/
+WARNING 2023-12-11 16:32:08,313 log 25784 26428 Not Found: /apiv2/get_template_content/index_iPad.html/
+WARNING 2023-12-11 16:32:08,315 basehttp 25784 26428 "GET /apiv2/get_template_content/index_iPad.html/ HTTP/1.1" 404 30
+WARNING 2023-12-11 16:32:08,315 basehttp 25784 26428 "GET /apiv2/get_template_content/index_iPad.html/ HTTP/1.1" 404 30
+WARNING 2023-12-11 16:32:09,498 log 25784 26428 Not Found: /apiv2/get_template_content/index_2x_hotfix_server.html/
+WARNING 2023-12-11 16:32:09,498 log 25784 26428 Not Found: /apiv2/get_template_content/index_2x_hotfix_server.html/
+WARNING 2023-12-11 16:32:09,500 basehttp 25784 26428 "GET /apiv2/get_template_content/index_2x_hotfix_server.html/ HTTP/1.1" 404 30
+WARNING 2023-12-11 16:32:09,500 basehttp 25784 26428 "GET /apiv2/get_template_content/index_2x_hotfix_server.html/ HTTP/1.1" 404 30
+INFO 2023-12-11 16:32:42,220 basehttp 25784 26428 "POST /apiv2/upload_template/ HTTP/1.1" 200 40
+INFO 2023-12-11 16:32:42,220 basehttp 25784 26428 "POST /apiv2/upload_template/ HTTP/1.1" 200 40
+INFO 2023-12-11 19:10:56,699 basehttp 25784 24324 "GET /static/js/release/mailing.js HTTP/1.1" 200 11993
+INFO 2023-12-11 19:10:56,699 basehttp 25784 24324 "GET /static/js/release/mailing.js HTTP/1.1" 200 11993
+INFO 2023-12-11 19:10:56,765 basehttp 25784 24324 "GET /apiv2/get_template_content/index_2x.html/ HTTP/1.1" 200 117936
+INFO 2023-12-11 19:10:56,765 basehttp 25784 24324 "GET /apiv2/get_template_content/index_2x.html/ HTTP/1.1" 200 117936
+INFO 2023-12-11 19:10:57,583 basehttp 25784 24324 "GET / HTTP/1.1" 200 14135
+INFO 2023-12-11 19:10:57,583 basehttp 25784 24324 "GET / HTTP/1.1" 200 14135
+INFO 2023-12-11 19:10:57,613 basehttp 25784 24324 "GET /media/favicons/background_image.jpg HTTP/1.1" 200 131898
+INFO 2023-12-11 19:10:57,613 basehttp 25784 24324 "GET /media/favicons/background_image.jpg HTTP/1.1" 200 131898
+INFO 2023-12-11 19:10:58,382 basehttp 25784 24324 "GET /clients/ HTTP/1.1" 200 42528
+INFO 2023-12-11 19:10:58,382 basehttp 25784 24324 "GET /clients/ HTTP/1.1" 200 42528
+WARNING 2023-12-11 19:10:58,419 log 25784 24324 Not Found: /media/favicons/icon_card.png
+WARNING 2023-12-11 19:10:58,421 log 25784 25152 Not Found: /media/favicons/icon_service.png
+WARNING 2023-12-11 19:10:58,419 log 25784 24324 Not Found: /media/favicons/icon_card.png
+WARNING 2023-12-11 19:10:58,421 log 25784 25152 Not Found: /media/favicons/icon_service.png
+WARNING 2023-12-11 19:10:58,424 basehttp 25784 24324 "GET /media/favicons/icon_card.png HTTP/1.1" 404 8704
+INFO 2023-12-11 19:10:58,425 basehttp 25784 9984 "GET /static/js/client/client_status.js HTTP/1.1" 200 2011
+WARNING 2023-12-11 19:10:58,427 log 25784 26712 Not Found: /media/favicons/icon_tech_info.png
+WARNING 2023-12-11 19:10:58,427 basehttp 25784 25152 "GET /media/favicons/icon_service.png HTTP/1.1" 404 8716
+WARNING 2023-12-11 19:10:58,428 log 25784 26740 Not Found: /media/favicons/icon_integrations.png
+WARNING 2023-12-11 19:10:58,424 basehttp 25784 24324 "GET /media/favicons/icon_card.png HTTP/1.1" 404 8704
+INFO 2023-12-11 19:10:58,425 basehttp 25784 9984 "GET /static/js/client/client_status.js HTTP/1.1" 200 2011
+WARNING 2023-12-11 19:10:58,431 log 25784 19060 Not Found: /media/favicons/icon_documents.png
+WARNING 2023-12-11 19:10:58,427 log 25784 26712 Not Found: /media/favicons/icon_tech_info.png
+WARNING 2023-12-11 19:10:58,427 basehttp 25784 25152 "GET /media/favicons/icon_service.png HTTP/1.1" 404 8716
+WARNING 2023-12-11 19:10:58,428 log 25784 26740 Not Found: /media/favicons/icon_integrations.png
+WARNING 2023-12-11 19:10:58,434 basehttp 25784 26712 "GET /media/favicons/icon_tech_info.png HTTP/1.1" 404 8724
+WARNING 2023-12-11 19:10:58,431 log 25784 19060 Not Found: /media/favicons/icon_documents.png
+WARNING 2023-12-11 19:10:58,434 basehttp 25784 26712 "GET /media/favicons/icon_tech_info.png HTTP/1.1" 404 8724
+WARNING 2023-12-11 19:10:58,436 basehttp 25784 26740 "GET /media/favicons/icon_integrations.png HTTP/1.1" 404 8736
+WARNING 2023-12-11 19:10:58,436 basehttp 25784 19060 "GET /media/favicons/icon_documents.png HTTP/1.1" 404 8724
+WARNING 2023-12-11 19:10:58,436 basehttp 25784 26740 "GET /media/favicons/icon_integrations.png HTTP/1.1" 404 8736
+WARNING 2023-12-11 19:10:58,436 basehttp 25784 19060 "GET /media/favicons/icon_documents.png HTTP/1.1" 404 8724
+INFO 2023-12-11 19:10:58,440 basehttp 25784 24324 "GET /static/js/client/service_modal.js HTTP/1.1" 200 6297
+INFO 2023-12-11 19:10:58,440 basehttp 25784 24324 "GET /static/js/client/service_modal.js HTTP/1.1" 200 6297
+INFO 2023-12-11 19:10:58,444 basehttp 25784 25152 "GET /static/js/client/tech_information_modal.js HTTP/1.1" 200 24127
+INFO 2023-12-11 19:10:58,444 basehttp 25784 25152 "GET /static/js/client/tech_information_modal.js HTTP/1.1" 200 24127
+INFO 2023-12-11 19:10:58,445 basehttp 25784 26712 "GET /static/js/client/contact_modal.js HTTP/1.1" 200 2901
+INFO 2023-12-11 19:10:58,445 basehttp 25784 26712 "GET /static/js/client/contact_modal.js HTTP/1.1" 200 2901
+INFO 2023-12-11 19:10:58,447 basehttp 25784 9984 "GET /static/js/client/client_card_modal.js HTTP/1.1" 200 1115
+INFO 2023-12-11 19:10:58,447 basehttp 25784 9984 "GET /static/js/client/client_card_modal.js HTTP/1.1" 200 1115
+INFO 2023-12-11 19:10:58,714 basehttp 25784 9984 "POST /api/token HTTP/1.1" 200 483
+INFO 2023-12-11 19:10:58,714 basehttp 25784 9984 "POST /api/token HTTP/1.1" 200 483
+INFO 2023-12-11 19:10:59,673 basehttp 25784 9984 "GET /client/1/ HTTP/1.1" 200 40552
+INFO 2023-12-11 19:10:59,673 basehttp 25784 9984 "GET /client/1/ HTTP/1.1" 200 40552
+INFO 2023-12-11 19:10:59,691 basehttp 25784 9984 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 19:10:59,691 basehttp 25784 26712 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 19:10:59,691 basehttp 25784 9984 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 19:10:59,691 basehttp 25784 26712 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 19:10:59,693 basehttp 25784 25152 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 19:10:59,694 basehttp 25784 24324 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22338
+INFO 2023-12-11 19:10:59,693 basehttp 25784 25152 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 19:10:59,694 basehttp 25784 24324 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22338
+WARNING 2023-12-11 19:10:59,701 log 25784 25152 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:10:59,701 log 25784 25152 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:10:59,703 basehttp 25784 25152 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:10:59,703 basehttp 25784 25152 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 19:10:59,708 basehttp 25784 25152 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 19:10:59,708 basehttp 25784 25152 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 19:11:08,571 basehttp 25784 25152 "PATCH /apiv2/tech_info/update/1/ HTTP/1.1" 200 240
+INFO 2023-12-11 19:11:08,571 basehttp 25784 25152 "PATCH /apiv2/tech_info/update/1/ HTTP/1.1" 200 240
+INFO 2023-12-11 19:11:08,601 basehttp 25784 24324 "GET /client/1/ HTTP/1.1" 200 40552
+INFO 2023-12-11 19:11:08,601 basehttp 25784 24324 "GET /client/1/ HTTP/1.1" 200 40552
+WARNING 2023-12-11 19:11:08,627 log 25784 24324 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:11:08,627 log 25784 24324 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:11:08,628 basehttp 25784 24324 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:11:08,628 basehttp 25784 24324 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 19:27:18,649 basehttp 25784 23576 "GET /client/1/ HTTP/1.1" 200 40552
+INFO 2023-12-11 19:27:18,649 basehttp 25784 23576 "GET /client/1/ HTTP/1.1" 200 40552
+INFO 2023-12-11 19:27:18,663 basehttp 25784 23576 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 19:27:18,663 basehttp 25784 23576 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 19:27:18,671 basehttp 25784 23560 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 19:27:18,723 basehttp 25784 5512 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 19:27:18,724 basehttp 25784 500 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 19:27:18,671 basehttp 25784 23560 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 19:27:18,725 basehttp 25784 20572 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+INFO 2023-12-11 19:27:18,725 basehttp 25784 23576 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22338
+INFO 2023-12-11 19:27:18,725 basehttp 25784 18896 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 19:27:18,723 basehttp 25784 5512 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 19:27:18,724 basehttp 25784 500 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 19:27:18,725 basehttp 25784 20572 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+INFO 2023-12-11 19:27:18,729 basehttp 25784 23560 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+INFO 2023-12-11 19:27:18,725 basehttp 25784 23576 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22338
+INFO 2023-12-11 19:27:18,725 basehttp 25784 18896 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 19:27:18,730 basehttp 25784 5512 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+INFO 2023-12-11 19:27:18,729 basehttp 25784 23560 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+INFO 2023-12-11 19:27:18,730 basehttp 25784 5512 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+WARNING 2023-12-11 19:27:18,894 log 25784 5512 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:27:18,894 log 25784 5512 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:27:18,896 basehttp 25784 5512 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:27:18,896 basehttp 25784 5512 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 19:27:18,899 basehttp 25784 23560 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 19:27:18,899 basehttp 25784 23560 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 19:27:19,038 basehttp 25784 23560 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 19:27:19,038 basehttp 25784 23560 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 19:27:24,938 basehttp 25784 23560 "GET /client/1/ HTTP/1.1" 200 40552
+INFO 2023-12-11 19:27:24,938 basehttp 25784 23560 "GET /client/1/ HTTP/1.1" 200 40552
+WARNING 2023-12-11 19:27:24,978 log 25784 23560 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:27:24,978 log 25784 23560 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:27:24,979 basehttp 25784 23560 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:27:24,979 basehttp 25784 23560 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 19:27:26,997 basehttp 25784 23560 "GET /client/1/ HTTP/1.1" 200 40552
+INFO 2023-12-11 19:27:26,997 basehttp 25784 23560 "GET /client/1/ HTTP/1.1" 200 40552
+WARNING 2023-12-11 19:27:27,021 log 25784 23560 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:27:27,021 log 25784 23560 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:27:27,023 basehttp 25784 23560 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:27:27,023 basehttp 25784 23560 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 19:28:33,674 basehttp 25784 23560 "GET /client/1/ HTTP/1.1" 200 40552
+INFO 2023-12-11 19:28:33,674 basehttp 25784 23560 "GET /client/1/ HTTP/1.1" 200 40552
+INFO 2023-12-11 19:28:33,710 basehttp 25784 24944 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 19:28:33,710 basehttp 25784 24944 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+WARNING 2023-12-11 19:28:33,791 log 25784 23560 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:28:33,791 log 25784 23560 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:28:33,792 basehttp 25784 23560 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:28:33,792 basehttp 25784 23560 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 19:45:00,052 basehttp 25784 29328 "GET /client/1/ HTTP/1.1" 200 40552
+INFO 2023-12-11 19:45:00,052 basehttp 25784 29328 "GET /client/1/ HTTP/1.1" 200 40552
+INFO 2023-12-11 19:45:00,077 basehttp 25784 29328 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 19:45:00,077 basehttp 25784 29328 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 19:45:00,079 basehttp 25784 8460 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+INFO 2023-12-11 19:45:00,079 basehttp 25784 8460 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+INFO 2023-12-11 19:45:00,081 basehttp 25784 1888 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 19:45:00,082 basehttp 25784 29140 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 19:45:00,081 basehttp 25784 1888 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 19:45:00,082 basehttp 25784 29140 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 19:45:00,085 basehttp 25784 29508 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 19:45:00,085 basehttp 25784 29508 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 19:45:00,086 basehttp 25784 29140 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+INFO 2023-12-11 19:45:00,086 basehttp 25784 29140 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+INFO 2023-12-11 19:45:00,088 basehttp 25784 29328 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22341
+INFO 2023-12-11 19:45:00,088 basehttp 25784 29328 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22341
+INFO 2023-12-11 19:45:00,091 basehttp 25784 29584 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 19:45:00,091 basehttp 25784 29584 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 19:45:00,095 basehttp 25784 8460 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+INFO 2023-12-11 19:45:00,095 basehttp 25784 8460 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+WARNING 2023-12-11 19:45:00,442 log 25784 8460 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:45:00,442 log 25784 8460 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:45:00,444 basehttp 25784 8460 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:45:00,444 basehttp 25784 8460 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 19:45:00,460 basehttp 25784 8460 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 19:45:00,460 basehttp 25784 8460 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 19:45:00,630 basehttp 25784 8460 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 19:45:00,630 basehttp 25784 8460 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 19:51:21,201 basehttp 25784 13412 "GET /client/1/ HTTP/1.1" 200 40552
+INFO 2023-12-11 19:51:21,201 basehttp 25784 13412 "GET /client/1/ HTTP/1.1" 200 40552
+INFO 2023-12-11 19:51:21,225 basehttp 25784 13412 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 19:51:21,225 basehttp 25784 13412 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 19:51:21,233 basehttp 25784 4440 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 19:51:21,234 basehttp 25784 5692 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 19:51:21,234 basehttp 25784 29272 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 19:51:21,234 basehttp 25784 21552 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 19:51:21,235 basehttp 25784 10364 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+INFO 2023-12-11 19:51:21,233 basehttp 25784 4440 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 19:51:21,234 basehttp 25784 5692 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 19:51:21,234 basehttp 25784 29272 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 19:51:21,234 basehttp 25784 21552 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 19:51:21,235 basehttp 25784 10364 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+INFO 2023-12-11 19:51:21,240 basehttp 25784 4440 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+INFO 2023-12-11 19:51:21,241 basehttp 25784 5692 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+INFO 2023-12-11 19:51:21,240 basehttp 25784 4440 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+INFO 2023-12-11 19:51:21,243 basehttp 25784 13412 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22402
+INFO 2023-12-11 19:51:21,241 basehttp 25784 5692 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+INFO 2023-12-11 19:51:21,243 basehttp 25784 13412 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22402
+WARNING 2023-12-11 19:51:21,466 log 25784 13412 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:51:21,466 log 25784 13412 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:51:21,468 basehttp 25784 13412 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:51:21,468 basehttp 25784 13412 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 19:51:21,471 basehttp 25784 5692 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 19:51:21,471 basehttp 25784 5692 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 19:51:21,642 basehttp 25784 5692 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 19:51:21,642 basehttp 25784 5692 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 19:51:32,015 basehttp 25784 5692 "PATCH /apiv2/tech_note/update/1/ HTTP/1.1" 200 222
+INFO 2023-12-11 19:51:32,015 basehttp 25784 5692 "PATCH /apiv2/tech_note/update/1/ HTTP/1.1" 200 222
+INFO 2023-12-11 19:57:12,780 basehttp 25784 29108 "GET /client/1/ HTTP/1.1" 200 40572
+INFO 2023-12-11 19:57:12,780 basehttp 25784 29108 "GET /client/1/ HTTP/1.1" 200 40572
+INFO 2023-12-11 19:57:12,802 basehttp 25784 29108 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 19:57:12,802 basehttp 25784 29108 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 19:57:12,811 basehttp 25784 20836 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 19:57:12,811 basehttp 25784 20836 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 19:57:12,813 basehttp 25784 8708 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 19:57:12,813 basehttp 25784 4116 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 19:57:12,813 basehttp 25784 1904 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 19:57:12,813 basehttp 25784 20632 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+INFO 2023-12-11 19:57:12,813 basehttp 25784 8708 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 19:57:12,816 basehttp 25784 29108 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22402
+INFO 2023-12-11 19:57:12,813 basehttp 25784 4116 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 19:57:12,813 basehttp 25784 1904 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 19:57:12,819 basehttp 25784 20836 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+INFO 2023-12-11 19:57:12,813 basehttp 25784 20632 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+INFO 2023-12-11 19:57:12,816 basehttp 25784 29108 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22402
+INFO 2023-12-11 19:57:12,819 basehttp 25784 20836 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+INFO 2023-12-11 19:57:12,821 basehttp 25784 4116 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+INFO 2023-12-11 19:57:12,821 basehttp 25784 4116 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+WARNING 2023-12-11 19:57:13,060 log 25784 4116 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:57:13,060 log 25784 4116 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:57:13,061 basehttp 25784 4116 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:57:13,061 basehttp 25784 4116 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 19:57:13,069 basehttp 25784 4116 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 19:57:13,069 basehttp 25784 4116 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 19:57:13,198 basehttp 25784 4116 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 19:57:13,198 basehttp 25784 4116 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 19:57:21,450 basehttp 25784 4116 "PATCH /apiv2/connection_info/update/1/ HTTP/1.1" 200 247
+INFO 2023-12-11 19:57:21,450 basehttp 25784 4116 "PATCH /apiv2/connection_info/update/1/ HTTP/1.1" 200 247
+INFO 2023-12-11 19:57:21,468 basehttp 25784 20836 "PATCH /apiv2/tech_note/update/1/ HTTP/1.1" 200 222
+INFO 2023-12-11 19:57:21,468 basehttp 25784 20836 "PATCH /apiv2/tech_note/update/1/ HTTP/1.1" 200 222
+INFO 2023-12-11 19:57:24,418 basehttp 25784 20836 "GET /client/1/ HTTP/1.1" 200 40576
+INFO 2023-12-11 19:57:24,418 basehttp 25784 20836 "GET /client/1/ HTTP/1.1" 200 40576
+WARNING 2023-12-11 19:57:24,521 log 25784 20836 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:57:24,521 log 25784 20836 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:57:24,522 basehttp 25784 20836 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:57:24,522 basehttp 25784 20836 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 19:58:00,349 basehttp 25784 28012 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 19:58:00,349 basehttp 25784 28012 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 19:58:00,369 basehttp 25784 28012 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 19:58:00,369 basehttp 25784 28012 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 20:05:11,727 basehttp 25784 4280 "GET /client/1/ HTTP/1.1" 200 40576
+INFO 2023-12-11 20:05:11,727 basehttp 25784 4280 "GET /client/1/ HTTP/1.1" 200 40576
+INFO 2023-12-11 20:05:11,751 basehttp 25784 4280 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 20:05:11,751 basehttp 25784 4280 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 20:05:11,758 basehttp 25784 4904 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 20:05:11,758 basehttp 25784 18768 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 20:05:11,758 basehttp 25784 4504 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 20:05:11,758 basehttp 25784 18444 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 20:05:11,758 basehttp 25784 404 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+INFO 2023-12-11 20:05:11,758 basehttp 25784 4904 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 20:05:11,758 basehttp 25784 18768 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 20:05:11,758 basehttp 25784 4504 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 20:05:11,758 basehttp 25784 18444 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 20:05:11,764 basehttp 25784 4904 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+INFO 2023-12-11 20:05:11,758 basehttp 25784 404 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+INFO 2023-12-11 20:05:11,765 basehttp 25784 4280 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22376
+INFO 2023-12-11 20:05:11,766 basehttp 25784 18768 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+INFO 2023-12-11 20:05:11,764 basehttp 25784 4904 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+INFO 2023-12-11 20:05:11,765 basehttp 25784 4280 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22376
+INFO 2023-12-11 20:05:11,766 basehttp 25784 18768 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+WARNING 2023-12-11 20:05:12,112 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:05:12,112 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:05:12,113 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 20:05:12,113 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 20:05:12,119 basehttp 25784 18768 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 20:05:12,119 basehttp 25784 18768 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 20:05:12,270 basehttp 25784 18768 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 20:05:12,270 basehttp 25784 18768 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 20:05:14,469 basehttp 25784 18768 "PATCH /apiv2/connection_info/update/1/ HTTP/1.1" 200 247
+INFO 2023-12-11 20:05:14,469 basehttp 25784 18768 "PATCH /apiv2/connection_info/update/1/ HTTP/1.1" 200 247
+INFO 2023-12-11 20:05:16,489 basehttp 25784 18768 "GET /client/1/ HTTP/1.1" 200 40576
+INFO 2023-12-11 20:05:16,489 basehttp 25784 18768 "GET /client/1/ HTTP/1.1" 200 40576
+INFO 2023-12-11 20:05:16,507 basehttp 25784 18768 "GET /static/js/client/edit_mode.js HTTP/1.1" 304 0
+INFO 2023-12-11 20:05:16,507 basehttp 25784 18768 "GET /static/js/client/edit_mode.js HTTP/1.1" 304 0
+WARNING 2023-12-11 20:05:16,597 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:05:16,597 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:05:16,598 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 20:05:16,598 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 20:05:27,282 basehttp 25784 18768 "PATCH /apiv2/connection_info/update/1/ HTTP/1.1" 200 247
+INFO 2023-12-11 20:05:27,282 basehttp 25784 18768 "PATCH /apiv2/connection_info/update/1/ HTTP/1.1" 200 247
+INFO 2023-12-11 20:05:29,310 basehttp 25784 18768 "GET /client/1/ HTTP/1.1" 200 40576
+INFO 2023-12-11 20:05:29,310 basehttp 25784 18768 "GET /client/1/ HTTP/1.1" 200 40576
+INFO 2023-12-11 20:05:29,325 basehttp 25784 18768 "GET /static/js/client/edit_mode.js HTTP/1.1" 304 0
+INFO 2023-12-11 20:05:29,325 basehttp 25784 18768 "GET /static/js/client/edit_mode.js HTTP/1.1" 304 0
+WARNING 2023-12-11 20:05:29,370 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:05:29,370 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:05:29,372 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 20:05:29,372 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 20:10:02,269 basehttp 25784 18768 "GET /client/1/ HTTP/1.1" 200 40576
+INFO 2023-12-11 20:10:02,269 basehttp 25784 18768 "GET /client/1/ HTTP/1.1" 200 40576
+INFO 2023-12-11 20:10:02,292 basehttp 25784 18768 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 20:10:02,292 basehttp 25784 18768 "GET /static/css/styles.css HTTP/1.1" 200 11340
+INFO 2023-12-11 20:10:02,299 basehttp 25784 4904 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 20:10:02,299 basehttp 25784 18444 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 20:10:02,299 basehttp 25784 404 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 20:10:02,299 basehttp 25784 4504 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+INFO 2023-12-11 20:10:02,299 basehttp 25784 4280 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 20:10:02,299 basehttp 25784 4904 "GET /static/css/client/client.css HTTP/1.1" 200 2880
+INFO 2023-12-11 20:10:02,299 basehttp 25784 18444 "GET /static/js/client/password.js HTTP/1.1" 200 2392
+INFO 2023-12-11 20:10:02,299 basehttp 25784 404 "GET /static/js/client/account.js HTTP/1.1" 200 537
+INFO 2023-12-11 20:10:02,299 basehttp 25784 4504 "GET /static/js/toastify-settings.js HTTP/1.1" 200 2479
+INFO 2023-12-11 20:10:02,299 basehttp 25784 4280 "GET /static/js/search/search.js HTTP/1.1" 200 2684
+INFO 2023-12-11 20:10:02,305 basehttp 25784 18444 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+INFO 2023-12-11 20:10:02,306 basehttp 25784 4504 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+INFO 2023-12-11 20:10:02,305 basehttp 25784 18444 "GET /static/js/switchery_setup.js HTTP/1.1" 200 3163
+INFO 2023-12-11 20:10:02,306 basehttp 25784 4504 "GET /static/js/button_scroll_up.js HTTP/1.1" 200 892
+INFO 2023-12-11 20:10:02,307 basehttp 25784 18768 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22378
+INFO 2023-12-11 20:10:02,307 basehttp 25784 18768 "GET /static/js/client/edit_mode.js HTTP/1.1" 200 22378
+WARNING 2023-12-11 20:10:02,534 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:10:02,534 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:10:02,535 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 20:10:02,535 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 20:10:02,542 basehttp 25784 18768 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 20:10:02,542 basehttp 25784 18768 "GET /media/favicons/Koty12.png HTTP/1.1" 200 620794
+INFO 2023-12-11 20:10:02,690 basehttp 25784 18768 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 20:10:02,690 basehttp 25784 18768 "GET /media/favicons/favicon.png HTTP/1.1" 200 21146
+INFO 2023-12-11 20:10:04,446 basehttp 25784 18768 "PATCH /apiv2/connection_info/update/1/ HTTP/1.1" 200 247
+INFO 2023-12-11 20:10:04,446 basehttp 25784 18768 "PATCH /apiv2/connection_info/update/1/ HTTP/1.1" 200 247
+INFO 2023-12-11 20:10:06,467 basehttp 25784 18768 "GET /client/1/ HTTP/1.1" 200 40576
+INFO 2023-12-11 20:10:06,467 basehttp 25784 18768 "GET /client/1/ HTTP/1.1" 200 40576
+INFO 2023-12-11 20:10:06,484 basehttp 25784 18768 "GET /static/js/client/edit_mode.js HTTP/1.1" 304 0
+INFO 2023-12-11 20:10:06,484 basehttp 25784 18768 "GET /static/js/client/edit_mode.js HTTP/1.1" 304 0
+WARNING 2023-12-11 20:10:06,568 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:10:06,568 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:10:06,569 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 20:10:06,569 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+INFO 2023-12-11 20:10:09,531 basehttp 25784 18768 "PATCH /apiv2/connection_info/update/1/ HTTP/1.1" 200 247
+INFO 2023-12-11 20:10:09,531 basehttp 25784 18768 "PATCH /apiv2/connection_info/update/1/ HTTP/1.1" 200 247
+INFO 2023-12-11 20:10:11,554 basehttp 25784 18768 "GET /client/1/ HTTP/1.1" 200 40576
+INFO 2023-12-11 20:10:11,554 basehttp 25784 18768 "GET /client/1/ HTTP/1.1" 200 40576
+INFO 2023-12-11 20:10:11,574 basehttp 25784 18768 "GET /static/js/client/edit_mode.js HTTP/1.1" 304 0
+INFO 2023-12-11 20:10:11,574 basehttp 25784 18768 "GET /static/js/client/edit_mode.js HTTP/1.1" 304 0
+WARNING 2023-12-11 20:10:11,620 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:10:11,620 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:10:11,621 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 20:10:11,621 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14

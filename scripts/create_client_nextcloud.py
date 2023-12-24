@@ -1,11 +1,15 @@
 import requests
 import base64
 import logging
+from logger.log_config import setup_logger, get_abs_log_path
 from time import sleep
 from requests.exceptions import RequestException
 
-# Настройка логирования
-logger = logging.getLogger(__name__)
+
+# Указываем настройки логов для нашего файла с классами
+scripts_error_logger = setup_logger('scripts', get_abs_log_path('scripts_errors.log'), logging.ERROR)
+scripts_info_logger = setup_logger('scripts', get_abs_log_path('scripts_info.log'), logging.INFO)
+
 
 # Константы
 FOLDER_IDS = ['62', '86']  # Айди папок "1. Актуальный релиз" и "2. Предыдущий релиз"
@@ -46,20 +50,20 @@ class NextCloudManager:
                     # HTTP статусы 2xx означают успешное выполнение запроса
                     return response
                 elif response.status_code == 400:
-                    logger.error("Некорректный запрос: параметры запроса недопустимы.")
+                    scripts_error_logger.error("Некорректный запрос: параметры запроса недопустимы.")
                 elif response.status_code == 401:
-                    logger.error("Ошибка авторизации: недопустимые учетные данные.")
+                    scripts_error_logger.error("Ошибка авторизации: недопустимые учетные данные.")
                 elif response.status_code == 403:
-                    logger.error("Ошибка доступа: у вас нет прав для выполнения этого действия.")
+                    scripts_error_logger.error("Ошибка доступа: у вас нет прав для выполнения этого действия.")
                 elif response.status_code == 404:
-                    logger.error("Ресурс не найден.")
+                    scripts_error_logger.error("Ресурс не найден.")
                 else:
-                    logger.error(f"Неизвестная ошибка: {response.status_code}")
+                    scripts_error_logger.error(f"Неизвестная ошибка: {response.status_code}")
 
                 sleep(3)  # Задержка перед повторной попыткой
 
             except RequestException as error_message:
-                logger.error(f"Ошибка запроса: {error_message}")
+                scripts_error_logger.error(f"Ошибка запроса: {error_message}")
                 sleep(3)  # Задержка перед повторной попыткой
 
         return None  # Возвращаем None после всех неудачных попыток
@@ -77,11 +81,11 @@ class NextCloudManager:
         response = self._send_request(url, payload)
         if response and response.status_code == 200:
             print(f"Успешно создана учетная запись NextCloud для {client_name}")
-            logger.info(f"Успешно создана учетная запись NextCloud для {client_name}")
+            scripts_info_logger.info(f"Успешно создана учетная запись NextCloud для {client_name}")
             return True
         else:
             print(f"Не удалось создать учетную запись NextCloud для {client_name}")
-            logger.error(f"Не удалось создать учетную запись NextCloud для {client_name}")
+            scripts_error_logger.error(f"Не удалось создать учетную запись NextCloud для {client_name}")
             return False
 
     def create_group(self, group_name):
@@ -96,11 +100,11 @@ class NextCloudManager:
         response = self._send_request(url, payload)
         if response and response.status_code == 200:
             print(f"Группа NextCloud успешно создана: {group_name}")
-            logger.info(f"Группа NextCloud успешно создана: {group_name}")
+            scripts_info_logger.info(f"Группа NextCloud успешно создана: {group_name}")
             return True
         else:
             print(f"Не удалось создать группу NextCloud: {group_name}")
-            logger.error(f"Не удалось создать группу NextCloud: {group_name}")
+            scripts_error_logger.error(f"Не удалось создать группу NextCloud: {group_name}")
             return False
 
     def add_user_to_group(self, user_name, group_name):
@@ -116,11 +120,11 @@ class NextCloudManager:
         response = self._send_request(url, payload)
         if response and response.status_code == 200:
             print(f"Успешно добавлено {user_name} в группу NextCloud {group_name}")
-            logger.info(f"Успешно добавлено {user_name} в группу NextCloud {group_name}")
+            scripts_info_logger.info(f"Успешно добавлено {user_name} в группу NextCloud {group_name}")
             return True
         else:
             print(f"Ошибка добавления {user_name} в группу NextCloud {group_name}")
-            logger.error(f"Ошибка добавления {user_name} в группу NextCloud {group_name}")
+            scripts_error_logger.error(f"Ошибка добавления {user_name} в группу NextCloud {group_name}")
             return False
     
     def add_group_to_folder_and_set_permissions(self, folder_id, group_name):
@@ -142,11 +146,11 @@ class NextCloudManager:
         response_set_perms = self._send_request(url_set_perms, payload_set_perms)
         if response_set_perms and response_set_perms.status_code == 200:
             print(f"Успешно установлены разрешения для группы {group_name} в папке {folder_id}")
-            logger.info(f"Успешно установлены разрешения для группы {group_name} в папке {folder_id}")
+            scripts_info_logger.info(f"Успешно установлены разрешения для группы {group_name} в папке {folder_id}")
             return True
         else:
             print(f"Не удалось установить разрешения для группы {group_name} в папке {folder_id}")
-            logger.error(f"Не удалось установить разрешения для группы {group_name} в папке {folder_id}")
+            scripts_error_logger.error(f"Не удалось установить разрешения для группы {group_name} в папке {folder_id}")
             return False
 
     def execute_all(self, client_name, account_name, group_name):
@@ -160,3 +164,7 @@ class NextCloudManager:
         for folder_id in self.folder_ids:
             if not self.add_group_to_folder_and_set_permissions(folder_id, group_name):
                 return
+
+if __name__ == "__main__":
+    manager = NextCloudManager("https://cloud.boardmaps.ru", "ncloud", "G6s6kWaZWyOC0oLt")
+    manager.execute_all("Международная контейнерная логистика (МКЛ)", "mkl", "mkl")

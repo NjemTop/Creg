@@ -162,3 +162,9 @@ class DatabaseCleanerPostgreSQL:
         except Exception as error_message:
             logger.error(f'Ошибка при обновлении: {error_message}')
             raise
+
+# service_url = 'https://osbm-sup03.boardmaps.ru/'
+# db_cleaner = DatabaseCleaner(service_url)
+# db_cleaner.connect()
+# db_cleaner.clean()
+# db_cleaner.close()

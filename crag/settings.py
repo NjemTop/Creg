@@ -163,17 +163,6 @@ if DJANGO_ENV == 'local':
             'PORT': '5432',
         }
     }
-elif 'GITHUB_ACTIONS' in os.environ:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('POSTGRES_DB'),
-            'USER': os.environ.get('POSTGRES_USER'),
-            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-            'HOST': 'localhost',
-            'PORT': '5432',
-        }
-    }
 else:
     DATABASES = {
         'default': {
@@ -189,8 +178,8 @@ else:
     import ldap
 
     AUTHENTICATION_BACKENDS = [
-    'django_auth_ldap.backend.LDAPBackend',
-    'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.ModelBackend', # Basic Django auth
+    'django_auth_ldap.backend.LDAPBackend',      # LDAP auth
     'axes.backends.AxesBackend',
     ]
 
@@ -211,7 +200,7 @@ else:
 
     # Настройка будет пытаться найти пользователя в созданной нами OU Django и стандартной папке DashboardUsers, 
     # сопоставляя введенный login пользователя с аттрибутами sAMAccountName
-    AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=OU,dc=corp,dc=domain,dc=com", ldap.SCOPE_SUBTREE, "(sAMAccountName=%(user)s)")
+    AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=DashboardUsers,dc=corp,dc=boardmaps,dc=com", ldap.SCOPE_SUBTREE, "(sAMAccountName=%(user)s)")
 
     # Указываем как переносить данные из AD в стандартный профиль пользователя Django
     AUTH_LDAP_USER_ATTR_MAP = {
@@ -361,6 +350,22 @@ LOGGING = {
             'backupCount': 3,  # Устанавливаем количество файлов логов в 3 файла
             'formatter': 'verbose',  # Применяем форматтер
         },
+        'celery_info_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': './logs/celery_info.log',
+            'maxBytes': 1024*1024*2,
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+        'celery_error_file': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': './logs/celery_error.log',
+            'maxBytes': 1024*1024*2,
+            'backupCount': 3,
+            'formatter': 'verbose',
+        },
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',  # Применяем форматтер
@@ -368,10 +373,18 @@ LOGGING = {
         'gelf': {
         'level': 'INFO',
         'class': 'graypy.GELFTCPHandler',
-        'host': 'graylog.URL.ru',
+        #'host': 'graylog.boardmaps.ru',
+        'host': '10.6.75.201',
         'port': 12201,  # Порт Graylog GELF TCP input
         'facility': 'Creg',  # Задаём имя источника для отображения в Graylog
-    },
+        },
+        'gelf_celery': {
+            'level': 'INFO',
+            'class': 'graypy.GELFTCPHandler',
+            'host': '10.6.75.201',
+            'port': 12201,
+            'facility': 'Celery',  # Задаём имя источника для отображения в Graylog
+        },
     },
     'root': {
         'handlers': ['file', 'console', 'gelf'],
@@ -384,9 +397,9 @@ LOGGING = {
             'propagate': True,
         },
         'celery': {
-            'handlers': ['file', 'console'],
+            'handlers': ['file', 'celery_info_file', 'celery_error_file', 'console', 'gelf_celery'],
             'level': 'DEBUG',
-            'propagate': True,
+            'propagate': False,  # Убираем передачу сообщений в другие обработчики
         },
     },
 }

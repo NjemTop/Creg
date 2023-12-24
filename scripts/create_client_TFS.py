@@ -2,6 +2,7 @@ import json
 import requests
 import base64
 import logging
+from logger.log_config import setup_logger, get_abs_log_path
 import os
 from dotenv import load_dotenv
 
@@ -9,7 +10,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-logger = logging.getLogger(__name__)
+# Указываем настройки логов для нашего файла с классами
+scripts_error_logger = setup_logger('scripts', get_abs_log_path('scripts_errors.log'), logging.ERROR)
+scripts_info_logger = setup_logger('scripts', get_abs_log_path('scripts_info.log'), logging.INFO)
+
 
 TFS_USER = os.environ.get('TFS_USER')
 TFS_PASSWORD = os.environ.get('TFS_PASSWORD')
@@ -46,6 +50,6 @@ def trigger_tfs_pipeline(client_name):
 
     response = requests.post(url, json=data, headers=headers)
     if response.status_code == 200:
-        logger.info(f'Pipeline успешно запущен для клиента: {client_name}')
+        scripts_error_logger.info(f'Pipeline успешно запущен для клиента: {client_name}')
     else:
-        logger.error(f"Не удалось запустить pipeline для клиента: {client_name}. Ошибка: {response.text}")
+        scripts_error_logger.error(f"Не удалось запустить pipeline для клиента: {client_name}. Ошибка: {response.text}")

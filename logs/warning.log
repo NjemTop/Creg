@@ -1,0 +1,529 @@
+ERROR 2023-11-28 22:47:17,592 log 27488 29504 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-11-28 22:47:17,593 basehttp 27488 29504 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 41
+ERROR 2023-11-28 22:48:04,634 log 29756 26896 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-11-28 22:48:04,635 basehttp 29756 26896 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 41
+WARNING 2023-11-28 22:49:37,128 log 5012 10996 Not Found: /apiv2/send_test_mailing/
+WARNING 2023-11-28 22:49:37,129 basehttp 5012 10996 "POST /apiv2/send_test_mailing/ HTTP/1.1" 404 102
+ERROR 2023-11-28 22:52:43,393 log 27712 29180 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-11-28 22:52:43,394 basehttp 27712 29180 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 263
+ERROR 2023-11-28 22:53:29,936 log 15776 3396 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-11-28 22:53:29,938 basehttp 15776 3396 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 373
+ERROR 2023-11-28 22:53:52,165 log 15776 3396 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-11-28 22:53:52,166 basehttp 15776 3396 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 373
+ERROR 2023-11-28 23:23:55,125 log 29820 17932 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-11-28 23:23:55,126 basehttp 29820 17932 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 295
+ERROR 2023-11-28 23:27:13,557 log 28988 14164 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-11-28 23:27:13,559 basehttp 28988 14164 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 295
+ERROR 2023-11-29 23:51:00,294 log 10696 7872 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-11-29 23:51:00,295 basehttp 10696 7872 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 596
+ERROR 2023-11-29 23:54:03,573 log 10696 21396 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-11-29 23:54:03,574 basehttp 10696 21396 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 293
+ERROR 2023-11-29 23:55:16,360 log 10696 21396 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-11-29 23:55:16,362 basehttp 10696 21396 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 293
+ERROR 2023-11-29 23:57:08,506 log 23816 8068 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-11-29 23:57:08,507 basehttp 23816 8068 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 293
+WARNING 2023-11-29 23:59:05,626 log 3412 18344 Not Found: /apiv2/send_test_mailing/
+WARNING 2023-11-29 23:59:05,627 basehttp 3412 18344 "POST /apiv2/send_test_mailing/ HTTP/1.1" 404 174
+WARNING 2023-11-29 23:59:33,125 log 3412 18344 Not Found: /apiv2/send_test_mailing/
+WARNING 2023-11-29 23:59:33,126 basehttp 3412 18344 "POST /apiv2/send_test_mailing/ HTTP/1.1" 404 174
+WARNING 2023-11-30 00:05:59,509 log 8384 1648 Not Found: /apiv2/send_test_mailing/
+WARNING 2023-11-30 00:05:59,511 basehttp 8384 1648 "POST /apiv2/send_test_mailing/ HTTP/1.1" 404 174
+WARNING 2023-11-30 00:06:30,244 log 8384 1648 Not Found: /apiv2/send_test_mailing/
+WARNING 2023-11-30 00:06:30,245 basehttp 8384 1648 "POST /apiv2/send_test_mailing/ HTTP/1.1" 404 174
+WARNING 2023-11-30 00:32:47,964 log 18644 28660 Not Found: /apiv2/send_test_mailing/
+WARNING 2023-11-30 00:32:47,965 basehttp 18644 28660 "POST /apiv2/send_test_mailing/ HTTP/1.1" 404 93
+WARNING 2023-11-30 00:40:17,851 log 28492 26724 Not Found: /apiv2/send_test_mailing/
+WARNING 2023-11-30 00:40:17,852 basehttp 28492 26724 "POST /apiv2/send_test_mailing/ HTTP/1.1" 404 174
+WARNING 2023-11-30 00:41:22,411 log 28492 26724 Not Found: /apiv2/send_test_mailing/
+WARNING 2023-11-30 00:41:22,412 basehttp 28492 26724 "POST /apiv2/send_test_mailing/ HTTP/1.1" 404 162
+WARNING 2023-11-30 00:41:47,622 log 28492 26724 Not Found: /apiv2/send_test_mailing/
+WARNING 2023-11-30 00:41:47,623 basehttp 28492 26724 "POST /apiv2/send_test_mailing/ HTTP/1.1" 404 165
+ERROR 2023-11-30 00:47:26,641 log 24792 2484 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-11-30 00:47:26,642 basehttp 24792 2484 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 423
+ERROR 2023-11-30 00:47:43,045 log 24792 2484 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-11-30 00:47:43,046 basehttp 24792 2484 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 423
+WARNING 2023-11-30 00:58:23,014 log 24792 2484 Not Found: /apiv2/send_test_mailing/
+WARNING 2023-11-30 00:58:23,014 basehttp 24792 2484 "POST /apiv2/send_test_mailing/ HTTP/1.1" 404 174
+WARNING 2023-11-30 00:58:34,291 log 24792 2484 Not Found: /apiv2/send_test_mailing/
+WARNING 2023-11-30 00:58:34,291 basehttp 24792 2484 "POST /apiv2/send_test_mailing/ HTTP/1.1" 404 162
+WARNING 2023-11-30 00:58:48,073 log 24792 2484 Not Found: /apiv2/send_test_mailing/
+WARNING 2023-11-30 00:58:48,074 basehttp 24792 2484 "POST /apiv2/send_test_mailing/ HTTP/1.1" 404 165
+ERROR 2023-12-03 21:35:33,730 log 2580 23344 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-12-03 21:35:33,731 basehttp 2580 23344 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 595
+ERROR 2023-12-04 00:03:36,714 log 9872 19068 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-12-04 00:03:36,726 basehttp 9872 19068 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 254
+ERROR 2023-12-04 00:04:27,220 log 21452 20668 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-12-04 00:04:27,221 basehttp 21452 20668 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 254
+ERROR 2023-12-04 00:19:39,127 log 21452 26500 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-12-04 00:19:39,128 basehttp 21452 26500 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 254
+WARNING 2023-12-04 11:53:40,646 log 23892 22832 Not Found: /download-template/index_2x.html
+WARNING 2023-12-04 11:53:40,647 basehttp 23892 22832 "GET /download-template/index_2x.html HTTP/1.1" 404 8878
+WARNING 2023-12-04 11:53:40,714 log 23892 22832 Not Found: /favicon.ico
+WARNING 2023-12-04 11:53:40,715 basehttp 23892 22832 "GET /favicon.ico HTTP/1.1" 404 8818
+WARNING 2023-12-04 11:53:50,968 log 23892 22832 Not Found: /download-template/index_3x.html
+WARNING 2023-12-04 11:53:50,969 basehttp 23892 22832 "GET /download-template/index_3x.html HTTP/1.1" 404 8878
+WARNING 2023-12-04 11:54:24,028 log 23892 22832 Not Found: /download-template/index_2x.html
+WARNING 2023-12-04 11:54:24,029 basehttp 23892 22832 "GET /download-template/index_2x.html HTTP/1.1" 404 8878
+WARNING 2023-12-04 11:54:59,978 log 23892 10504 Not Found: /download_template/index_2x.html
+WARNING 2023-12-04 11:54:59,979 basehttp 23892 10504 "GET /download_template/index_2x.html HTTP/1.1" 404 8878
+WARNING 2023-12-04 11:55:00,037 log 23892 10504 Not Found: /favicon.ico
+WARNING 2023-12-04 11:55:00,038 basehttp 23892 10504 "GET /favicon.ico HTTP/1.1" 404 8818
+WARNING 2023-12-04 11:57:47,712 log 23892 19780 Not Found: /download_template/index_2x.html
+WARNING 2023-12-04 11:57:47,713 basehttp 23892 19780 "GET /download_template/index_2x.html HTTP/1.1" 404 8878
+WARNING 2023-12-04 11:57:47,769 log 23892 19780 Not Found: /favicon.ico
+WARNING 2023-12-04 11:57:47,770 basehttp 23892 19780 "GET /favicon.ico HTTP/1.1" 404 8818
+WARNING 2023-12-04 12:00:01,881 log 9296 20676 Not Found: /download_template/index_2x.html
+WARNING 2023-12-04 12:00:01,893 basehttp 9296 20676 "GET /download_template/index_2x.html HTTP/1.1" 404 8878
+WARNING 2023-12-04 12:00:49,223 log 21964 26228 Not Found: /download_template/index_2x.html
+WARNING 2023-12-04 12:00:49,242 basehttp 21964 26228 "GET /download_template/index_2x.html HTTP/1.1" 404 8878
+WARNING 2023-12-04 12:01:25,661 log 26292 23144 Not Found: /download_template/index_2x.html
+WARNING 2023-12-04 12:01:25,662 basehttp 26292 23144 "GET /download_template/index_2x.html HTTP/1.1" 404 8878
+WARNING 2023-12-04 12:01:25,721 log 26292 23144 Not Found: /favicon.ico
+WARNING 2023-12-04 12:01:25,722 basehttp 26292 23144 "GET /favicon.ico HTTP/1.1" 404 8818
+WARNING 2023-12-04 12:01:48,343 log 24008 8016 Not Found: /download_template/index_2x.html
+WARNING 2023-12-04 12:01:48,355 basehttp 24008 8016 "GET /download_template/index_2x.html HTTP/1.1" 404 8878
+WARNING 2023-12-04 17:10:25,788 log 23900 27412 Not Found: /apiv2/get_template_content/index_3x.html
+WARNING 2023-12-04 17:10:25,789 basehttp 23900 27412 "GET /apiv2/get_template_content/index_3x.html HTTP/1.1" 404 13944
+WARNING 2023-12-04 17:10:40,460 log 23900 6476 Not Found: /apiv2/get_template_content/index_3x.html
+WARNING 2023-12-04 17:10:40,461 basehttp 23900 6476 "GET /apiv2/get_template_content/index_3x.html HTTP/1.1" 404 13944
+WARNING 2023-12-04 19:00:57,986 log 22972 1036 Not Found: /favicon.ico
+WARNING 2023-12-04 19:00:57,987 basehttp 22972 1036 "GET /favicon.ico HTTP/1.1" 404 8818
+WARNING 2023-12-04 19:26:21,775 log 16560 28336 Not Found: /favicon.ico
+WARNING 2023-12-04 19:26:21,776 basehttp 16560 28336 "GET /favicon.ico HTTP/1.1" 404 8818
+WARNING 2023-12-05 11:56:54,264 log 6324 1444 Not Found: /favicon.ico
+WARNING 2023-12-05 11:56:54,297 basehttp 6324 1444 "GET /favicon.ico HTTP/1.1" 404 8818
+ERROR 2023-12-05 15:05:47,088 log 23016 30976 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-12-05 15:05:47,088 basehttp 23016 30976 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 254
+ERROR 2023-12-05 15:11:48,963 log 24892 11504 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-12-05 15:11:48,964 basehttp 24892 11504 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 286
+ERROR 2023-12-05 17:50:06,253 log 20384 25132 Internal Server Error: /apiv2/send_test_mailing/
+ERROR 2023-12-05 17:50:06,254 basehttp 20384 25132 "POST /apiv2/send_test_mailing/ HTTP/1.1" 500 286
+WARNING 2023-12-05 18:18:19,256 log 31812 20624 Not Found: /favicon.ico
+WARNING 2023-12-05 18:18:19,257 basehttp 31812 20624 "GET /favicon.ico HTTP/1.1" 404 8818
+WARNING 2023-12-06 11:37:39,256 log 27404 27228 Not Found: /media/favicons/icon_service.png
+WARNING 2023-12-06 11:37:39,259 log 27404 24312 Not Found: /media/favicons/icon_documents.png
+WARNING 2023-12-06 11:37:39,261 log 27404 2188 Not Found: /media/favicons/icon_integrations.png
+WARNING 2023-12-06 11:37:39,263 log 27404 24816 Not Found: /media/favicons/icon_card.png
+WARNING 2023-12-06 11:37:39,265 log 27404 26772 Not Found: /media/favicons/icon_tech_info.png
+WARNING 2023-12-06 11:37:39,266 basehttp 27404 27228 "GET /media/favicons/icon_service.png HTTP/1.1" 404 8716
+WARNING 2023-12-06 11:37:39,269 basehttp 27404 24312 "GET /media/favicons/icon_documents.png HTTP/1.1" 404 8724
+WARNING 2023-12-06 11:37:39,270 basehttp 27404 2188 "GET /media/favicons/icon_integrations.png HTTP/1.1" 404 8736
+WARNING 2023-12-06 11:37:39,271 basehttp 27404 24816 "GET /media/favicons/icon_card.png HTTP/1.1" 404 8704
+WARNING 2023-12-06 11:37:39,272 basehttp 27404 26772 "GET /media/favicons/icon_tech_info.png HTTP/1.1" 404 8724
+ERROR 2023-12-06 11:37:41,420 log 27404 24816 Internal Server Error: /client/1/
+Traceback (most recent call last):
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: ОШИБКА:  столбец users_boardmaps.test_automatic_email не существует
+LINE 1: ...boardmaps"."email", "users_boardmaps"."position", "users_boa...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Script\BoardMaps\TFS\Crag\main\views.py", line 386, in client
+    return render(request, 'main/client/client.html', {
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 175, in render
+    return self._render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 167, in _render
+    return self.nodelist.render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 1005, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\loader_tags.py", line 157, in render
+    return compiled_parent._render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 167, in _render
+    return self.nodelist.render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 1005, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\loader_tags.py", line 63, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 1005, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\defaulttags.py", line 194, in render
+    len_values = len(values)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\models\query.py", line 380, in __len__
+    self._fetch_all()
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\models\query.py", line 1881, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\models\query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\models\sql\compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 102, in execute
+    return super().execute(sql, params)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 67, in execute
+    return self._execute_with_wrappers(
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 80, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 84, in _execute
+    with self.db.wrap_database_errors:
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: ОШИБКА:  столбец users_boardmaps.test_automatic_email не существует
+LINE 1: ...boardmaps"."email", "users_boardmaps"."position", "users_boa...
+                                                             ^
+
+ERROR 2023-12-06 11:37:41,429 basehttp 27404 24816 "GET /client/1/ HTTP/1.1" 500 261935
+WARNING 2023-12-06 11:37:41,636 log 27404 24816 Not Found: /favicon.ico
+WARNING 2023-12-06 11:37:41,638 basehttp 27404 24816 "GET /favicon.ico HTTP/1.1" 404 8818
+ERROR 2023-12-06 11:37:50,577 log 27404 24816 Internal Server Error: /client/2/
+Traceback (most recent call last):
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: ОШИБКА:  столбец users_boardmaps.test_automatic_email не существует
+LINE 1: ...boardmaps"."email", "users_boardmaps"."position", "users_boa...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Script\BoardMaps\TFS\Crag\main\views.py", line 386, in client
+    return render(request, 'main/client/client.html', {
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 175, in render
+    return self._render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 167, in _render
+    return self.nodelist.render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 1005, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\loader_tags.py", line 157, in render
+    return compiled_parent._render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 167, in _render
+    return self.nodelist.render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 1005, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\loader_tags.py", line 63, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 1005, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 1005, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\base.py", line 966, in render_annotated
+    return self.render(context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\template\defaulttags.py", line 194, in render
+    len_values = len(values)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\models\query.py", line 380, in __len__
+    self._fetch_all()
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\models\query.py", line 1881, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\models\query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\models\sql\compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 102, in execute
+    return super().execute(sql, params)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 67, in execute
+    return self._execute_with_wrappers(
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 80, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 84, in _execute
+    with self.db.wrap_database_errors:
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: ОШИБКА:  столбец users_boardmaps.test_automatic_email не существует
+LINE 1: ...boardmaps"."email", "users_boardmaps"."position", "users_boa...
+                                                             ^
+
+ERROR 2023-12-06 11:37:50,585 basehttp 27404 24816 "GET /client/2/ HTTP/1.1" 500 262176
+ERROR 2023-12-06 11:38:08,749 log 27404 25708 Internal Server Error: /admin/main/usersboardmaps/
+Traceback (most recent call last):
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UndefinedColumn: ОШИБКА:  столбец users_boardmaps.test_automatic_email не существует
+LINE 1: ...boardmaps"."email", "users_boardmaps"."position", "users_boa...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\contrib\admin\options.py", line 688, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\utils\decorators.py", line 134, in _wrapper_view
+    response = view_func(request, *args, **kwargs)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\views\decorators\cache.py", line 62, in _wrapper_view_func
+    response = view_func(request, *args, **kwargs)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\contrib\admin\sites.py", line 242, in inner
+    return view(request, *args, **kwargs)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\utils\decorators.py", line 46, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\utils\decorators.py", line 134, in _wrapper_view
+    response = view_func(request, *args, **kwargs)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\contrib\admin\options.py", line 2065, in changelist_view
+    "selection_note": _("0 of %(cnt)s selected") % {"cnt": len(cl.result_list)},
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\models\query.py", line 380, in __len__
+    self._fetch_all()
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\models\query.py", line 1881, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\models\query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\models\sql\compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 102, in execute
+    return super().execute(sql, params)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 67, in execute
+    return self._execute_with_wrappers(
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 80, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 84, in _execute
+    with self.db.wrap_database_errors:
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\db\backends\utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.ProgrammingError: ОШИБКА:  столбец users_boardmaps.test_automatic_email не существует
+LINE 1: ...boardmaps"."email", "users_boardmaps"."position", "users_boa...
+                                                             ^
+
+ERROR 2023-12-06 11:38:08,756 basehttp 27404 25708 "GET /admin/main/usersboardmaps/ HTTP/1.1" 500 176324
+WARNING 2023-12-06 11:39:44,754 log 27404 9192 Not Found: /media/favicons/icon_service.png
+WARNING 2023-12-06 11:39:44,755 log 27404 25336 Not Found: /media/favicons/icon_card.png
+WARNING 2023-12-06 11:39:44,757 basehttp 27404 9192 "GET /media/favicons/icon_service.png HTTP/1.1" 404 8716
+WARNING 2023-12-06 11:39:44,757 basehttp 27404 25336 "GET /media/favicons/icon_card.png HTTP/1.1" 404 8704
+WARNING 2023-12-06 11:39:44,788 log 27404 9192 Not Found: /media/favicons/icon_integrations.png
+WARNING 2023-12-06 11:39:44,789 log 27404 25336 Not Found: /media/favicons/icon_tech_info.png
+WARNING 2023-12-06 11:39:44,791 log 27404 11816 Not Found: /media/favicons/icon_documents.png
+WARNING 2023-12-06 11:39:44,793 log 27404 27296 Not Found: /media/favicons/icon_card.png
+WARNING 2023-12-06 11:39:44,797 log 27404 6320 Not Found: /media/favicons/icon_service.png
+WARNING 2023-12-06 11:39:44,798 basehttp 27404 9192 "GET /media/favicons/icon_integrations.png HTTP/1.1" 404 8736
+WARNING 2023-12-06 11:39:44,800 basehttp 27404 25336 "GET /media/favicons/icon_tech_info.png HTTP/1.1" 404 8724
+WARNING 2023-12-06 11:39:44,800 basehttp 27404 11816 "GET /media/favicons/icon_documents.png HTTP/1.1" 404 8724
+WARNING 2023-12-06 11:39:44,801 basehttp 27404 27296 "GET /media/favicons/icon_card.png HTTP/1.1" 404 8704
+WARNING 2023-12-06 11:39:44,802 basehttp 27404 6320 "GET /media/favicons/icon_service.png HTTP/1.1" 404 8716
+WARNING 2023-12-06 11:39:46,257 log 27404 25336 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 11:39:46,259 basehttp 27404 25336 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 11:45:05,595 log 27404 20104 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 11:45:05,597 basehttp 27404 20104 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 11:45:12,439 log 27404 1620 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 11:45:12,440 basehttp 27404 1620 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 13:26:44,104 log 27228 17560 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 13:26:44,107 basehttp 27228 17560 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 13:26:58,656 log 27228 26012 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 13:26:58,658 basehttp 27228 26012 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 13:31:04,804 log 27228 26012 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 13:31:04,806 basehttp 27228 26012 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 13:31:21,934 log 27228 26012 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 13:31:21,936 basehttp 27228 26012 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 13:31:40,765 log 27228 26012 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 13:31:40,767 basehttp 27228 26012 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 13:32:10,036 log 27228 26012 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 13:32:10,038 basehttp 27228 26012 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 13:38:14,093 log 27228 26564 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 13:38:14,095 basehttp 27228 26564 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 13:43:15,792 log 27228 26352 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 13:43:15,793 basehttp 27228 26352 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 13:43:46,877 log 27228 25196 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 13:43:46,878 basehttp 27228 25196 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 14:20:01,953 log 27228 27764 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 14:20:01,955 basehttp 27228 27764 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 14:20:20,431 log 27228 27764 Not Found: /apiv2/contact/delete/23/
+WARNING 2023-12-06 14:20:20,432 basehttp 27228 27764 "DELETE /apiv2/contact/delete/23/ HTTP/1.1" 404 105
+WARNING 2023-12-06 14:20:20,462 log 27228 25320 Not Found: /apiv2/contact/delete/35/
+WARNING 2023-12-06 14:20:20,463 basehttp 27228 25320 "DELETE /apiv2/contact/delete/35/ HTTP/1.1" 404 105
+WARNING 2023-12-06 14:20:20,487 log 27228 28364 Not Found: /apiv2/contact/delete/58/
+WARNING 2023-12-06 14:20:20,489 basehttp 27228 28364 "DELETE /apiv2/contact/delete/58/ HTTP/1.1" 404 105
+WARNING 2023-12-06 14:25:45,491 log 27228 20104 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 14:25:45,493 basehttp 27228 20104 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 14:38:34,696 log 27228 16200 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 14:38:34,697 basehttp 27228 16200 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+ERROR 2023-12-06 14:38:53,841 log 27228 1068 Internal Server Error: /apiv2/connect_info/delete/23/
+Traceback (most recent call last):
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\views\decorators\http.py", line 43, in inner
+    return func(request, *args, **kwargs)
+TypeError: delete_connect_info() got an unexpected keyword argument 'connect_info_id'
+ERROR 2023-12-06 14:38:53,844 basehttp 27228 1068 "DELETE /apiv2/connect_info/delete/23/ HTTP/1.1" 500 93324
+WARNING 2023-12-06 14:41:30,619 log 9220 25120 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 14:41:30,620 basehttp 9220 25120 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 14:42:25,730 log 9220 25120 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 14:42:25,732 basehttp 9220 25120 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 14:48:21,659 log 9220 9284 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 14:48:21,661 basehttp 9220 9284 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 14:48:38,397 log 9220 26300 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 14:48:38,398 basehttp 9220 26300 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 14:48:41,813 log 9220 26300 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 14:48:41,814 basehttp 9220 26300 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 14:48:44,684 log 9220 26300 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 14:48:44,685 basehttp 9220 26300 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 14:48:46,413 log 9220 26300 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 14:48:46,414 basehttp 9220 26300 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 14:48:52,550 log 9220 26300 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 14:48:52,551 basehttp 9220 26300 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 14:55:07,922 log 9220 24144 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 14:55:07,923 basehttp 9220 24144 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 15:18:20,163 log 9220 20888 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 15:18:20,165 basehttp 9220 20888 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 16:45:25,962 log 27264 4652 Not Found: /favicon.ico
+WARNING 2023-12-06 16:45:25,964 basehttp 27264 4652 "GET /favicon.ico HTTP/1.1" 404 8818
+WARNING 2023-12-06 18:36:27,298 log 28732 23728 Not Found: /media/favicons/icon_service.png
+WARNING 2023-12-06 18:36:27,300 log 28732 24108 Not Found: /media/favicons/icon_card.png
+WARNING 2023-12-06 18:36:27,301 basehttp 28732 23728 "GET /media/favicons/icon_service.png HTTP/1.1" 404 8716
+WARNING 2023-12-06 18:36:27,302 basehttp 28732 24108 "GET /media/favicons/icon_card.png HTTP/1.1" 404 8704
+WARNING 2023-12-06 18:36:27,367 log 28732 24108 Not Found: /media/favicons/icon_tech_info.png
+WARNING 2023-12-06 18:36:27,368 log 28732 6564 Not Found: /media/favicons/icon_documents.png
+WARNING 2023-12-06 18:36:27,369 log 28732 23728 Not Found: /media/favicons/icon_integrations.png
+WARNING 2023-12-06 18:36:27,375 basehttp 28732 24108 "GET /media/favicons/icon_tech_info.png HTTP/1.1" 404 8724
+WARNING 2023-12-06 18:36:27,375 basehttp 28732 6564 "GET /media/favicons/icon_documents.png HTTP/1.1" 404 8724
+WARNING 2023-12-06 18:36:27,379 basehttp 28732 23728 "GET /media/favicons/icon_integrations.png HTTP/1.1" 404 8736
+WARNING 2023-12-06 18:36:27,388 log 28732 10680 Not Found: /media/favicons/icon_service.png
+WARNING 2023-12-06 18:36:27,390 basehttp 28732 10680 "GET /media/favicons/icon_service.png HTTP/1.1" 404 8716
+WARNING 2023-12-06 18:36:27,392 log 28732 11120 Not Found: /media/favicons/icon_card.png
+WARNING 2023-12-06 18:36:27,396 basehttp 28732 11120 "GET /media/favicons/icon_card.png HTTP/1.1" 404 8704
+WARNING 2023-12-06 18:36:28,536 log 28732 23728 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 18:36:28,539 basehttp 28732 23728 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-06 18:36:32,060 log 28732 23728 Not Found: /favicon.ico
+WARNING 2023-12-06 18:36:32,061 basehttp 28732 23728 "GET /favicon.ico HTTP/1.1" 404 8818
+WARNING 2023-12-06 20:37:49,729 log 28732 20572 Not Found: /media/favicons/icon_card.png
+WARNING 2023-12-06 20:37:49,731 log 28732 19848 Not Found: /media/favicons/icon_service.png
+WARNING 2023-12-06 20:37:49,734 basehttp 28732 20572 "GET /media/favicons/icon_card.png HTTP/1.1" 404 8704
+WARNING 2023-12-06 20:37:49,734 basehttp 28732 19848 "GET /media/favicons/icon_service.png HTTP/1.1" 404 8716
+WARNING 2023-12-06 20:37:49,801 log 28732 19848 Not Found: /media/favicons/icon_tech_info.png
+WARNING 2023-12-06 20:37:49,803 log 28732 29020 Not Found: /media/favicons/icon_documents.png
+WARNING 2023-12-06 20:37:49,805 log 28732 20572 Not Found: /media/favicons/icon_integrations.png
+WARNING 2023-12-06 20:37:49,809 basehttp 28732 19848 "GET /media/favicons/icon_tech_info.png HTTP/1.1" 404 8724
+WARNING 2023-12-06 20:37:49,813 basehttp 28732 29020 "GET /media/favicons/icon_documents.png HTTP/1.1" 404 8724
+WARNING 2023-12-06 20:37:49,814 basehttp 28732 20572 "GET /media/favicons/icon_integrations.png HTTP/1.1" 404 8736
+WARNING 2023-12-06 20:37:49,824 log 28732 12396 Not Found: /media/favicons/icon_card.png
+WARNING 2023-12-06 20:37:49,825 log 28732 23988 Not Found: /media/favicons/icon_service.png
+WARNING 2023-12-06 20:37:49,827 basehttp 28732 12396 "GET /media/favicons/icon_card.png HTTP/1.1" 404 8704
+WARNING 2023-12-06 20:37:49,827 basehttp 28732 23988 "GET /media/favicons/icon_service.png HTTP/1.1" 404 8716
+ERROR 2023-12-06 20:47:53,576 log 28732 11976 Internal Server Error: /search_results/
+Traceback (most recent call last):
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\Adena\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Script\BoardMaps\TFS\Crag\main\views.py", line 216, in search_results
+    for result in results:
+UnboundLocalError: local variable 'results' referenced before assignment
+ERROR 2023-12-06 20:47:53,578 basehttp 28732 11976 "GET /search_results/?serverVersionInput=&managerCheckbox=on HTTP/1.1" 500 90567
+WARNING 2023-12-06 20:47:53,680 log 28732 11976 Not Found: /favicon.ico
+WARNING 2023-12-06 20:47:53,681 basehttp 28732 11976 "GET /favicon.ico HTTP/1.1" 404 8818
+WARNING 2023-12-06 20:48:41,057 log 28732 25664 Not Found: /media/favicons/icon_card.png
+WARNING 2023-12-06 20:48:41,059 log 28732 3928 Not Found: /media/favicons/icon_service.png
+WARNING 2023-12-06 20:48:41,060 basehttp 28732 25664 "GET /media/favicons/icon_card.png HTTP/1.1" 404 8704
+WARNING 2023-12-06 20:48:41,061 basehttp 28732 3928 "GET /media/favicons/icon_service.png HTTP/1.1" 404 8716
+WARNING 2023-12-06 20:48:41,087 log 28732 3928 Not Found: /media/favicons/icon_tech_info.png
+WARNING 2023-12-06 20:48:41,089 log 28732 25664 Not Found: /media/favicons/icon_integrations.png
+WARNING 2023-12-06 20:48:41,092 log 28732 12616 Not Found: /media/favicons/icon_documents.png
+WARNING 2023-12-06 20:48:41,097 basehttp 28732 3928 "GET /media/favicons/icon_tech_info.png HTTP/1.1" 404 8724
+WARNING 2023-12-06 20:48:41,099 basehttp 28732 25664 "GET /media/favicons/icon_integrations.png HTTP/1.1" 404 8736
+WARNING 2023-12-06 20:48:41,100 basehttp 28732 12616 "GET /media/favicons/icon_documents.png HTTP/1.1" 404 8724
+WARNING 2023-12-06 20:48:41,102 log 28732 11596 Not Found: /media/favicons/icon_card.png
+WARNING 2023-12-06 20:48:41,106 log 28732 25396 Not Found: /media/favicons/icon_service.png
+WARNING 2023-12-06 20:48:41,111 basehttp 28732 11596 "GET /media/favicons/icon_card.png HTTP/1.1" 404 8704
+WARNING 2023-12-06 20:48:41,111 basehttp 28732 25396 "GET /media/favicons/icon_service.png HTTP/1.1" 404 8716
+WARNING 2023-12-06 21:13:29,633 log 28732 8428 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-06 21:13:29,635 basehttp 28732 8428 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 16:24:01,122 log 25784 25516 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 16:24:01,123 basehttp 25784 25516 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 16:25:10,894 log 25784 23692 Not Found: /favicon.ico
+WARNING 2023-12-11 16:25:10,896 basehttp 25784 23692 "GET /favicon.ico HTTP/1.1" 404 8818
+WARNING 2023-12-11 16:31:43,609 log 25784 25100 Not Found: /apiv2/get_template_content/index_2x_hotfix_server.html/
+WARNING 2023-12-11 16:31:43,611 basehttp 25784 25100 "GET /apiv2/get_template_content/index_2x_hotfix_server.html/ HTTP/1.1" 404 30
+WARNING 2023-12-11 16:31:52,984 log 25784 10748 Not Found: /apiv2/get_template_content/index_iPad.html/
+WARNING 2023-12-11 16:31:52,986 basehttp 25784 10748 "GET /apiv2/get_template_content/index_iPad.html/ HTTP/1.1" 404 30
+WARNING 2023-12-11 16:31:54,233 log 25784 24164 Not Found: /apiv2/get_template_content/index_Android.html/
+WARNING 2023-12-11 16:31:54,235 basehttp 25784 24164 "GET /apiv2/get_template_content/index_Android.html/ HTTP/1.1" 404 30
+WARNING 2023-12-11 16:31:56,436 log 25784 24164 Not Found: /apiv2/get_template_content/index_2x_hotfix_server.html/
+WARNING 2023-12-11 16:31:56,437 basehttp 25784 24164 "GET /apiv2/get_template_content/index_2x_hotfix_server.html/ HTTP/1.1" 404 30
+WARNING 2023-12-11 16:32:08,313 log 25784 26428 Not Found: /apiv2/get_template_content/index_iPad.html/
+WARNING 2023-12-11 16:32:08,315 basehttp 25784 26428 "GET /apiv2/get_template_content/index_iPad.html/ HTTP/1.1" 404 30
+WARNING 2023-12-11 16:32:09,498 log 25784 26428 Not Found: /apiv2/get_template_content/index_2x_hotfix_server.html/
+WARNING 2023-12-11 16:32:09,500 basehttp 25784 26428 "GET /apiv2/get_template_content/index_2x_hotfix_server.html/ HTTP/1.1" 404 30
+WARNING 2023-12-11 19:10:58,419 log 25784 24324 Not Found: /media/favicons/icon_card.png
+WARNING 2023-12-11 19:10:58,421 log 25784 25152 Not Found: /media/favicons/icon_service.png
+WARNING 2023-12-11 19:10:58,424 basehttp 25784 24324 "GET /media/favicons/icon_card.png HTTP/1.1" 404 8704
+WARNING 2023-12-11 19:10:58,427 log 25784 26712 Not Found: /media/favicons/icon_tech_info.png
+WARNING 2023-12-11 19:10:58,427 basehttp 25784 25152 "GET /media/favicons/icon_service.png HTTP/1.1" 404 8716
+WARNING 2023-12-11 19:10:58,428 log 25784 26740 Not Found: /media/favicons/icon_integrations.png
+WARNING 2023-12-11 19:10:58,431 log 25784 19060 Not Found: /media/favicons/icon_documents.png
+WARNING 2023-12-11 19:10:58,434 basehttp 25784 26712 "GET /media/favicons/icon_tech_info.png HTTP/1.1" 404 8724
+WARNING 2023-12-11 19:10:58,436 basehttp 25784 26740 "GET /media/favicons/icon_integrations.png HTTP/1.1" 404 8736
+WARNING 2023-12-11 19:10:58,436 basehttp 25784 19060 "GET /media/favicons/icon_documents.png HTTP/1.1" 404 8724
+WARNING 2023-12-11 19:10:59,701 log 25784 25152 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:10:59,703 basehttp 25784 25152 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:11:08,627 log 25784 24324 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:11:08,628 basehttp 25784 24324 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:27:18,894 log 25784 5512 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:27:18,896 basehttp 25784 5512 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:27:24,978 log 25784 23560 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:27:24,979 basehttp 25784 23560 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:27:27,021 log 25784 23560 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:27:27,023 basehttp 25784 23560 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:28:33,791 log 25784 23560 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:28:33,792 basehttp 25784 23560 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:45:00,442 log 25784 8460 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:45:00,444 basehttp 25784 8460 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:51:21,466 log 25784 13412 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:51:21,468 basehttp 25784 13412 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:57:13,060 log 25784 4116 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:57:13,061 basehttp 25784 4116 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 19:57:24,521 log 25784 20836 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 19:57:24,522 basehttp 25784 20836 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 20:05:12,112 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:05:12,113 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 20:05:16,597 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:05:16,598 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 20:05:29,370 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:05:29,372 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 20:10:02,534 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:10:02,535 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 20:10:06,568 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:10:06,569 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14
+WARNING 2023-12-11 20:10:11,620 log 25784 18768 Not Found: /document_preview/Нет документа/
+WARNING 2023-12-11 20:10:11,621 basehttp 25784 18768 "GET /document_preview/%D0%9D%D0%B5%D1%82%20%D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%B0/ HTTP/1.1" 404 14

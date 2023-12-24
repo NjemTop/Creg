@@ -163,3 +163,9 @@ class DatabaseCleanerMsSQL:
         except Exception as error_message:
             logger.error(f'Ошибка при обновлении: {error_message}')
             raise
+
+# service_url = 'https://bm-sup-5.boardmaps.com/'
+# db_cleaner = DatabaseCleaner(service_url)
+# db_cleaner.connect()
+# db_cleaner.clean()
+# db_cleaner.close()

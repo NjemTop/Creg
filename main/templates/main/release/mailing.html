@@ -1,0 +1,117 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load json_filters %} 
+
+{% block title %}
+{{ block.super }} - Рассылки
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/release/mailing.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h2 class="section-title mb-4">Шаблоны рассылки</h2>
+    
+    <!-- Шапка выборки -->
+    <div class="mailing-header mb-4">
+        <div class="row">
+            <!-- Левый столбец -->
+            <div class="col-sm-4">
+                <div class="row mb-3">
+                    <label for="releaseTypeGroup" class="col-sm-6 col-form-label input-limited">Выберите тип рассылки:</label>
+                    <div class="col-sm-6">
+                        <select class="form-select input-limited" id="releaseTypeGroup">
+                            <option value="test_mailing" selected>Тестовая рассылка</option>
+                            <option value="standard_mailing">Стандартная рассылка</option>
+                            <option value="request">Запрос сервисного окна</option>
+                            <option value="hotfix">Hotfix</option>
+                            <option value="feedback">Обратная связь</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row mb-3" id="testMailingRow">
+                    <label for="releaseViewGroup" class="col-sm-6 col-form-label input-limited">Выберите вид рассылки:</label>
+                    <div class="col-sm-6">
+                        <select class="form-select input-limited" id="releaseViewGroup">
+                            <option value="standard_mailing" selected>Стандартная рассылка</option>
+                            <option value="request">Запрос сервисного окна</option>
+                            <option value="hotfix">Hotfix</option>
+                            <option value="feedback">Обратная связь</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Правый столбец -->
+            <div class="col-sm-4">
+                <div class="row mb-3">
+                    <label for="releaseGroup" class="col-sm-6 col-form-label input-limited">Выберите рассылку:</label>
+                    <div class="col-sm-6">
+                        <select class="form-select input-limited" id="releaseGroup">
+                            <option value="release2x" selected>2.х</option> <!-- Стандарт, HotFix -->
+                            <option value="release3x">3.х</option> <!-- Стандарт, HotFix -->
+                            <option value="releaseiPad">iPad/iPhone</option> <!-- HotFix -->
+                            <option value="releaseAndroid">Android</option> <!-- HotFix -->
+                            <option value="releaseModule">По модулям</option> <!-- HotFix -->
+                            <option value="releaseIntegration">По интеграциям</option> <!-- HotFix -->
+                            <option value="releaseGP">Gold/Platinum</option> <!-- Сервисное окно -->
+                            <option value="releaseSaaS">SaaS</option> <!-- Сервисное окно -->
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row" id="filterGroupRow">
+                    <label for="filterGroup" class="col-sm-6 col-form-label input-limited">Фильтры:</label>
+                    <div class="col-sm-6">
+                        <select class="form-select input-limited" id="filterGroup">
+                            <option value="email" selected>Кому отправить</option> <!-- Тестовая рассылка -->
+                            <option value="client">Клиент</option> <!-- HotFix -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="row mb-3">
+                    <input type="text" class="form-control input-limited" id="numberRelease" placeholder="Номер релиза">
+                </div>
+                <div class="row mb-3" id="mobileVersionRow" style="display: none;">
+                    <input type="text" class="form-control input-limited" id="mobileVersion" placeholder="Номер мобил. релиза">
+                </div>
+                <div class="row mb-3" id="emailRow">
+                    <input type="email" class="form-control input-limited" id="email" placeholder="Почта">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="col-sm-10 offset-sm-1">
+                    <button class="btn btn-primary" id="applyButton">Отправить тест</button>
+                    <!-- Спиннер -->
+                    <div id="loading-spinner" style="display: none;">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Загрузка...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-sm-12">
+            <button class="btn btn-secondary" id="downloadButton">Скачать шаблон</button>
+            <button class="btn btn-primary" id="uploadButton">Загрузить шаблон</button>
+            <input type="file" id="uploadInput" />
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-sm-12">
+            <iframe id="previewIframe" style="width: 30%; height: 600px; border: 1px solid #ddd; padding: 0;"></iframe>
+        </div>
+    </div>
+
+    <script type="module" src="{% static 'js/release/mailing.js' %}"></script>
+    <script type="module" src="{% static 'js/release/test_send_mailing.js' %}"></script>
+    <script src="{% static 'js/toastify-settings.js' %}"></script>
+{% endblock %}

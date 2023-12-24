@@ -5,12 +5,16 @@ from django.core.files.storage import FileSystemStorage
 from django.db.models.signals import pre_delete, pre_save
 from django.dispatch import receiver
 import os
+import logging
 
+
+logger = logging.getLogger(__name__)
 
 backup_storage = FileSystemStorage(location='./backup/db/')
 
 def backup_file_path(instance, filename):
-    return os.path.join('backup', 'db', filename)
+    # Просто возвращаем имя файла, так как путь к директории уже задан в FileSystemStorage
+    return filename
 
 class BackupStorage(FileSystemStorage):
     def get_available_name(self, name, **kwargs):
@@ -40,6 +44,7 @@ class DatabaseBackup(models.Model):
 @receiver(pre_delete, sender=DatabaseBackup)
 def delete_backup_file(sender, instance, **kwargs):
     if instance.file:
+        logger.info(f"Удаление файла бэкапа: {instance.file.name}")
         instance.file.storage.delete(instance.file.name)
 
 
@@ -74,6 +79,86 @@ def update_favicon_file(sender, instance, **kwargs):
                 os.remove(old_path)
     except Favicon.DoesNotExist:
         return False
+
+class ReleaseInfo(models.Model):
+    """Таблица с информацией о рассылки клиенту"""
+    date = models.DateField(verbose_name="Дата рассылки")
+    release_number = models.CharField(verbose_name="Номер релиза", max_length=10)
+    client_name = models.CharField(verbose_name="Наименование клиента", max_length=100)
+    main_contact = models.CharField(verbose_name="Основной контакт", max_length=100)
+    copy_contact = models.TextField(verbose_name="Копия", null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Отчёт о рассылке"
+        verbose_name_plural = "Отчёты о рассылке"
+        db_table = "release_info"
+
+    def __str__(self):
+        return self.release_number
+
+
+class ReportTicket(models.Model):
+    """Класс для таблицы БД информации с отчётами о тикетах"""
+    report_date = models.DateField(verbose_name='Дата отчёта', null=True, blank=True)
+    ticket_id = models.IntegerField(verbose_name='Номер тикета', null=True, blank=True)
+    subject = models.CharField(verbose_name='Тема тикета', max_length=100, null=True, blank=True)
+    creation_date = models.DateField(verbose_name='Создан', null=True, blank=True)
+    status = models.CharField(verbose_name='Статус', max_length=100, null=True, blank=True)
+    client_name = models.CharField(verbose_name='Название клиента', max_length=100, null=True, blank=True)
+    initiator = models.CharField(verbose_name='Инициатор', max_length=100, null=True, blank=True)
+    priority = models.CharField(verbose_name='Приоритет', max_length=100, null=True, blank=True)
+    assignee_name = models.CharField(verbose_name='Исполнитель', max_length=100, null=True, blank=True)
+    updated_at = models.DateField(verbose_name='Дата обновления', null=True, blank=True)
+    last_reply_at = models.DateField(verbose_name='Дата последнего ответа клиенту', null=True, blank=True)
+    sla = models.BooleanField(verbose_name='SLA', null=True, blank=True)
+    sla_time = models.IntegerField(verbose_name='Общее_время SLA', null=True, blank=True)
+    response_time = models.IntegerField(verbose_name='Среднее время ответа', null=True, blank=True)
+    cause = models.CharField(verbose_name='Причина возникновения', max_length=100, null=True, blank=True)
+    module_boardmaps = models.CharField(verbose_name='Модуль BoardMaps', max_length=100, null=True, blank=True)
+    staff_message = models.IntegerField(verbose_name='Сообщений от саппорта', null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Отчёт о тикетах"
+        verbose_name_plural = "Отчёты о тикетах"
+        db_table = "report_ticket"
+
+    def __str__(self):
+        return str(self.ticket_id) if self.ticket_id else ''
+
+class ReportDownloadjFrog(models.Model):
+    """Класс для таблицы БД информации о скачивании с jFrog"""
+    date = models.DateField(verbose_name='Дата')
+    account_name = models.CharField(verbose_name='Учётная запись jFrog', max_length=100, null=True, blank=True)
+    version_download = models.CharField(verbose_name='Версия скачивания', max_length=100, null=True, blank=True)
+    ip_address = models.CharField(verbose_name='IP-адрес', max_length=20, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Отчёт о скачивании с jFrog"
+        verbose_name_plural = "Отчёты о скачивании с jFrog"
+        db_table = "report_download_jfrog"
+
+    def __str__(self):
+        return str(self.date) if self.date else ''
+
+class UsersBoardMaps(models.Model):
+    """Таблица для пользователей сотрудников BoardMaps"""
+    name = models.CharField(verbose_name='Сотрудник', max_length=150, null=True, blank=True)
+    email = models.CharField(verbose_name='Почта', max_length=100, null=True, blank=True)
+    position = models.CharField(verbose_name='Должность', max_length=100, null=True, blank=True)
+    test_automatic_email = models.BooleanField(verbose_name='Тестовая отправка рассылки', null=True, blank=True)
+    new_client = models.BooleanField(verbose_name='Отправка информамции о новом созданном клиенте', null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Сотрудники BoardMaps"
+        verbose_name_plural = "Список сотрудников BoardMaps"
+        db_table = "users_boardmaps"
+
+    def __str__(self):
+        return str(self.name) if self.name else ''
+
+    @staticmethod
+    def get_managers():
+        return UsersBoardMaps.objects.filter(position='Менеджер')
 
 
 class ClientsList(models.Model):
@@ -266,8 +351,8 @@ class ConnectionInfo(models.Model):
     text = models.TextField(null=True)
 
     class Meta:
-        verbose_name = "Документы"
-        verbose_name_plural = "Документы по подключению к клиенту"
+        verbose_name = "Удалёнка клиента"
+        verbose_name_plural = "Информация по подключению к клиенту"
         db_table = 'connection_info'
 
     def __str__(self):
@@ -282,6 +367,7 @@ class ServiseCard(models.Model):
                                     verbose_name="Client Card")
     service_pack = models.CharField(verbose_name="Тарифный план", max_length=255)
     manager = models.CharField(verbose_name="Менеджер", max_length=255)
+    manager_new = models.ForeignKey(UsersBoardMaps, on_delete=models.SET_NULL, null=True, blank=True, limit_choices_to={'position': 'Менеджер'}, verbose_name="Менеджер")
     loyal = models.CharField(verbose_name="Лояльность", max_length=255, null=True, blank=True)
 
     class Meta:
@@ -333,64 +419,3 @@ class TechNote(models.Model):
 
     def __str__(self):
         return f"{self.client_card} ({self.client_card.client_info.client_name})"
-
-
-class ReleaseInfo(models.Model):
-    """Таблица с информацией о рассылки клиенту"""
-    date = models.DateField(verbose_name="Дата рассылки")
-    release_number = models.CharField(verbose_name="Номер релиза", max_length=10)
-    client_name = models.CharField(verbose_name="Наименование клиента", max_length=100)
-    main_contact = models.CharField(verbose_name="Основной контакт", max_length=100)
-    copy_contact = models.TextField(verbose_name="Копия", null=True, blank=True)
-
-    class Meta:
-        verbose_name = "Отчёт о рассылке"
-        verbose_name_plural = "Отчёты о рассылке"
-        db_table = "release_info"
-
-    def __str__(self):
-        return self.release_number
-
-
-class ReportTicket(models.Model):
-    """Класс для таблицы БД информации с отчётами о тикетах"""
-    report_date = models.DateField(verbose_name='Дата отчёта', null=True, blank=True)
-    ticket_id = models.IntegerField(verbose_name='Номер тикета', null=True, blank=True)
-    subject = models.CharField(verbose_name='Тема тикета', max_length=100, null=True, blank=True)
-    creation_date = models.DateField(verbose_name='Создан', null=True, blank=True)
-    status = models.CharField(verbose_name='Статус', max_length=100, null=True, blank=True)
-    client_name = models.CharField(verbose_name='Название клиента', max_length=100, null=True, blank=True)
-    initiator = models.CharField(verbose_name='Инициатор', max_length=100, null=True, blank=True)
-    priority = models.CharField(verbose_name='Приоритет', max_length=100, null=True, blank=True)
-    assignee_name = models.CharField(verbose_name='Исполнитель', max_length=100, null=True, blank=True)
-    updated_at = models.DateField(verbose_name='Дата обновления', null=True, blank=True)
-    last_reply_at = models.DateField(verbose_name='Дата последнего ответа клиенту', null=True, blank=True)
-    sla = models.BooleanField(verbose_name='SLA', null=True, blank=True)
-    sla_time = models.IntegerField(verbose_name='Общее_время SLA', null=True, blank=True)
-    response_time = models.IntegerField(verbose_name='Среднее время ответа', null=True, blank=True)
-    cause = models.CharField(verbose_name='Причина возникновения', max_length=100, null=True, blank=True)
-    module_boardmaps = models.CharField(verbose_name='Модуль BoardMaps', max_length=100, null=True, blank=True)
-    staff_message = models.IntegerField(verbose_name='Сообщений от саппорта', null=True, blank=True)
-
-    class Meta:
-        verbose_name = "Отчёт о тикетах"
-        verbose_name_plural = "Отчёты о тикетах"
-        db_table = "report_ticket"
-
-    def __str__(self):
-        return str(self.ticket_id) if self.ticket_id else ''
-
-class ReportDownloadjFrog(models.Model):
-    """Класс для таблицы БД информации о скачивании с jFrog"""
-    date = models.DateField(verbose_name='Дата')
-    account_name = models.CharField(verbose_name='Учётная запись jFrog', max_length=100, null=True, blank=True)
-    version_download = models.CharField(verbose_name='Версия скачивания', max_length=100, null=True, blank=True)
-    ip_address = models.CharField(verbose_name='IP-адрес', max_length=20, null=True, blank=True)
-
-    class Meta:
-        verbose_name = "Отчёт о скачивании с jFrog"
-        verbose_name_plural = "Отчёты о скачивании с jFrog"
-        db_table = "report_download_jfrog"
-
-    def __str__(self):
-        return str(self.date) if self.date else ''

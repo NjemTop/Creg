@@ -2,6 +2,7 @@ import requests
 import json
 from main.models import ReportTicket
 import logging
+from logger.log_config import setup_logger, get_abs_log_path
 from datetime import datetime
 import os
 from dotenv import load_dotenv
@@ -18,7 +19,10 @@ API_URL = os.environ.get('API_URL_TICKETS')
 API_AUTH = (os.environ.get('API_AUTH_USER'), os.environ.get('API_AUTH_PASS'))
 HEADERS = {'Content-Type': 'application/json'}
 
-logger = logging.getLogger(__name__)
+# Указываем настройки логов для нашего файла с классами
+scripts_error_logger = setup_logger('scripts', get_abs_log_path('scripts_errors.log'), logging.ERROR)
+scripts_info_logger = setup_logger('scripts', get_abs_log_path('scripts_info.log'), logging.INFO)
+
 
 
 def update_tickets(start_date, end_date):
@@ -38,7 +42,7 @@ def update_tickets(start_date, end_date):
             # Выполнение запроса к API для первой страницы
             res = session.get(API_URL, params=params)
             if res.status_code != 200:
-                logger.error(f'Код статуса ответа: {res.status_code}')
+                scripts_error_logger.error(f'Код статуса ответа: {res.status_code}')
                 return
             
             # Обработка JSON-ответа от API
@@ -53,16 +57,16 @@ def update_tickets(start_date, end_date):
                 params['page'] = page
                 res = session.get(API_URL, params=params)
                 if res.status_code != 200:
-                    logger.error(f'Код статуса ответа: {res.status_code} для страницы {page}')
+                    scripts_error_logger.error(f'Код статуса ответа: {res.status_code} для страницы {page}')
                     continue
                 
                 res_json = res.json()
                 process_tickets(res_json.get('data', []))
         
     except requests.RequestException as error_message:
-        logger.error(f'Ошибка при выполнении запроса: {error_message}')
+        scripts_error_logger.error(f'Ошибка при выполнении запроса: {error_message}')
     except Exception as error_message:
-        logger.error(f'Неизвестная ошибка: {error_message}')
+        scripts_error_logger.error(f'Неизвестная ошибка: {error_message}')
 
 
 def process_tickets(ticket_data_list):
@@ -71,7 +75,7 @@ def process_tickets(ticket_data_list):
         try:
             update_single_ticket(ticket_data)
         except Exception as error_message:
-            logger.error(f'Ошибка при обработке тикета: {error_message}')
+            scripts_error_logger.error(f'Ошибка при обработке тикета: {error_message}')
 
 
 def extract_cause(custom_fields):
@@ -207,15 +211,15 @@ def update_single_ticket(ticket_data):
         )
         
         if created:
-            logger.info(f'Создан новый тикет {ticket_id}')
+            scripts_info_logger.info(f'Создан новый тикет {ticket_id}')
         else:
-            logger.info(f'Обновленный тикет {ticket_id}')
+            scripts_info_logger.info(f'Обновленный тикет {ticket_id}')
             
     except KeyError as key_error:
-        logger.error(f'Ошибка обработки ключа: {key_error}')
+        scripts_error_logger.error(f'Ошибка обработки ключа: {key_error}')
         
     except ValueError as value_error:
-        logger.error(f'Ошибка преобразования значения: {value_error}')
+        scripts_error_logger.error(f'Ошибка преобразования значения: {value_error}')
         
     except Exception as error_message:
-        logger.error(f'Произошла ошибка при обновлении тикета {ticket_id}. Ошибка: {error_message}')
+        scripts_error_logger.error(f'Произошла ошибка при обновлении тикета {ticket_id}. Ошибка: {error_message}')

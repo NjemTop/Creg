@@ -1,6 +1,10 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import ClientsList, ReportTicket, ReportDownloadjFrog, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote, ReleaseInfo, Favicon
+from .models import (
+    ClientsList, ReportTicket, ReportDownloadjFrog, UsersBoardMaps, ClientsCard, 
+    ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, 
+    TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote, 
+    ReleaseInfo, Favicon)
 from .models import backup_file_path, DatabaseBackup
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -10,11 +14,16 @@ from django.db import DatabaseError
 from django.contrib import messages
 from datetime import datetime
 from django.core.files.base import ContentFile
+from django.core.files import File
 from io import StringIO
 import json
+import os
+import logging
 from django_celery_beat.models import PeriodicTask
 from api.tasks import add_user_jfrog_task, update_module_info_task, update_tickets
 
+
+logger = logging.getLogger(__name__)
 
 @admin.register(DatabaseBackup)
 class DatabaseBackupAdmin(admin.ModelAdmin):
@@ -30,20 +39,33 @@ class DatabaseBackupAdmin(admin.ModelAdmin):
         return custom_urls + urls
 
     def make_backup(self, request):
-        output = StringIO()
-        call_command('dbbackup', stdout=output)
-        file_content = output.getvalue()
-        output.close()
+        # Выполнение команды dbbackup для создания бэкапа
+        call_command('dbbackup')
 
-        # Возьмите имя файла из команды dbbackup и сохраните его в базе данных.
-        # Например, вы можете использовать текущее время для создания имени файла.
-        file_name = datetime.now().strftime("backup_%Y%m%d%H%M%S")
-        file_path = backup_file_path(None, file_name)
-        backup = DatabaseBackup(file_name=file_name)
-        backup.file.save(file_path, ContentFile(file_content))
-        backup.save()
+        # Поиск последнего созданного файла бэкапа
+        backup_files = [f for f in os.listdir('backup/db/') if f.endswith('.psql.bin')]
+        backup_files.sort(reverse=True)
+        if not backup_files:
+            self.message_user(request, 'Ошибка создания бэкапа', level=messages.ERROR)
+            logger.error(f'Ошибка создания бэкапа')
+            return redirect('..')
 
-        self.message_user(request, 'Бэкап успешно выполнен')
+        latest_backup_file = backup_files[0]
+
+        # Проверка, зарегистрирован ли уже этот файл в базе данных
+        if not DatabaseBackup.objects.filter(file_name=latest_backup_file).exists():
+            file_path = os.path.join('backup/db/', latest_backup_file)
+
+            # Создание записи в базе данных
+            backup = DatabaseBackup(file_name=latest_backup_file)
+            backup.file.name = file_path
+            backup.save()
+            self.message_user(request, 'Бэкап успешно выполнен')
+            logger.info(f'Бэкап успешно выполнен')
+        else:
+            self.message_user(request, 'Файл бэкапа уже существует', level=messages.INFO)
+            logger.error(f'Файл бэкапа уже существует')
+
         return redirect('..')
 
     def restore_backup(self, request):
@@ -58,10 +80,13 @@ class DatabaseBackupAdmin(admin.ModelAdmin):
             backup = DatabaseBackup.objects.get(id=backup_id)
             call_command('dbrestore', '--noinput')
             self.message_user(request, 'Бэкап успешно восстановлен')
+            logger.info(f'Бэкап успешно восстановлен')
         except DatabaseError:
             self.message_user(request, 'Ошибка при восстановлении бэкапа', level=messages.ERROR)
+            logger.error(f'Ошибка при восстановлении бэкапа')
         except DatabaseBackup.DoesNotExist:
             self.message_user(request, 'Выбранного бэкапа не существует', level=messages.ERROR)
+            logger.error(f'Выбранного бэкапа не существует')
         return redirect('..')
 
 
@@ -137,6 +162,7 @@ admin.site.register(TechNote)
 admin.site.register(ReleaseInfo)
 admin.site.register(ReportTicket)
 admin.site.register(ReportDownloadjFrog)
+admin.site.register(UsersBoardMaps)
 
 
 @admin.register(Favicon)

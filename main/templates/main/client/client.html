@@ -80,24 +80,26 @@
         </tbody>
     </table>
 </section>
-<section>
-    <h3>Обслуживание</h3>
-    <p>Тарифный план: <span class="editable-select" data-options="Bronze,Silver,Gold,Platinum">{{ servise.service_pack }}</span></p>
-    <p>Менеджер: <span class="editable-select" data-options="Tatiana Shindikova,Ekaterina Shneyder">{{ servise.manager }}</span></p>
-    <p>Лояльность: <span class="editable-select" data-options="Low,Medium,High">{{ servise.loyal }}</span></p>
+<section id="service-section">
+    <h3 data-id="{{ servise.id }}">Обслуживание</h3>
+    <p>Тарифный план: <span class="editable-select" data-options="Bronze,Silver,Gold,Platinum" data-field="service_pack">{{ servise.service_pack }}</span></p>
+    <p>Менеджер: 
+        <span class="editable-select" data-options="{% for manager in managers %}{{ manager.name }},{% endfor %}" data-field="manager">{{ servise.manager }}</span>
+    </p>
+    <p>Лояльность: <span class="editable-select" data-options="Low,Medium,High" data-field="loyal">{{ servise.loyal }}</span></p>
 </section>
-<section>
-    <h3>Техническая информация</h3>
-    <p>Версия сервера: <span class="editable">{{ tech_info.server_version }}</span></p>
-    <p>Дата обновления: <span class="editable">{{ tech_info.update_date }}</span></p>
-    <p><input type="checkbox" class="techinfo-toggle" {% if tech_info.api %}checked{% endif %}>&nbsp Public API</p>
-    <p>iPad: <span class="editable">{{ tech_info.ipad }}</span></p>
-    <p>Android: <span class="editable">{{ tech_info.android }}</span></p>
-    <p>MDM: <span class="editable">{{ tech_info.mdm }}</span></p>
-    <p><input type="checkbox" class="techinfo-toggle" {% if tech_info.localizable_web %}checked{% endif %}>&nbsp Локализация Web</p>
-    <p><input type="checkbox" class="techinfo-toggle" {% if tech_info.localizable_ios %}checked{% endif %}>&nbsp Локализация iOS</p>
-    <p><input type="checkbox" class="techinfo-toggle" {% if tech_info.skins_web %}checked{% endif %}>&nbsp Скины Web</p>
-    <p><input type="checkbox" class="techinfo-toggle" {% if tech_info.skins_ios %}checked{% endif %}>&nbsp Скины iOS</p>
+<section id="techinfo-section">
+    <h3 data-id="{{ tech_info.id }}">Техническая информация</h3>
+    <p>Версия сервера: <span class="editable" data-field="server_version">{{ tech_info.server_version }}</span></p>
+    <p>Дата обновления: <span class="editable-date" data-field="update_date">{{ tech_info.update_date }}</span></p>
+    <p><input type="checkbox" class="techinfo-toggle" {% if tech_info.api %}checked{% endif %} data-field="api">&nbsp Public API</p>
+    <p>iPad: <span class="editable" data-field="ipad">{{ tech_info.ipad }}</span></p>
+    <p>Android: <span class="editable" data-field="android">{{ tech_info.android }}</span></p>
+    <p>MDM: <span class="editable" data-field="mdm">{{ tech_info.mdm }}</span></p>
+    <p><input type="checkbox" class="techinfo-toggle" {% if tech_info.localizable_web %}checked{% endif %} data-field="localizable_web">&nbsp Локализация Web</p>
+    <p><input type="checkbox" class="techinfo-toggle" {% if tech_info.localizable_ios %}checked{% endif %} data-field="localizable_ios">&nbsp Локализация iOS</p>
+    <p><input type="checkbox" class="techinfo-toggle" {% if tech_info.skins_web %}checked{% endif %} data-field="skins_web">&nbsp Скины Web</p>
+    <p><input type="checkbox" class="techinfo-toggle" {% if tech_info.skins_ios %}checked{% endif %} data-field="skins_ios">&nbsp Скины iOS</p>
 </section>
 <section>
     <h3>Интеграции</h3>
@@ -184,19 +186,15 @@
         </div>
     </div>
 </section>
-<section>
-    <h3>Информация для подключения</h3>
-    {% if file_path != "Нет документа" %}
-        <p>Файл: <a href="{{ file_path }}">{{ file_name }}</a></p>
-        <div class="document-preview">
-            <iframe src="{% url 'document_preview' file_path=file_path %}"></iframe>
-        </div>
-    {% else %}
-        <p>Нет документа</p>
-    {% endif %}
+<section id="vpn_info-section">
+    <h3 data-id="{% if connection_info %}{{ connection_info.id }}{% else %}new{% endif %}">Информация для подключения</h3>
+    <p>Файл: <a href="{{ file_path }}">{{ file_name }}</a></p>
+    <div class="document-preview">
+        <iframe src="{% url 'document_preview' file_path=file_path %}"></iframe>
+    </div>
     <p>Краткое описание:</p>
     <div class="max-width-text">
-        <pre class="editable">{{ text|linebreaksbr|urlize|safe }}</pre>
+        <pre class="editable" data-field="text">{{ text|linebreaksbr|urlize|safe }}</pre>
     </div>
 </section>
 <section>
@@ -300,7 +298,7 @@
                     <td class="editable">{{ bm_server.bm_servers_servers_name }}</td>
                     <td class="editable">{{ bm_server.bm_servers_servers_adress }}</td>
                     <td class="editable">{{ bm_server.bm_servers_operation_system }}</td>
-                    <td><a href="{{ bm_server.bm_servers_url }}" target="_blank"><span class="editable">{{ bm_server.bm_servers_url|urlize }}</span></a></td>
+                    <td><span class="editable">{{ bm_server.bm_servers_url|urlize }}</span></td>
                     <td class="editable">{{ bm_server.bm_servers_role }}</td>
                     <td class="delete-column" data-bs-toggle="tooltip" data-bs-placement="left" title="Удалить контакт"><button class="delete-row-button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
                 </tr>
@@ -308,10 +306,10 @@
         </tbody>
     </table>
 </section>
-<section>
-    <h3>Технические заметки</h3>
+<section id="technote-section">
+    <h3 data-id="{{ tech_note.id }}">Технические заметки</h3>
     <div class="max-width-text">
-        <pre class="editable">{{ tech_note.tech_note_text|linebreaksbr|urlize|safe }}</pre>
+        <pre class="editable" data-field="tech_note_text">{{ tech_note.tech_note_text|linebreaksbr|urlize|safe }}</pre>
     </div>
 </section>
 <section>

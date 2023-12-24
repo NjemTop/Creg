@@ -99,3 +99,15 @@ def get_mssql_info(hostname, username, password):
     else:
         print("'Connection string' не найдена или файл конфигурации имеет неверный формат.")
         return None
+
+
+# hostname_input = "https://demo-impl4.boardmaps.ru/"
+# username = "corp\oeliseev"
+# password = "Rfnzkj0604"
+
+# db_info = get_mssql_info(hostname_input, username, password)
+# if db_info:
+#     print(f"DB Server: {db_info['db_server']}")
+#     print(f"DB Name: {db_info['db_name']}")
+#     print(f"DB User: {db_info['db_user']}")
+#     print(f"DB Password: {db_info['db_password']}")

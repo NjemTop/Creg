@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.db import transaction
-from main.models import ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, TechNote, TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, ReleaseInfo, ReportTicket
+from main.models import (ClientsList, ClientsCard, ContactsCard, ConnectInfoCard, 
+BMServersCard, Integration, ModuleCard, TechNote, TechAccountCard, ConnectionInfo, 
+ServiseCard, TechInformationCard, ReleaseInfo, ReportTicket, UsersBoardMaps)
 from rest_framework.exceptions import ValidationError
 
 class ClientsCardSerializer(serializers.ModelSerializer):
@@ -600,3 +602,9 @@ class ReportTicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReportTicket
         fields = ['report_date', 'ticket_id', 'subject', 'creation_date', 'status', 'client_name', 'priority', 'assignee_name', 'updated_at', 'last_reply_at', 'sla', 'sla_time', 'response_time', 'cause', 'module_boardmaps', 'staff_message']
+
+
+class UsersBoardMapsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UsersBoardMaps
+        fields = ['name', 'email', 'position', 'test_automatic_email', 'new_client']

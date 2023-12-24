@@ -3,6 +3,7 @@ import json
 import string
 import random
 import logging
+from logger.log_config import setup_logger, get_abs_log_path
 import os
 from dotenv import load_dotenv
 
@@ -10,7 +11,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-logger = logging.getLogger(__name__)
+# Указываем настройки логов для нашего файла с классами
+scripts_error_logger = setup_logger('scripts', get_abs_log_path('scripts_errors.log'), logging.ERROR)
+scripts_info_logger = setup_logger('scripts', get_abs_log_path('scripts_info.log'), logging.INFO)
+
 
 JFROG_USER = os.environ.get('JFROG_USER')
 JFROG_PASSWORD = os.environ.get('JFROG_PASSWORD')
@@ -42,16 +46,16 @@ def authenticate():
         # Проверяем статус-код ответа 200, если нет, то выбросим в ошибку
         response.raise_for_status()
     except requests.exceptions.HTTPError as error_message:
-        logger.warning(f"HTTP запрос вернул ошибку: {error_message}")
+        scripts_error_logger.error(f"HTTP запрос вернул ошибку: {error_message}")
         return None
     except requests.exceptions.ConnectionError as error_message:
-        logger.warning(f"Ошибка подключения: {error_message}")
+        scripts_error_logger.error(f"Ошибка подключения: {error_message}")
         return None
     except requests.exceptions.Timeout as error_message:
-        logger.warning(f"Ошибка тайм-аута: {error_message}")
+        scripts_error_logger.error(f"Ошибка тайм-аута: {error_message}")
         return None
     except requests.exceptions.RequestException as error_message:
-        logger.error(f"Общая ошибка: {error_message}")
+        scripts_error_logger.error(f"Общая ошибка: {error_message}")
         return None
 
     # Возвращаем cookies, полученные после авторизации
@@ -85,7 +89,7 @@ def create_user(username, password, cookies):
         "email": f"{username}@example.com",
         "password": password,
         "username": username,
-        "groups": ["Public"],
+        "groups": ["Clients"],
         "disableUiAccess": True
     }
 
@@ -95,16 +99,16 @@ def create_user(username, password, cookies):
         # Проверяем статус-код ответа 200, если нет, то выбросим в ошибку
         response.raise_for_status()
     except requests.exceptions.HTTPError as errh:
-        logger.warning(f"HTTP запрос вернул ошибку: {errh}")
+        scripts_error_logger.error(f"HTTP запрос вернул ошибку: {errh}")
         return None
     except requests.exceptions.ConnectionError as errc:
-        logger.warning(f"Ошибка подключения: {errc}")
+        scripts_error_logger.error(f"Ошибка подключения: {errc}")
         return None
     except requests.exceptions.Timeout as errt:
-        logger.warning(f"Ошибка тайм-аута: {errt}")
+        scripts_error_logger.error(f"Ошибка тайм-аута: {errt}")
         return None
     except requests.exceptions.RequestException as error_message:
-        logger.error(f"Общая ошибка: {error_message}")
+        scripts_error_logger.error(f"Общая ошибка: {error_message}")
         return None
 
     # Возвращаем статус-код ответа
