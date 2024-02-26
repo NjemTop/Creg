@@ -78,51 +78,6 @@ services:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
     restart: always
 
-  graylog:
-    image: graylog/graylog:5.1
-    container_name: Graylog
-    environment:
-      - TZ=Europe/Moscow
-      - GRAYLOG_HTTP_EXTERNAL_URI=http://195.2.80.251:9000/
-      - GRAYLOG_GELF_TCP_INPUT_ENABLED=true  # Включение GELF TCP входа
-      - GRAYLOG_MONGODB_URI=mongodb://mongo:27017/graylog  # Указываем URI MongoDB для Graylog
-      - GRAYLOG_PASSWORD_SECRET=${GRAYLOG_PASSWORD_SECRET} # Секретная фраза
-      - GRAYLOG_ROOT_PASSWORD_SHA2=${GRAYLOG_ROOT_PASSWORD_SHA2}
-    restart: always
-    ports:
-      - "9000:9000"  # Порт Graylog веб-интерфейса
-      - "12201:12201/udp"  # Порт Graylog GELF UDP input
-      - "12201:12201" # Порт Graylog GELF TCP input
-      - "514:514" # Порт Graylog Syslog TCP input
-      - "514:514/udp" # Порт Graylog Syslog UDP input
-    volumes:
-      - graylogdata:/usr/share/graylog/data
-      - ./plugins:/usr/share/graylog/plugin
-    depends_on:
-      - elasticsearch
-      - mongo
-
-  elasticsearch:
-    image: elasticsearch:7.12.0
-    container_name: Elasticsearch
-    environment:
-      - TZ=Europe/Moscow
-      - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  # Опционально: ограничение памяти для Elasticsearch
-    restart: always
-    ports:
-      - "9200:9200"  # Порт Elasticsearch REST API
-      - "9300:9300"  # Порт Elasticsearch межузлового общения
-
-  mongo:
-    image: mongo:5
-    container_name: MongoDB
-    environment:
-      - TZ=Europe/Moscow
-    volumes:
-      - mongodata:/data/db
-    restart: always
-
 volumes:
   dbdata:
   migrationsdata:
@@ -143,7 +98,3 @@ volumes:
       type: none
       device: ${PWD}/logs
       o: bind
-  mongodata:
-    driver: local
-  graylogdata:
-    driver: local

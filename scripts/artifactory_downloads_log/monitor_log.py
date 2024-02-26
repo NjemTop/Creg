@@ -11,8 +11,8 @@ from django.core.exceptions import ValidationError
 
 
 # Указываем настройки логов для нашего файла с классами
-scripts_error_logger = setup_logger('scripts', get_abs_log_path('scripts_errors.log'), logging.ERROR)
-scripts_info_logger = setup_logger('scripts', get_abs_log_path('scripts_info.log'), logging.INFO)
+scripts_error_logger = setup_logger('scripts_error', get_abs_log_path('scripts_errors.log'), logging.ERROR)
+scripts_info_logger = setup_logger('scripts_info', get_abs_log_path('scripts_info.log'), logging.INFO)
 
 
 utc = pytz.UTC
@@ -55,7 +55,7 @@ def update_client_and_report(log_date, ip_address, account_name, version):
 
 
 def analyze_logs_and_update_db():
-    log_file_path = os.path.join(settings.BASE_DIR, "scripts/artifactory_downloads_log/artifactory-request.log")
+    log_file_path = os.path.join(settings.BASE_DIR, "scripts/artifactory_downloads_log/log/artifactory-request.log")
     if not os.path.exists(log_file_path) or not os.access(log_file_path, os.R_OK):
         scripts_error_logger.error("Файл журнала не существует или недоступен для чтения")
         return
@@ -91,7 +91,7 @@ def analyze_logs_and_update_db():
 
 
 def analyze_logs_and_get_data():
-    log_file_path = os.path.abspath("./scripts/artifactory_downloads_log/artifactory-request.log")
+    log_file_path = os.path.abspath("./scripts/artifactory_downloads_log/log/artifactory-request.log")
     if not os.path.exists(log_file_path):
         return "Файл журнала не существует", []
 

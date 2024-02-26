@@ -46,7 +46,7 @@ from .serializers import (
     ServiseSerializer,
     TechInformationSerializer,
     TechNoteSerializer,
-    ForAutomaticEmailSerializer,
+    ClientsListSerializer,
     Version2ClientsSerializer,
     Version3ClientsSerializer,
     ReleaseInfoSerializer,
@@ -959,9 +959,9 @@ class TechNoteDetailsView(CustomResponseMixin, mixins.UpdateModelMixin, mixins.D
         return self.destroy(request, *args, **kwargs)
 
 
-class ForAutomaticEmailView(generics.ListAPIView):
+class ClientsListView(generics.ListAPIView):
     queryset = ClientsList.objects.all()
-    serializer_class = ForAutomaticEmailSerializer
+    serializer_class = ClientsListSerializer
 
 class Version2ClientsView(generics.ListAPIView):
     queryset = ClientsList.objects.filter(clients_card__tech_information__server_version__startswith='2')

@@ -6,9 +6,13 @@ import os
 from django.conf import settings
 import smtplib
 import requests
+from collections import defaultdict
 from main.models import ReportTicket
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Count, DateField
+from django.db.models.functions import Trunc
+from django.db.models.functions import TruncDay, TruncWeek, TruncMonth, TruncYear
 from main.models import (ClientsList, ClientsCard, ContactsCard, TechAccountCard, ConnectInfoCard, 
 BMServersCard, ServiseCard, TechInformationCard, ConnectionInfo, TechNote)
 from django.contrib.auth.hashers import make_password, check_password
@@ -19,22 +23,154 @@ from scripts.release.test_automatic_email import send_test_email
 logger = logging.getLogger(__name__)
 
 
-def creation_tickets(request):
+def get_tickets(request):
     try:
         start_date = request.GET.get('start_date')
         end_date = request.GET.get('end_date')
+        step = request.GET.get('step', 'month')
+        support = request.GET.get('support', None)
         
-        report_tickets = ReportTicket.objects.filter(creation_date__range=[start_date, end_date]).values()
-        return JsonResponse(list(report_tickets), safe=False)
-    except Exception as error_message:
-        return HttpResponseServerError("Ошибка при получении данных:", str(error_message), status=400)
+        # Фильтруем тикеты по дате создания
+        created_tickets = ReportTicket.objects.filter(creation_date__range=[start_date, end_date])
+        closed_tickets = ReportTicket.objects.filter(closed_date__range=[start_date, end_date], status="Closed")
+        
+        # Агрегация тикетов в зависимости от выбранного шага
+        if step == 'day':
+            created_agg = created_tickets.annotate(date=TruncDay('creation_date'))
+            closed_agg = closed_tickets.annotate(date=TruncDay('closed_date'))
+        elif step == 'week':
+            created_agg = created_tickets.annotate(date=TruncWeek('creation_date'))
+            closed_agg = closed_tickets.annotate(date=TruncWeek('closed_date'))
+        elif step == 'month':
+            created_agg = created_tickets.annotate(date=TruncMonth('creation_date'))
+            closed_agg = closed_tickets.annotate(date=TruncMonth('closed_date'))
+        elif step == 'year':
+            created_agg = created_tickets.annotate(date=TruncYear('creation_date'))
+            closed_agg = closed_tickets.annotate(date=TruncYear('closed_date'))
+        
+        created_agg = created_agg.values('date').annotate(created=Count('id')).order_by('date')
+        closed_agg = closed_agg.values('date').annotate(closed=Count('id')).order_by('date')
+        
+        # Слияние данных по открытым и закрытым тикетам
+        dates = set()
+        data = defaultdict(lambda: {'created': 0, 'closed': 0})
+        for ticket in created_agg:
+            date_str = ticket['date'].strftime('%Y-%m-%d')
+            data[date_str]['created'] = ticket['created']
+            dates.add(date_str)
+        for ticket in closed_agg:
+            date_str = ticket['date'].strftime('%Y-%m-%d')
+            data[date_str]['closed'] = ticket['closed']
+            dates.add(date_str)
 
-def open_tickets(request):
+        dates = sorted(list(dates))
+        created_counts = [data[date]['created'] for date in dates]
+        closed_counts = [data[date]['closed'] for date in dates]
+        
+        response_data = {
+            'dates': dates,
+            'created_counts': created_counts,
+            'closed_counts': closed_counts,
+            'data': list(created_tickets.values()) # Детальная информация по каждому тикету
+        }
+        
+        return JsonResponse(response_data, safe=False)
+    except Exception as error_message:
+        return HttpResponseServerError(f"Ошибка при получении данных: {str(error_message)}", status=400)
+
+def opened_tickets(request):
     try:
-        open_report_tickets = ReportTicket.objects.exclude(status="Closed").values()
-        return JsonResponse(list(open_report_tickets), safe=False)
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+        step = request.GET.get('step', 'day')
+        support = request.GET.get('support', None)
+        ci_filter = request.GET.get('ci', None)
+
+        # Получаем все открытые тикеты
+        open_tickets = ReportTicket.objects.exclude(status="Closed")
+
+        # Фильтр по дате, если заданы начальная и конечная даты
+        if start_date and end_date:
+            open_tickets = open_tickets.filter(creation_date__range=[start_date, end_date])
+
+        # Получаем детальную информацию по открытым тикетам
+        open_tickets_detail = open_tickets.values()
+
+        if ci_filter and ci_filter.lower() == 'true':
+            tickets = tickets.exclude(ci__isnull=True).exclude(ci='')
+
+        # Агрегация данных по дате создания тикета
+        daily_open_ticket_counts = open_tickets.annotate(date=TruncDay('creation_date', output_field=DateField())).values('date').annotate(count=Count('id')).order_by('date')
+
+        response_data = {
+            'open_tickets_count': open_tickets.count(),
+            'tickets': list(open_tickets_detail),
+            'daily_counts': list(daily_open_ticket_counts)
+        }
+
+        return JsonResponse(response_data, safe=False)
     except Exception as error_message:
         return HttpResponseServerError("Ошибка при получении данных:", str(error_message))
+
+def closed_tickets(request):
+    try:
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+        ci_filter = request.GET.get('ci', None)
+        
+        tickets = ReportTicket.objects.filter(closed_date__range=[start_date, end_date], status="Closed")
+
+        if ci_filter and ci_filter.lower() == 'true':
+            tickets = tickets.exclude(ci__isnull=True).exclude(ci='')
+
+        close_report_tickets = tickets.values()
+        return JsonResponse(list(close_report_tickets), safe=False)
+    except Exception as error_message:
+        return HttpResponseServerError("Ошибка при получении данных:", str(error_message))
+
+
+def closed_tickets_by_support(request):
+    try:
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+        step = request.GET.get('step', 'month')
+        support = request.GET.get('support', None)
+
+        tickets = ReportTicket.objects.filter(closed_date__range=[start_date, end_date], status="Closed")
+
+        if support:
+            tickets = tickets.filter(assignee_name=support, status="Closed")
+
+        if step == 'day':
+            tickets = tickets.annotate(date=TruncDay('closed_date'))
+        elif step == 'week':
+            tickets = tickets.annotate(date=TruncWeek('closed_date'))
+        elif step == 'month':
+            tickets = tickets.annotate(date=TruncMonth('closed_date'))
+        elif step == 'year':
+            tickets = tickets.annotate(date=TruncYear('closed_date'))
+
+        tickets = tickets.values('date', 'assignee_name').order_by('date').annotate(count=Count('id'))
+
+        support_data = defaultdict(lambda: defaultdict(int))
+        dates = set()
+
+        for ticket in tickets:
+            date_str = ticket['date'].strftime('%Y-%m-%d')
+            assignee = ticket['assignee_name']
+            count = ticket['count']
+            support_data[assignee][date_str] += count
+            dates.add(date_str)
+
+        dates = sorted(list(dates))
+        formatted_data = {'dates': dates, 'supportData': {}}
+
+        for assignee, data in support_data.items():
+            formatted_data['supportData'][assignee] = [data.get(date, 0) for date in dates]
+
+        return JsonResponse(formatted_data, safe=False)
+    except Exception as error_message:
+        return HttpResponseServerError("Ошибка при получении данных:", str(error_message), status=400)
 
 
 @csrf_exempt

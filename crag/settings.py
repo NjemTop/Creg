@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     # 'django_celery_monitor',
     'axes',
+    'auditlog',
 ]
 
 # Настройки пути для сохранения резервных копий
@@ -116,10 +117,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'axes.middleware.AxesMiddleware',
+    'auditlog.middleware.AuditlogMiddleware',
 ]
 
 # выключил проверку на HTTPS
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Автоматически логировать все таблицы в БД
+AUDITLOG_INCLUDE_ALL_MODELS=True
 
 ROOT_URLCONF = 'crag.urls'
 
@@ -265,9 +270,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # Настройки Celery
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')
-# CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
-CELERY_BROKER_URL = os.environ.get('CELERY_RESULT_BACKEND')
 CELERY_TIMEZONE = 'Europe/Moscow'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
@@ -275,7 +279,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 # Сохраняем результаты задач в БД
 CELERY_TASK_IGNORE_RESULT = False
 CELERY_IGNORE_RESULT = False
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_BEAT_SCHEDULER = os.environ.get('CELERY_BEAT_SCHEDULER')
 
 # Расписание Celery Beat
 CELERY_BEAT_SCHEDULE = {

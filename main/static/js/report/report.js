@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const reportTypeRow = document.getElementById('reportTypeRow');
     const reportTypeSelect = document.getElementById('reportType');
     const dateRangeRow = document.getElementById('dateRange').parentNode.parentNode; // получаем родительский div для dateRange
-    const openTicketsCount = document.getElementById('openTicketsCount');
     const applyButton = document.querySelector('#applyButton');
     const elementsToRemove = document.querySelectorAll('.tickets-info, .lists');
 
@@ -18,23 +17,122 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Функция для скрытия и изменения элементов на странице
+    function hideOrModifyElements() {
+        // Скрыть элементы с классами .tickets-info и .lists
+        document.querySelector('.tickets-info').style.display = 'none';
+        document.querySelector('.lists').style.display = 'none';
+
+        // Изменить стиль диаграммы, чтобы она занимала всю ширину страницы
+        document.querySelector('.chart-container').style.width = '100%';
+    }
+
+    reportGroupSelect.addEventListener('change', function() {
+        if (this.value === 'tickets') {
+            reportTypeRow.style.visibility = 'visible';
+            reportTypeRow.style.height = 'auto'; // вернуть высоту элемента
+        } else {
+            reportTypeRow.style.visibility = 'hidden';
+            reportTypeRow.style.height = '0'; // установить высоту элемента в 0, чтобы он не занимал места
+        }
+    });
+
+    reportTypeSelect.addEventListener('change', function() {
+        if (this.value === 'create_close') {
+            // Показать блоки "Отборы" и "Фильтры"
+            document.getElementById('selectionsRow').style.visibility = 'visible';
+            document.getElementById('selectionsRow').style.height = 'auto';
+            document.getElementById('filtersRow').style.visibility = 'visible';
+            document.getElementById('filtersRow').style.height = 'auto';
+    
+            // Показать диапазон дат, если он был скрыт
+            dateRangeRow.style.visibility = 'visible';
+            dateRangeRow.style.height = 'auto';
+        } else {
+            // Скрыть блоки "Отборы" и "Фильтры"
+            document.getElementById('selectionsRow').style.visibility = 'hidden';
+            document.getElementById('selectionsRow').style.height = '0';
+            document.getElementById('filtersRow').style.visibility = 'hidden';
+            document.getElementById('filtersRow').style.height = '0';
+    
+            // Для других типов отчетов обрабатывать видимость диапазона дат
+            if (this.value === 'open') {
+                dateRangeRow.style.visibility = 'hidden';
+                dateRangeRow.style.height = '0';
+            } else {
+                dateRangeRow.style.visibility = 'visible';
+                dateRangeRow.style.height = 'auto';
+            }
+        }
+    });
+
+    // Функция для обновления доступных опций фильтра
+    function updateFilterOptions() {
+        const selectionType = document.getElementById('selectionType').value;
+        const filterTypeSelect = document.getElementById('filterType');
+        const filterOptions = filterTypeSelect.options;
+
+        for (let i = 0; i < filterOptions.length; i++) {
+            const option = filterOptions[i];
+            if (['support', 'modules', 'reasons'].includes(option.value)) {
+                option.disabled = selectionType === 'open_only';
+            }
+        }
+
+        // Если выбран "Только открытые", устанавливаем значение фильтра в "Не учитывать"
+        if (selectionType === 'open_only') {
+            filterTypeSelect.value = 'default';
+        }
+    }
+
+    // Функция для обновления значения "Отборы:"
+    function updateSelectionType() {
+        const filterType = document.getElementById('filterType').value;
+        const selectionTypeSelect = document.getElementById('selectionType');
+
+        if (['support', 'modules', 'reasons'].includes(filterType)) {
+            selectionTypeSelect.value = 'closed_only';
+            updateFilterOptions(); // Обновляем доступные опции фильтра
+        }
+    }
+
+    // Обработчик событий для "Отборы:"
+    document.getElementById('selectionType').addEventListener('change', function() {
+        updateFilterOptions();
+    });
+
+    // Обработчик событий для "Фильтры:"
+    document.getElementById('filterType').addEventListener('change', function() {
+        updateSelectionType();
+    });
+
+    // Вызов функции для инициализации доступных опций фильтра
+    updateFilterOptions();
+
     // Функция генерации линейной диаграммы
-    function generateLineChart(dates, createdData, closedData = null) {
+    function generateLineChart(dates, createdData = null, closedData = null, supportData = null) {
         const ctx = document.getElementById('ticketsChart').getContext('2d');
     
         // Перед созданием новой диаграммы уничтожьте существующую, если она есть
         if (window.myChart) {
             window.myChart.destroy();
         }
+
+        // Определение наборов данных для графика
+        const datasets = [];
     
-        const datasets = [{
-            label: 'Открыто тикетов',
-            data: createdData,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1
-        }];
+        // Добавляем данные об открытых тикетах, если они доступны
+        if (createdData) {
+            datasets.push({
+                label: 'Открыто тикетов',
+                data: createdData,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            });
+        }
     
+        // Добавляем данные о закрытых тикетах, если они доступны
         if (closedData) {
             datasets.push({
                 label: 'Закрыто тикетов',
@@ -42,6 +140,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
                 borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 1
+            });
+        }
+
+        // Добавляем данные по саппортам, если они доступны
+        if (supportData) {
+            Object.keys(supportData).forEach((supportName, index) => {
+                datasets.push({
+                    label: `Закрыто тикетов - ${supportName}`,
+                    data: supportData[supportName],
+                    backgroundColor: getRandomColor(),
+                    borderColor: getRandomColor(),
+                    borderWidth: 1
+                });
             });
         }
     
@@ -152,6 +263,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Вспомогательная функция для генерации случайного цвета
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
     // Определяем пустой аргумент для того, чтобы потом обновлять таблицу в режиме онлайн
     let vueInstance = null;
 
@@ -205,6 +326,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const [day, month, year] = date.split('.').map(Number);
             let stepKey;
     
+            // Агрегация данных в зависимости от выбранного шага
             if (step === 'day') {
                 stepKey = `${String(day).padStart(2, '0')}.${String(month).padStart(2, '0')}.${String(year).slice(2)}`;
             } else if (step === 'week') {
@@ -244,7 +366,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         tickets.forEach(ticket => {
             const creationDate = new Date(ticket.creation_date).toLocaleDateString();
-            const closingDate = !onlyOpen && ticket.status === "Closed" ? new Date(ticket.updated_at).toLocaleDateString() : null;
+            const closingDate = !onlyOpen && ticket.status === "Closed" ? new Date(ticket.closed_date).toLocaleDateString() : null;
     
             datesMap.set(creationDate, (datesMap.get(creationDate) || { created: 0, closed: 0 }));
             datesMap.get(creationDate).created++;
@@ -260,7 +382,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const closedData = !onlyOpen ? sortedDates.map(date => datesMap.get(date).closed) : null;
     
         return onlyOpen ? { dates: sortedDates, createdData } : { dates: sortedDates, createdData, closedData };
-    }    
+    }
 
     // Функция создания списка топ модулей
     function getTopEntities(tickets, entity) {
@@ -299,36 +421,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return dayA - dayB;
         });
     }
-
-    // Функция для скрытия и изменения элементов на странице
-    function hideOrModifyElements() {
-        // Скрыть элементы с классами .tickets-info и .lists
-        document.querySelector('.tickets-info').style.display = 'none';
-        document.querySelector('.lists').style.display = 'none';
-
-        // Изменить стиль диаграммы, чтобы она занимала всю ширину страницы
-        document.querySelector('.chart-container').style.width = '100%';
-    }
-
-    reportGroupSelect.addEventListener('change', function() {
-        if (this.value === 'tickets') {
-            reportTypeRow.style.visibility = 'visible';
-            reportTypeRow.style.height = 'auto'; // вернуть высоту элемента
-        } else {
-            reportTypeRow.style.visibility = 'hidden';
-            reportTypeRow.style.height = '0'; // установить высоту элемента в 0, чтобы он не занимал места
-        }
-    });
-
-    reportTypeSelect.addEventListener('change', function() {
-        if (this.value === 'open') {
-            dateRangeRow.style.visibility = 'hidden';
-            dateRangeRow.style.height = '0'; // установить высоту элемента в 0, чтобы он не занимал места
-        } else {
-            dateRangeRow.style.visibility = 'visible';
-            dateRangeRow.style.height = 'auto'; // вернуть высоту элемента
-        }
-    });
 
     // Функция для удаления и изменения элементов на странице
     function mergeAndRemoveTables() {
@@ -411,19 +503,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Функция для создания календаря
     function setupDateRangePicker() {
         $(function() {
-            const today = new Date();
-            const thisYear = today.getFullYear();
-            const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-            const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-            const startOfLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-            const endOfLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
-            const startOfYear = new Date(thisYear, 0, 1);
+            // Используем moment.js для создания объектов дат
+            const today = moment();
+            const thisYear = today.year(); // Получаем год из объекта moment
+            const startOfYear = moment().startOf('year'); // Устанавливаем начало текущего года
+            
+            // Конвертируем объекты moment в объекты Date для использования в 'daterangepicker'
+            const startOfMonth = new Date(thisYear, today.month(), 1);
+            const endOfMonth = new Date(thisYear, today.month() + 1, 0);
+            const startOfLastMonth = new Date(thisYear, today.month() - 1, 1);
+            const endOfLastMonth = new Date(thisYear, today.month(), 0);
             const endOfYear = new Date(thisYear, 11, 31);
             const startOfLastYear = new Date(thisYear - 1, 0, 1);
             const endOfLastYear = new Date(thisYear - 1, 11, 31);
     
             $('#dateRange').daterangepicker({
-                autoUpdateInput: false,
+                startDate: startOfYear,
+                endDate: today,
+                autoUpdateInput: true,
                 ranges: {
                     'Эта неделя': [moment().startOf('week'), moment().endOf('week')],
                     'Этот месяц': [moment(startOfMonth), moment(endOfMonth)],
@@ -443,10 +540,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
     
+            // Устанавливаем начальное значение элемента диапазона дат в нужном формате
+            $('#dateRange').val(startOfYear.format('YYYY-MM-DD') + ' - ' + today.format('YYYY-MM-DD'));
+
+            // Обработчики событий для применения и отмены выбора диапазона
             $('#dateRange').on('apply.daterangepicker', function(ev, picker) {
                 $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
             });
-    
+
             $('#dateRange').on('cancel.daterangepicker', function(ev, picker) {
                 $(this).val('');
             });
@@ -456,10 +557,8 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
         const tickets = parseTickets();
 
-        openTicketsCount.textContent = tickets.filter(ticket => ticket.status !== "Closed").length;
-
         const { dates, createdData, closedData } = processTickets(tickets);
-        console.log(tickets);
+        console.log('Текущие тикеты:', tickets);
 
         // Вызываем функцию сортировки
         sortByDate(dates);
@@ -473,140 +572,171 @@ document.addEventListener('DOMContentLoaded', function() {
 
     } catch (error) {
         console.error("Произошла ошибка при обработке данных:", error.message);
-        alert("Произошла ошибка при загрузке страницы. Пожалуйста, обновите страницу или попробуйте позже.");
+        errorShowToast("Произошла ошибка при загрузке страницы. Пожалуйста, обновите страницу или попробуйте позже.");
     }
 
     // Находите кнопку "Применить" по её id или классу и добавьте обработчик события click
     applyButton.addEventListener('click', function () {
-        // Получите значения выбранного диапазона дат из элемента с id "dateRange"
+        // Получаем значения выбранного диапазона дат из элемента с id "dateRange"
         const dateRangeValue = document.querySelector('#dateRange').value;
 
         // Разберите значение диапазона дат на начальную и конечную даты
         const [startDate, endDate] = dateRangeValue.split(' - ');
         
-        // Получите выбранный отчет из элемента с id "reportType"
+        // Получаем выбранный отчет из элемента с id "reportType"
         const selectedReport = document.querySelector('#reportType').value;
 
-        // Получите выбранный шаг из элемента с id "dataStep"
+        // Получаем выбранный шаг из элемента с id "dataStep"
         const selectedStep = document.querySelector('#dataStep').value;
+
+        // Получаем выбранные фильтры отчёта с id "selectionType" и "filterType"
+        const selectionType = document.querySelector('#selectionType').value;
+        const filterType = document.querySelector('#filterType').value;
+
+        // Вызываем функцию для удаления и изменения элементов
+        mergeAndRemoveTables();
 
         // Если выбран отчет "Создание/закрытие тикетов", выполните следующее:
         if (selectedReport === 'create_close') {
-            
-            // Отправляем AJAX-запрос на сервер с выбранными фильтрами
-            fetch(`/apiv2/creation_tickets/?start_date=${startDate}&end_date=${endDate}`)
+            // Определяем, нужно ли генерировать диаграмму по саппортам
+            if (selectionType === 'closed_only' && filterType === 'support') {
+                // Отправляем AJAX-запрос на сервер за агрегированными данными по закрытым тикетам саппортов
+                fetch(`/apiv2/closed_tickets_by_support/?start_date=${startDate}&end_date=${endDate}&step=${selectedStep}`)
                 .then(response => {
                     if (!response.ok) {
-                    throw new Error('Нет ответа от сервера');
+                        throw new Error('Нет ответа от сервера');
                     }
-                    return response.json(); // Преобразуем ответ в JSON
+                    return response.json();
                 })
                 .then(data => {
-                    // Обновите данные на странице с использованием полученных данных
-                    const { dates, createdData, closedData } = processTickets(data);
-                    console.log(data)
-
-                    // Вызываем функцию сортировки
-                    sortByDate(dates);
-
-                    // Проверяем что выбрано в графе "Сводные данные в разрезе / шаг в:" и стоим график от этого выбора
-                    if (selectedStep === 'day') {
-                        const aggregatedResultsByDay = aggregateData(dates, createdData, closedData, 'day');
-                        generateLineChart(aggregatedResultsByDay.dates, aggregatedResultsByDay.createdData, aggregatedResultsByDay.closedData);
-                    }
-                    else if (selectedStep === 'week') {
-                        const aggregatedResultsByWeek = aggregateData(dates, createdData, closedData, 'week');
-                        generateLineChart(aggregatedResultsByWeek.dates, aggregatedResultsByWeek.createdData, aggregatedResultsByWeek.closedData);
-                    }
-                    else if (selectedStep === 'month') {
-                        const aggregatedResultsByMonth = aggregateData(dates, createdData, closedData, 'month');
-                        generateLineChart(aggregatedResultsByMonth.dates, aggregatedResultsByMonth.createdData, aggregatedResultsByMonth.closedData);
-                    }
-                    else if (selectedStep === 'year') {
-                        const aggregatedResultsByYear = aggregateData(dates, createdData, closedData, 'year');
-                        generateLineChart(aggregatedResultsByYear.dates, aggregatedResultsByYear.createdData, aggregatedResultsByYear.closedData);
-                    }
-                    else {
-                        // Сюда потом обработку, когда нефига нет !!!!!!!!!!!!!
-                    }
-
-                    // Вызываем функцию для удаления и изменения элементов
-                    mergeAndRemoveTables();
-
-                    // Генерируйте круговую диаграмму с данными клиентов
-                    generatePieChart(data);
-
-                    // Инициализируем Vue и таблицу с полученными данными
-                    initializeVueTable(data);
+                    // Построение графика с полученными данными
+                    generateLineChart(data.dates, null, null, data.supportData);
                 })
                 .catch(error => {
                     console.error("Произошла ошибка при запросе данных:", error);
-                    console.error('Ошибка:', error.responseText);
-                    alert("Произошла ошибка при запросе данных. Пожалуйста, попробуйте ещё раз.");
+                    errorShowToast(`Произошла ошибка при запросе данных: ${error.message}`);
                 });
-            }
-            else if (selectedReport === 'open'){
-                // Отправляем AJAX-запрос на сервер с выбранными фильтрами
-                fetch(`/apiv2/open_tickets/`)
+                // Отправляем запрос для получения списка закрытых тикетов
+                fetch(`/apiv2/closed_tickets/?start_date=${startDate}&end_date=${endDate}`)
                 .then(response => {
                     if (!response.ok) {
-                    throw new Error('Нет ответа от сервера');
+                        throw new Error('Нет ответа от сервера');
                     }
-                    return response.json(); // Преобразуем ответ в JSON
+                    return response.json();
                 })
-                .then(data => {
-                    // Обновите данные на странице с использованием полученных данных
-                    const { dates, createdData } = processTickets(data, true);
-                    console.log(data)
-
-                    // Вызываем функцию сортировки
-                    sortByDate(dates);
-
-                    // Проверяем что выбрано в графе "Сводные данные в разрезе / шаг в:" и стоим график от этого выбора
-                    if (selectedStep === 'day') {
-                        const aggregatedResultsByDay = aggregateData(dates, createdData, 'day', true);
-                        generateLineChart(aggregatedResultsByDay.dates, aggregatedResultsByDay.createdData);
-                    }
-                    else if (selectedStep === 'week') {
-                        const aggregatedResultsByWeek = aggregateData(dates, createdData, 'week', true);
-                        generateLineChart(aggregatedResultsByWeek.dates, aggregatedResultsByWeek.createdData);
-                    }
-                    else if (selectedStep === 'month') {
-                        const aggregatedResultsByMonth = aggregateData(dates, createdData, 'month', true);
-                        generateLineChart(aggregatedResultsByMonth.dates, aggregatedResultsByMonth.createdData);
-                    }
-                    else if (selectedStep === 'year') {
-                        const aggregatedResultsByYear = aggregateData(dates, createdData, 'year', true);
-                        generateLineChart(aggregatedResultsByYear.dates, aggregatedResultsByYear.createdData);
-                    }
-                    else {
-                        // Сюда потом обработку, когда нефига нет !!!!!!!!!!!!!
-                    }
-
-                    // Вызываем функцию для удаления и изменения элементов
-                    mergeAndRemoveTables();
-
-                    // Генерируйте круговую диаграмму с данными клиентов
-                    generatePieChart(data);
-
-                    // Инициализируем Vue и таблицу с полученными данными
-                    initializeVueTable(data);
+                .then(closedTicketsData => {
+                    // Построение отчёта и диаграммы с полученными данными
+                    initializeVueTable(closedTicketsData);
+                    generatePieChart(closedTicketsData);
                 })
                 .catch(error => {
-                    console.error("Произошла ошибка при запросе данных:", error);
-                    console.error('Ошибка:', error.responseText);
-                    alert("Произошла ошибка при запросе данных. Пожалуйста, попробуйте ещё раз.");
+                    console.error("Ошибка при получении списка закрытых тикетов:", error);
+                    errorShowToast(`Ошибка при получении списка закрытых тикетов: ${error.message}`);
                 });
             }
-            else if (selectedReport === 'ci'){
-
-            }
-            else if (selectedReport === 'movement'){
-
-            }
+            else if (selectionType === 'closed_only') {
+                fetch(`/apiv2/closed_tickets/?start_date=${startDate}&end_date=${endDate}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Нет ответа от сервера');
+                    }
+                    return response.json();
+                })
+                .then(closedTicketsData => {
+                    // Построение отчёта и диаграммы с полученными данными
+                    initializeVueTable(closedTicketsData);
+                    generatePieChart(closedTicketsData);
+                })
+                .catch(error => {
+                    console.error("Ошибка при получении списка закрытых тикетов:", error);
+                    errorShowToast(`Ошибка при получении списка закрытых тикетов: ${error.message}`);
+                });
+            } 
             else {
-                // Если неизвестный выбор сделан...
+                // Отправляем AJAX-запрос на сервер с выбранными фильтрами
+                fetch(`/apiv2/get_tickets/?start_date=${startDate}&end_date=${endDate}&step=${selectedStep}`)
+                .then(response => {
+                    if (!response.ok) {
+                    throw new Error('Нет ответа от сервера');
+                    }
+                    return response.json(); // Преобразуем ответ в JSON
+                })
+                .then(data => {
+                    // Строим график
+                    generateLineChart(data.dates, data.created_counts, data.closed_counts);
 
+                    // Генерируйте круговую диаграмму с данными клиентов
+                    generatePieChart(data.data);
+
+                    // Инициализируем Vue и таблицу с полученными данными
+                    initializeVueTable(data.data);
+                })
+                .catch(error => {
+                    console.error("Произошла ошибка при запросе данных:", error);
+                    console.error('Ошибка:', error.responseText);
+                    errorShowToast(`Произошла ошибка при запросе данных: ${error.message}`);
+                });
             }
+        }
+        else if (selectedReport === 'open'){
+            // Отправляем AJAX-запрос на сервер с выбранными фильтрами
+            fetch(`/apiv2/opened_tickets/`)
+            .then(response => {
+                if (!response.ok) {
+                throw new Error('Нет ответа от сервера');
+                }
+                return response.json(); // Преобразуем ответ в JSON
+            })
+            .then(data => {
+                // Обновите данные на странице с использованием полученных данных
+                const { dates, createdData } = processTickets(data.tickets, true);
+                console.log(data)
+
+                // Вызываем функцию сортировки
+                sortByDate(dates);
+
+                // Проверяем что выбрано в графе "Сводные данные в разрезе / шаг в:" и стоим график от этого выбора
+                if (selectedStep === 'day') {
+                    const aggregatedResultsByDay = aggregateData(dates, createdData, 'day', true);
+                    generateLineChart(aggregatedResultsByDay.dates, aggregatedResultsByDay.createdData);
+                }
+                else if (selectedStep === 'week') {
+                    const aggregatedResultsByWeek = aggregateData(dates, createdData, 'week', true);
+                    generateLineChart(aggregatedResultsByWeek.dates, aggregatedResultsByWeek.createdData);
+                }
+                else if (selectedStep === 'month') {
+                    const aggregatedResultsByMonth = aggregateData(dates, createdData, 'month', true);
+                    generateLineChart(aggregatedResultsByMonth.dates, aggregatedResultsByMonth.createdData);
+                }
+                else if (selectedStep === 'year') {
+                    const aggregatedResultsByYear = aggregateData(dates, createdData, 'year', true);
+                    generateLineChart(aggregatedResultsByYear.dates, aggregatedResultsByYear.createdData);
+                }
+                else {
+                    // Сюда потом обработку, когда нефига нет !!!!!!!!!!!!!
+                }
+
+                // Генерируйте круговую диаграмму с данными клиентов
+                generatePieChart(data.tickets);
+
+                // Инициализируем Vue и таблицу с полученными данными
+                initializeVueTable(data.tickets);
+            })
+            .catch(error => {
+                console.error("Произошла ошибка при запросе данных:", error);
+                console.error('Ошибка:', error.responseText);
+                errorShowToast(`Произошла ошибка при запросе данных: ${error.message}`);
+            });
+        }
+        else if (selectedReport === 'ci'){
+
+        }
+        else if (selectedReport === 'movement'){
+            
+        }
+        else {
+            // Тут остальные обработки, которых пока нет...
+            
+        }
     });
 });

@@ -7,7 +7,7 @@ def send_test_email(email):
         email = EmailMessage(
             'Test Email',
             'This is a test email.',
-            'sup-smtp@boardmaps.ru',
+            'imp-smtp@boardmaps.com',
             [email],
         )
         email.send()

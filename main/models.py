@@ -100,12 +100,13 @@ class ReleaseInfo(models.Model):
 class ReportTicket(models.Model):
     """Класс для таблицы БД информации с отчётами о тикетах"""
     report_date = models.DateField(verbose_name='Дата отчёта', null=True, blank=True)
-    ticket_id = models.IntegerField(verbose_name='Номер тикета', null=True, blank=True)
-    subject = models.CharField(verbose_name='Тема тикета', max_length=100, null=True, blank=True)
+    ticket_id = models.IntegerField(verbose_name='Номер тикета', unique=True, null=True, blank=True)
+    subject = models.CharField(verbose_name='Тема тикета', max_length=250, null=True, blank=True)
     creation_date = models.DateField(verbose_name='Создан', null=True, blank=True)
+    closed_date = models.DateField(verbose_name='Закрыт', null=True, blank=True)
     status = models.CharField(verbose_name='Статус', max_length=100, null=True, blank=True)
-    client_name = models.CharField(verbose_name='Название клиента', max_length=100, null=True, blank=True)
-    initiator = models.CharField(verbose_name='Инициатор', max_length=100, null=True, blank=True)
+    client_name = models.CharField(verbose_name='Название клиента', max_length=250, null=True, blank=True)
+    initiator = models.CharField(verbose_name='Инициатор', max_length=150, null=True, blank=True)
     priority = models.CharField(verbose_name='Приоритет', max_length=100, null=True, blank=True)
     assignee_name = models.CharField(verbose_name='Исполнитель', max_length=100, null=True, blank=True)
     updated_at = models.DateField(verbose_name='Дата обновления', null=True, blank=True)
@@ -115,6 +116,7 @@ class ReportTicket(models.Model):
     response_time = models.IntegerField(verbose_name='Среднее время ответа', null=True, blank=True)
     cause = models.CharField(verbose_name='Причина возникновения', max_length=100, null=True, blank=True)
     module_boardmaps = models.CharField(verbose_name='Модуль BoardMaps', max_length=100, null=True, blank=True)
+    ci = models.TextField(verbose_name='CI', null=True, blank=True)
     staff_message = models.IntegerField(verbose_name='Сообщений от саппорта', null=True, blank=True)
 
     class Meta:

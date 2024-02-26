@@ -555,7 +555,7 @@ class TechNoteSerializer(serializers.ModelSerializer):
         # Если записи не существовало и она была создана, возвращаем ее
         return obj
 
-class ForAutomaticEmailSerializer(serializers.ModelSerializer):
+class ClientsListSerializer(serializers.ModelSerializer):
 
     contacts_card = serializers.SerializerMethodField()
 
@@ -565,7 +565,7 @@ class ForAutomaticEmailSerializer(serializers.ModelSerializer):
 
     def get_contacts_card(self, obj):
         contacts = ContactsCard.objects.filter(client_card__client_info=obj)
-        return [{"contact_name": contact.contact_name, "contact_email": contact.contact_email, "notification_update": contact.notification_update} for contact in contacts]
+        return [{"contact_name": contact.contact_name, "contact_position": contact.contact_position, "contact_email": contact.contact_email, "contact_number": contact.contact_number, "notification_update": contact.notification_update} for contact in contacts]
 
 class Version2ClientsSerializer(serializers.ModelSerializer):
 

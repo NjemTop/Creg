@@ -20,6 +20,7 @@ import json
 import os
 import logging
 from django_celery_beat.models import PeriodicTask
+from django.contrib.admin.models import LogEntry
 from api.tasks import add_user_jfrog_task, update_module_info_task, update_tickets
 
 
@@ -147,6 +148,33 @@ class ClientsListAdmin(admin.ModelAdmin):
         return obj.client_card.client_info.client_name
     client_name.short_description = 'Клиент'
 
+
+# Создаем пользовательскую модель для отображения в админ-панели
+class AdminLogEntryAdmin(admin.ModelAdmin):
+    list_display = ('action_time', 'user', 'content_type', 'object_repr', 'action_flag', 'decoded_change_message')
+    search_fields = ('user__username', 'object_repr', 'change_message')
+    date_hierarchy = 'action_time'
+
+    def decoded_change_message(self, obj):
+        # Декодируем сообщение, если оно не пустое
+        if obj.change_message and obj.change_message.startswith('['):
+            try:
+                decoded_message = json.loads(obj.change_message)
+                readable_messages = []
+                for change in decoded_message:
+                    if 'fields' in change.get('changed', {}):
+                        fields = change['changed']['fields']
+                        readable_fields = ', '.join(fields)
+                        readable_messages.append(f"Измененные поля: {readable_fields}")
+                return format_html('<br>'.join(readable_messages))
+            except json.JSONDecodeError:
+                return obj.change_message
+        return obj.change_message
+
+    decoded_change_message.short_description = 'Изменения'
+
+# Регистрируем модель LogEntry для отображения в админ-панели
+admin.site.register(LogEntry, AdminLogEntryAdmin)
 
 admin.site.register(ClientsList, ClientsListAdmin)
 admin.site.register(ClientsCard, ClientsCardAdmin)

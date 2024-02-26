@@ -55,22 +55,22 @@ class NextcloudMover:
                 response = requests.request("MOVE", item_src_url, headers=headers, auth=(self.username, self.password), timeout=30)
             except requests.exceptions.RequestException as error:
                 print(f"Ошибка при выполнении запроса: {error}")
-                logger.error("Ошибка при выполнении запроса: %s", error)
+                scripts_error_logger.error("Ошибка при выполнении запроса: %s", error)
                 raise Exception(f"Ошибка при выполнении запроса: {error}")
         
             if response.status_code == 201:
                 print(f"Элемент {src_dir}/{item_name} успешно перемещен в {dest_dir}/{item_name} на Nextcloud.")
-                logger.info('Элемент %s/%s успешно перемещен в %s/%s на Nextcloud.', src_dir, item_name, dest_dir, item_name)
+                scripts_info_logger.info('Элемент %s/%s успешно перемещен в %s/%s на Nextcloud.', src_dir, item_name, dest_dir, item_name)
             elif response.status_code == 404:
                 print(f"Элемент {src_dir}/{item_name} не найден на Nextcloud.")
-                logger.error("Элемент %s/%s не найден на Nextcloud.", src_dir, item_name)
+                scripts_error_logger.error("Элемент %s/%s не найден на Nextcloud.", src_dir, item_name)
             elif response.status_code == 412:
                 print(f"Элемент {dest_dir}/{item_name} уже существует на Nextcloud.")
             else:
                 print(f"Ошибка при перемещении элемента {src_dir}/{item_name} на Nextcloud. Код статуса: {response.status_code}")
-                logger.error("Ошибка при перемещении элемента %s/%s на Nextcloud. Код статуса: %s", src_dir, item_name, response.status_code)
+                scripts_error_logger.error("Ошибка при перемещении элемента %s/%s на Nextcloud. Код статуса: %s", src_dir, item_name, response.status_code)
                 print(f"Содержимое ответа сервера: {response.text}")
-                logger.error("Содержимое ответа сервера: %s", response.text)
+                scripts_error_logger.error("Содержимое ответа сервера: %s", response.text)
     
     def folder_exists(self, folder_path):
         """
@@ -85,7 +85,7 @@ class NextcloudMover:
             return response.status_code == 200
         except requests.exceptions.RequestException as error:
             print(f"Ошибка при проверке существования папки: {error}")
-            logger.error("Ошибка при проверке существования папки: %s", error)
+            scripts_error_logger.error("Ошибка при проверке существования папки: %s", error)
             return False
 
     def move_folder(self, src_folder_path, dest_folder_path):
@@ -108,22 +108,22 @@ class NextcloudMover:
             parent_dest_url = self.nextcloud_url + "/remote.php/dav/files/" + self.username + "/" + "/".join(dest_folder_path.split("/")[:-1]).strip("/")
             response = requests.head(parent_dest_url, auth=(self.username, self.password), timeout=30)
             if response.status_code != 200:
-                logger.error("Родительская директория %s не существует.", parent_dest_url)
+                scripts_error_logger.error("Родительская директория %s не существует.", parent_dest_url)
                 return  # Выход, так как родительская директория не существует
 
             # Перемещаем папку
             response = requests.request("MOVE", src_url, headers=headers, auth=(self.username, self.password), timeout=30)
             if response.status_code == 201:
-                logger.info('Папка %s успешно перемещена в %s на Nextcloud.', src_folder_path, dest_folder_path)
+                scripts_info_logger.info('Папка %s успешно перемещена в %s на Nextcloud.', src_folder_path, dest_folder_path)
             elif response.status_code == 404:
-                logger.error("Папка %s не найдена на Nextcloud.", src_folder_path)
+                scripts_error_logger.error("Папка %s не найдена на Nextcloud.", src_folder_path)
             elif response.status_code == 412:
-                logger.error("Папка %s уже существует на Nextcloud.", dest_folder_path)
+                scripts_error_logger.error("Папка %s уже существует на Nextcloud.", dest_folder_path)
             else:
-                logger.error("Ошибка при перемещении папки %s на Nextcloud. Код статуса: %s", src_folder_path, response.status_code)
-                logger.error("Содержимое ответа сервера: %s", response.text)
+                scripts_error_logger.error("Ошибка при перемещении папки %s на Nextcloud. Код статуса: %s", src_folder_path, response.status_code)
+                scripts_error_logger.error("Содержимое ответа сервера: %s", response.text)
         except requests.exceptions.RequestException as error:
-            logger.error("Ошибка при перемещении папки: %s", error)
+            scripts_error_logger.error("Ошибка при перемещении папки: %s", error)
             raise Exception(f"Ошибка при перемещении папки: {error}")
 
     def create_folder(self, folder_path):
@@ -152,16 +152,17 @@ class NextcloudMover:
             response = requests.request("MKCOL", folder_url, headers=headers, data=body, auth=(self.username, self.password), timeout=30)
         except requests.exceptions.RequestException as error:
             print(f"Ошибка при создании папки: {error}")
-            logger.error("Ошибка при создании папки: %s", error)
+            scripts_error_logger.error("Ошибка при создании папки: %s", error)
             raise Exception(f"Ошибка при создании папки: {error}")
 
         if response.status_code == 201:
             print(f"Папка {folder_path} успешно создана на Nextcloud.")
-            logger.info('Папка %s успешно создана на Nextcloud.', folder_path)
+            scripts_info_logger.info('Папка %s успешно создана на Nextcloud.', folder_path)
         elif response.status_code == 405:
             print(f"Папка {folder_path} уже существует на Nextcloud.")
+            scripts_error_logger.error(f"Папка {folder_path} уже существует на Nextcloud.")
         else:
             print(f"Ошибка при создании папки {folder_path} на Nextcloud. Код статуса: {response.status_code}")
-            logger.error("Ошибка при создании папки %s на Nextcloud. Код статуса: %s", folder_path, response.status_code)
+            scripts_error_logger.error("Ошибка при создании папки %s на Nextcloud. Код статуса: %s", folder_path, response.status_code)
             print(f"Содержимое ответа сервера: {response.text}")
-            logger.error("Содержимое ответа сервера: %s", response.text)
+            scripts_error_logger.error("Содержимое ответа сервера: %s", response.text)

@@ -3,7 +3,7 @@ import json
 from main.models import ReportTicket
 import logging
 from logger.log_config import setup_logger, get_abs_log_path
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 from dotenv import load_dotenv
 
@@ -20,9 +20,36 @@ API_AUTH = (os.environ.get('API_AUTH_USER'), os.environ.get('API_AUTH_PASS'))
 HEADERS = {'Content-Type': 'application/json'}
 
 # Указываем настройки логов для нашего файла с классами
-scripts_error_logger = setup_logger('scripts', get_abs_log_path('scripts_errors.log'), logging.ERROR)
-scripts_info_logger = setup_logger('scripts', get_abs_log_path('scripts_info.log'), logging.INFO)
+scripts_error_logger = setup_logger('scripts_error', get_abs_log_path('scripts_errors.log'), logging.ERROR)
+scripts_info_logger = setup_logger('scripts_info', get_abs_log_path('scripts_info.log'), logging.INFO)
 
+
+def is_weekday(date):
+    return date.weekday() < 5  # Понедельник=0, Воскресенье=6
+
+
+def calculate_sla_working_time(updates):
+    relevant_statuses = {"New", "In work", "In progress"}
+    total_time = timedelta()
+    last_timestamp = None
+    last_status = None
+
+    for update in updates:
+        timestamp = datetime.strptime(update['timestamp'], '%Y-%m-%d %H:%M:%S')
+        status_change = update.get('status_change')
+        
+        if status_change:
+            new_status = status_change.get('new_name')
+            if last_status in relevant_statuses and is_weekday(last_timestamp):
+                start = max(last_timestamp, datetime(last_timestamp.year, last_timestamp.month, last_timestamp.day, 9, 0))
+                end = min(timestamp, datetime(timestamp.year, timestamp.month, timestamp.day, 19, 0))
+                if start < end:  # Учитываем только рабочее время
+                    total_time += end - start
+            
+            last_status = new_status
+        last_timestamp = timestamp
+
+    return total_time.total_seconds() // 60  # Возвращаем время в минутах
 
 
 def update_tickets(start_date, end_date):
@@ -34,7 +61,7 @@ def update_tickets(start_date, end_date):
             # Параметры запроса к API
             params = {
                 'category': 1,
-                'q': f'last-staff-replied-on-or-after:"{start_date}" last-staff-replied-on-or-before:"{end_date}"',
+                'q': f'last-modified-on-or-after:"{start_date}" last-modified-on-or-before:"{end_date}"',
                 'page': 1,
                 'size': 50
             }
@@ -73,6 +100,11 @@ def process_tickets(ticket_data_list):
     """Функция для обработки списка тикетов"""
     for ticket_data in ticket_data_list:
         try:
+            # Проверяем, принадлежит ли пользователь группе "Boardmaps group"
+            contact_groups = ticket_data['user'].get('contact_groups', [])
+            if any(group.get('name') == 'Boardmaps group' for group in contact_groups):
+                continue  # Пропускаем тикет, если он принадлежит группе "Boardmaps group"
+
             update_single_ticket(ticket_data)
         except Exception as error_message:
             scripts_error_logger.error(f'Ошибка при обработке тикета: {error_message}')
@@ -110,6 +142,14 @@ def update_single_ticket(ticket_data):
         status = ticket_data['status']['name']
         subject = ticket_data['subject']
         creation_date = datetime.strptime(ticket_data['created_at'], '%Y-%m-%d %H:%M:%S').date()
+        updates = ticket_data.get('updates', [])
+        sla_working_time = calculate_sla_working_time(updates)
+        closed_date = None
+        if ticket_data['status']['name'] == "Closed":
+            for update in reversed(ticket_data['updates']):
+                if update.get('status_change') and update['status_change'].get('new_name') == "Closed":
+                    closed_date = datetime.strptime(update['timestamp'], '%Y-%m-%d %H:%M:%S').date()
+                    break
         client_name = ticket_data['user']['contact_groups'][0]['name']
         initiator = ticket_data['user']['name']
         priority = ticket_data['priority']['name']
@@ -117,12 +157,18 @@ def update_single_ticket(ticket_data):
         updated_at = datetime.strptime(ticket_data['last_updated_at'], '%Y-%m-%d %H:%M:%S').date()
         last_reply_at = datetime.strptime(ticket_data['last_user_reply_at'], '%Y-%m-%d %H:%M:%S').date() if ticket_data['last_user_reply_at'] else None
         sla = ticket_data['sla_breaches'] > 0
-        sla_time = ticket_data['sla_breaches']
         response_time = ticket_data['time_spent']
         # Извлечение причины и модули
         cause = "Не указан"
         module_boardmaps = "Не указан"
         custom_fields = ticket_data['custom_fields']
+
+        # Извлекаем значение CI
+        ci_value = None
+        for field in ticket_data['custom_fields']:
+            if field['name'] == 'Ci Link':
+                ci_value = field.get('value')
+                break
 
         # Проходим по массиву custom_fields и ищем нужные значения
         for field in custom_fields:
@@ -195,6 +241,7 @@ def update_single_ticket(ticket_data):
                 'status': status,
                 'subject': subject,
                 'creation_date': creation_date,
+                'closed_date': closed_date,
                 'client_name': client_name,
                 'initiator': initiator,
                 'priority': priority,
@@ -202,10 +249,11 @@ def update_single_ticket(ticket_data):
                 'updated_at': updated_at,
                 'last_reply_at': last_reply_at,
                 'sla': sla,
-                'sla_time': sla_time,
+                'sla_time': sla_working_time,
                 'response_time': response_time,
                 'cause': cause,
                 'module_boardmaps': module_boardmaps,
+                'ci': ci_value,
                 'staff_message': staff_message,
             }
         )

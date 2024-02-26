@@ -28,3 +28,7 @@ main/migrations/0003_alter_bmserverscard_bm_servers_circuit_and_more.py
 main/migrations/0005_usersboardmaps.py
 main/migrations/0006_alter_connectioninfo_options_and_more.py
 main/migrations/0007_servisecard_manager_new.py
+main/migrations/0002_reportticket_closed_date.py
+main/migrations/0003_reportticket_ci_alter_reportticket_ticket_id.py
+main/migrations/0004_alter_reportticket_ci_alter_reportticket_client_name_and_more.py
+Main.config

@@ -457,7 +457,18 @@ def report(request):
 
     report_tickets = list(ReportTicket.objects.filter(creation_date__range=[start_date, end_date]).values())
     report_tickets_json = json.dumps(report_tickets, default=str)
-    return render(request, 'main/report/report.html', {'report_tickets': report_tickets_json})
+
+    # Подсчет всех открытых тикетов
+    open_tickets_count = ReportTicket.objects.exclude(status="Closed").count()
+
+    # Подсчет открытых тикетов с заполненным полем ci
+    open_ci_tickets_count = ReportTicket.objects.exclude(status="Closed").exclude(ci__isnull=True).exclude(ci='').count()
+
+    return render(request, 'main/report/report.html', {
+        'report_tickets': report_tickets_json,
+        'open_tickets_count': open_tickets_count,
+        'open_ci_tickets_count': open_ci_tickets_count
+    })
 
 def get_report_data(request):
     start_date = request.GET.get('start_date')

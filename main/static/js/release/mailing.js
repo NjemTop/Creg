@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterGroupSelect = document.getElementById('filterGroup');
     const filterGroupRow = document.getElementById('filterGroupRow');
     const emailRow = document.getElementById('emailRow');
+    const releaseGroupRow = document.getElementById('releaseGroup').parentNode.parentNode; // Получаем строку для скрытия
     const mobileVersionRow = document.getElementById('mobileVersionRow');
     const downloadButton = document.getElementById('downloadButton');
     const uploadButton = document.getElementById('uploadButton');
@@ -61,6 +62,36 @@ document.addEventListener('DOMContentLoaded', function() {
         // Сразу вызываем toggleEmailInput, чтобы обновить видимость поля email
         toggleEmailInput();
     }
+
+    // Функция обновления видимости разделов "Выберите рассылку" и "Фильтры"
+    function updateVisibility() {
+        const viewValue = releaseViewSelect.value;
+        // Скрываем или показываем раздел "Выберите рассылку"
+        releaseGroupRow.style.display = viewValue === 'custom_mailing' ? 'none' : '';
+        // Показываем раздел "Фильтры" только для кастомной рассылки
+        filterGroupRow.style.display = viewValue === 'custom_mailing' ? '' : 'none';
+    }
+
+    // Обработчик событий при изменении "Выберите вид рассылки"
+    releaseViewSelect.addEventListener('change', function() {
+        updateVisibility();
+        // Также необходимо обновить предпросмотр, если это реализовано
+    });
+
+    // Обработчик выбора файла
+    uploadInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            // Предполагается, что файл сразу загружается и отображается в iframe для предпросмотра
+            const file = this.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewIframe.contentWindow.document.open();
+                previewIframe.contentWindow.document.write(e.target.result);
+                previewIframe.contentWindow.document.close();
+            };
+            reader.readAsText(file);
+        }
+    });
 
     releaseTypeSelect.addEventListener('change', updateFilterGroupOptions);
 
@@ -207,6 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateReleaseGroupOptions();
     updateFilterGroupOptions();
     toggleEmailInput();
+    updateVisibility();
     toggleMobileVersionInput(); // Вызываем при загрузке, чтобы установить правильное состояние
     const selectedTemplateName = getSelectedTemplateName();
     loadTemplatePreview(selectedTemplateName);

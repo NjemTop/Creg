@@ -6,8 +6,8 @@ from logger.log_config import setup_logger, get_abs_log_path
 
 
 # Указываем настройки логов для нашего файла с классами
-scripts_error_logger = setup_logger('scripts', get_abs_log_path('scripts_errors.log'), logging.ERROR)
-scripts_info_logger = setup_logger('scripts', get_abs_log_path('scripts_info.log'), logging.INFO)
+scripts_error_logger = setup_logger('scripts_error', get_abs_log_path('scripts_errors.log'), logging.ERROR)
+scripts_info_logger = setup_logger('scripts_info', get_abs_log_path('scripts_info.log'), logging.INFO)
 
 
 class WebDavClient:
@@ -50,11 +50,11 @@ class WebDavClient:
             response = requests.request("PROPFIND", self.url, headers=headers, data=body, auth=(self.username, self.password), timeout=30)
         except requests.exceptions.RequestException as error:
             print(f"Ошибка при выполнении запроса: {error}")
-            logger.error("Ошибка при выполнении запроса: %s", error)
+            scripts_error_logger.error("Ошибка при выполнении запроса: %s", error)
             raise Exception(f"Ошибка при выполнении запроса: {error}")
 
         if response.status_code != 207:
-            logger.error("Ошибка при выполнении PROPFIND-запроса. Код статуса: %s, Текст ошибки: %s", response.status_code, response.text)
+            scripts_error_logger.error("Ошибка при выполнении PROPFIND-запроса. Код статуса: %s, Текст ошибки: %s", response.status_code, response.text)
             raise Exception(f"Ошибка при выполнении PROPFIND-запроса. Код статуса: {response.status_code}, Текст ошибки: {response.text}")
 
         xml_data = ET.fromstring(response.content)
@@ -87,11 +87,11 @@ class WebDavClient:
             response = requests.request("PROPFIND", folder_url, headers=headers, data=body, auth=(self.username, self.password), timeout=30)
             response.raise_for_status()
         except requests.exceptions.RequestException as error:
-            print(f"Ошибка при выполнении запроса: {error}")
+            scripts_error_logger.error(f"Ошибка при выполнении запроса: {error}")
             raise
 
         if response.status_code != 207:
-            print(f"Ошибка при выполнении PROPFIND-запроса. Код статуса: {response.status_code}, Текст ошибки: {response.text}")
+            scripts_error_logger.error(f"Ошибка при выполнении PROPFIND-запроса. Код статуса: {response.status_code}, Текст ошибки: {response.text}")
             raise Exception(f"Ошибка при выполнении PROPFIND-запроса. Код статуса: {response.status_code}, Текст ошибки: {response.text}")
 
         xml_data = ET.fromstring(response.content)
@@ -109,6 +109,6 @@ class WebDavClient:
             # Исключаем пустые имена
             if item_name:
                 folder_items.append(item_name)
-                logger.info('Папка найдена: "%s"', item_name)
+                scripts_info_logger.info('Папка найдена: "%s"', item_name)
 
         return folder_items

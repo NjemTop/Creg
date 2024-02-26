@@ -25,8 +25,8 @@ from .yandex.yandexDocs import update_local_documentation
 load_dotenv()
 
 # Указываем настройки логов для нашего файла с классами
-scripts_error_logger = setup_logger('scripts', get_abs_log_path('scripts_errors.log'), logging.ERROR)
-scripts_info_logger = setup_logger('scripts', get_abs_log_path('scripts_info.log'), logging.INFO)
+scripts_error_logger = setup_logger('scripts_error', get_abs_log_path('scripts_errors.log'), logging.ERROR)
+scripts_info_logger = setup_logger('scripts_info', get_abs_log_path('scripts_info.log'), logging.INFO)
 
 
 # Создаем среду Jinja2
@@ -52,6 +52,7 @@ def structure_updates_3x(updates):
     """
     structured_updates = []  # Список для структурированных данных
     current_module = {"title": None, "updates": []}  # Текущий обрабатываемый модуль
+    module_count = 1  # Счетчик модулей
 
     for update in updates:
         # Проверяем, является ли строка заголовком для "BoardMaps Core:"
@@ -60,14 +61,16 @@ def structure_updates_3x(updates):
             if current_module["updates"]:
                 structured_updates.append(current_module)
             # Начинаем новый модуль для "BoardMaps Core:"
-            current_module = {"title": "1. BoardMaps Core:", "updates": []}
+            current_module = {"title": f"{module_count}. BoardMaps Core:", "updates": []}
+            module_count += 1
         # Проверяем, является ли строка заголовком модуля
         elif 'Модуль' in update:
             # Если в текущем модуле уже есть обновления, добавляем его в итоговый список
             if current_module["updates"]:
                 structured_updates.append(current_module)
             # Начинаем новый модуль
-            current_module = {"title": update.split(':')[0] + ':', "updates": []}
+            current_module = {"title": f"{module_count}. {update.split(':')[0]}:", "updates": []}
+            module_count += 1
         else:
             # Добавляем обновление в текущий модуль
             current_module["updates"].append(update)
@@ -114,7 +117,7 @@ def send_test_email(version, email_send, mobile_version=None, mailing_type='stan
         # Открываем файл и загружаем данные
         with open(CONFIG_FILE, 'r', encoding='utf-8-sig') as json_file:
             DATA = json.load(json_file)
-            MAIL_SETTINGS = DATA['MAIL_SETTINGS_SUPPORT']
+            MAIL_SETTINGS = DATA['MAIL_SETTINGS']
             CREG_URL = DATA['CREG']['URL']
             CREG_USERNAME = DATA['CREG']['USERNAME']
             CREG_PASSWORD = DATA['CREG']['PASSWORD']
