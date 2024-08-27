@@ -25,7 +25,15 @@ alert = Alert()
 CONFIG_FILE = os.path.join(settings.BASE_DIR, "Main.config")
 
 if os.getenv('GITHUB_ACTIONS') == 'true':
-    DATA = "mocked configuration"
+    # Заглушка для данных конфигурации
+    DATA = {
+        'TELEGRAM_SETTINGS': {
+            'BOT_TOKEN': 'mocked_bot_token'
+        },
+        'SEND_ALERT': {
+            'GROUP_SUPPOR_TEAM': 'mocked_group_support_team_id'
+        }
+    }
 else:
     # Читаем данные из файла
     with open(CONFIG_FILE, 'r', encoding='utf-8-sig') as file:
