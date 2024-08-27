@@ -9,7 +9,7 @@ from django.conf import settings
 # Устанавливаем переменную окружения DJANGO_SETTINGS_MODULE
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crag.settings')
 
-app = Celery('crag', broker=settings.CELERY_BROKER_URL)
+app = Celery('creg', broker=settings.CELERY_BROKER_URL)
 
 # Используем настройки Django для конфигурации Celery
 app.config_from_object('django.conf:settings', namespace='CELERY')
