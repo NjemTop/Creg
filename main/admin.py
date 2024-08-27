@@ -21,7 +21,8 @@ import os
 import logging
 from django_celery_beat.models import PeriodicTask
 from django.contrib.admin.models import LogEntry
-from api.tasks import add_user_jfrog_task, update_module_info_task, update_tickets
+from api.tasks import update_module_info_task
+from main.tasks import add_user_jfrog_task, update_tickets
 
 
 logger = logging.getLogger(__name__)

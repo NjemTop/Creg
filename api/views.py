@@ -21,9 +21,9 @@ import logging
 import threading
 import os
 from dotenv import load_dotenv
-from scripts.add_user_JFrog import generate_random_password, authenticate, create_user
-from scripts.create_client_TFS import trigger_tfs_pipeline
-from scripts.create_client_nextcloud import NextCloudManager
+from scripts.jfrog.add_user_JFrog import generate_random_password, authenticate, create_user
+from scripts.tfs.create_client_TFS import trigger_tfs_pipeline
+from scripts.nextcloud.manager_nextcloud import NextCloudManager
 from .email_send import send_email_alert_async
 from django.shortcuts import get_object_or_404, get_list_or_404
 from .swagger_schemas import request_schema, response_schema
