@@ -13,7 +13,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.9]
+        python-version: [3.10]
 
     env:
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
@@ -44,7 +44,7 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-      
+
       # Шаг для установки зависимостей LDAP
       - name: Install LDAP dependencies
         run: |
@@ -55,10 +55,17 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Create Log Directory and Files
+        run: |
+          mkdir -p logs
+          touch logs/debug.log logs/info.log logs/warning.log logs/error.log logs/critical.log logs/celery_info.log logs/celery_error.log logs/scripts_errors.log
+
       - name: Apply Database Migrations
         run: |
           python manage.py makemigrations
           python manage.py migrate
+
       - name: Run Tests
         run: |
           python manage.py test
