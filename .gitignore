@@ -24,3 +24,4 @@ test.py
 python_ldap-3.4.4-cp310-cp310-win_amd64.whl
 media/reports/*
 venv
+Main.config

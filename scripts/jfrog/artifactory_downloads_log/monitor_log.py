@@ -24,9 +24,12 @@ alert = Alert()
 # Указываем путь к файлу с данными
 CONFIG_FILE = os.path.join(settings.BASE_DIR, "Main.config")
 
-# Читаем данные из файла
-with open(CONFIG_FILE, 'r', encoding='utf-8-sig') as file:
-    DATA = json.load(file)
+if os.getenv('GITHUB_ACTIONS') == 'true':
+    DATA = "mocked configuration"
+else:
+    # Читаем данные из файла
+    with open(CONFIG_FILE, 'r', encoding='utf-8-sig') as file:
+        DATA = json.load(file)
 
 # Получаем значение ключа GROUP_SUPPOR_TEAM в SEND_ALERT
 GROUP_SUPPOR_TEAM = DATA['SEND_ALERT']['GROUP_SUPPOR_TEAM']
