@@ -208,6 +208,17 @@ if DJANGO_ENV == 'local':
         dbname='creg'
     )
     CELERY_RESULT_BACKEND = 'django-db'
+elif 'GITHUB_ACTIONS' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_DB'),
+            'USER': os.environ.get('POSTGRES_USER'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
 else:
     DATABASES = {
         'default': {
