@@ -9,8 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
-# Указываем настройки логов для нашего файла с классами
+# Указываем настройки логов для нашего файла
 scripts_error_logger = setup_logger('scripts_error', get_abs_log_path('scripts_errors.log'), logging.ERROR)
 scripts_info_logger = setup_logger('scripts_info', get_abs_log_path('scripts_info.log'), logging.INFO)
 
@@ -18,7 +17,12 @@ scripts_info_logger = setup_logger('scripts_info', get_abs_log_path('scripts_inf
 CONFIG_FILE = os.path.join(settings.BASE_DIR, "Main.config")
 
 if os.getenv('GITHUB_ACTIONS') == 'true':
-    DATA = "mocked configuration"
+    # Заглушка для данных конфигурации
+    DATA = {
+        'TELEGRAM_SETTINGS': {
+            'BOT_TOKEN': 'mocked_bot_token'
+        }
+    }
 else:
     # Читаем данные из файла
     with open(CONFIG_FILE, 'r', encoding='utf-8-sig') as file:
@@ -36,7 +40,7 @@ class Alert():
         alert_chat_id - чат айди, куда мы будем отправлять сообщение,
         alert_text - текст сообщения, которое мы хотим отправить.
         """
-        # Адрес для отправи сообщение напрямую через API Telegram
+        # Адрес для отправки сообщения напрямую через API Telegram
         url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage'
         # Задаём стандартный заголовок отправки
         headers_server = {'Content-type': 'application/json'}
@@ -49,4 +53,4 @@ class Alert():
         # Отправляем запрос через наш бот
         response = requests.post(url, headers=headers_server, data=json.dumps(data), timeout=30)
         # Добавляем логгирование для отладки
-        scripts_info_logger.info(f"Сообщение контакту '{alert_chat_id}' было отправлено. Ответа: {response}")
+        scripts_info_logger.info(f"Сообщение контакту '{alert_chat_id}' было отправлено. Ответ: {response}")
