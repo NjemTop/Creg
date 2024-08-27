@@ -22,6 +22,11 @@ jobs:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       CELERY_BROKER_URL: ${{ secrets.CELERY_BROKER_URL }}
       CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}
+      EMAIL_HOST_PROD: ${{ secrets.EMAIL_HOST_PROD }}
+      EMAIL_PORT_PROD: ${{ secrets.EMAIL_PORT_PROD }}
+      EMAIL_HOST_USER_PROD: ${{ secrets.EMAIL_HOST_USER_PROD }}
+      EMAIL_HOST_PASSWORD_PROD: ${{ secrets.EMAIL_HOST_PASSWORD_PROD }}
+      DEFAULT_FROM_EMAIL_PROD: ${{ secrets.DEFAULT_FROM_EMAIL_PROD }}
 
     services:
       db:
