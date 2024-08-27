@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Удаление пользователя</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 40px;
+        }
+        form {
+            background-color: white;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            margin-top: 10px;
+            display: block;
+            color: #666;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #c9302c;
+        }
+    </style>
+</head>
+<body>
+    <h1>Удаление пользователя NextCloud</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="account_name">Имя аккаунта:</label>
+        <input type="text" name="account_name" id="account_name" required>
+        <label for="group_name">Группа:</label>
+        <input type="text" name="group_name" id="group_name" required>
+        <button type="submit">Удалить пользователя</button>
+    </form>
+</body>
+</html>

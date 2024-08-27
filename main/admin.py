@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import (
-    ClientsList, ReportTicket, ReportDownloadjFrog, UsersBoardMaps, ClientsCard, 
+    ClientsList, ReportTicket, Secret, SLAPolicy, ReportDownloadjFrog, UsersBoardMaps, ClientsCard, 
     ContactsCard, ConnectInfoCard, BMServersCard, Integration, ModuleCard, 
     TechAccountCard, ConnectionInfo, ServiseCard, TechInformationCard, TechNote, 
-    ReleaseInfo, Favicon)
+    ReleaseInfo, Favicon, TaskExecution, ClientSyncStatus)
 from .models import backup_file_path, DatabaseBackup
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -91,6 +91,22 @@ class DatabaseBackupAdmin(admin.ModelAdmin):
         return redirect('..')
 
 
+@admin.register(Secret)
+class SecretAdmin(admin.ModelAdmin):
+    list_display = ('name', 'created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at')
+    search_fields = ('name',)
+
+
+# Example used!!!
+def get_secret_value(name):
+    try:
+        secret = Secret.objects.get(name=name)
+        return secret.value
+    except Secret.DoesNotExist:
+        return None
+
+
 def run_selected_tasks(modeladmin, request, queryset):
     for task in queryset:
         args = json.loads(task.args)  # Десериализация аргументов из JSON
@@ -125,15 +141,15 @@ class ClientsCardAdmin(admin.ModelAdmin):
 
 
 class ContactsCardAdmin(admin.ModelAdmin):
-    list_display = ('id', 'client_name', 'contact_name', 'contact_position', 'contact_email', 'notification_update', 'contact_notes')
-    list_display_links = ('contact_name',)
+    list_display = ('id', 'client_name', 'contact_name', 'firstname', 'lastname', 'contact_position', 'contact_email', 'contact_number', 'notification_update', 'contact_notes', 'last_updated')
+    list_display_links = ('contact_email',)
 
     def client_name(self, obj):
         return obj.client_card.client_info.client_name
     client_name.short_description = 'Клиент'
 
 class ServiseCardAdmin(admin.ModelAdmin):
-    list_display = ('id', 'client_name', 'service_pack', 'manager', 'loyal')
+    list_display = ('id', 'client_name', 'service_pack', 'manager', 'loyal',  'last_updated')
     list_display_links = ('client_name',)
 
     def client_name(self, obj):
@@ -141,13 +157,29 @@ class ServiseCardAdmin(admin.ModelAdmin):
     client_name.short_description = 'Клиент'
 
 class ClientsListAdmin(admin.ModelAdmin):
-    list_display = ('id', 'client_name', 'short_name', 'password', 'contact_status')
+    list_display = ('id', 'client_name', 'short_name', 'password', 'contact_status', 'last_updated')
     list_display_links = ('client_name',)
 
     def client_name(self, obj):
         return obj.client_card.client_info.client_name
     client_name.short_description = 'Клиент'
 
+class TechInformationCardAdmin(admin.ModelAdmin):
+    list_display = ('id', 'client_name', 'server_version', 'update_date',  'last_updated')
+    list_display_links = ('client_name',)
+
+    def client_name(self, obj):
+        return obj.client_card.client_info.client_name
+    client_name.short_description = 'Клиент'
+
+
+class UsersBoardMapsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'email', 'position',  'agent_id', 'test_automatic_email', 'new_client')
+    list_display_links = ('name',)
+
+
+class SLAPolicyAdmin(admin.ModelAdmin):
+    list_display = ('priority', 'plan', 'formatted_reaction_time', 'formatted_planned_resolution_time', 'formatted_max_resolution_time')
 
 # Создаем пользовательскую модель для отображения в админ-панели
 class AdminLogEntryAdmin(admin.ModelAdmin):
@@ -185,12 +217,15 @@ admin.site.register(Integration)
 admin.site.register(ModuleCard)
 admin.site.register(TechAccountCard)
 admin.site.register(ServiseCard, ServiseCardAdmin)
-admin.site.register(TechInformationCard)
+admin.site.register(TechInformationCard, TechInformationCardAdmin)
 admin.site.register(TechNote)
 admin.site.register(ReleaseInfo)
 admin.site.register(ReportTicket)
+admin.site.register(SLAPolicy, SLAPolicyAdmin)
 admin.site.register(ReportDownloadjFrog)
-admin.site.register(UsersBoardMaps)
+admin.site.register(UsersBoardMaps, UsersBoardMapsAdmin)
+admin.site.register(ClientSyncStatus)
+admin.site.register(TaskExecution)
 
 
 @admin.register(Favicon)

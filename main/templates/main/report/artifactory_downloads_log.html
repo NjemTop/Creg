@@ -28,6 +28,7 @@
             <tr>
                 <th>Дата</th>
                 <th>Учётная запись jFrog</th>
+                <th>Образ</th>
                 <th>Версия скачивания</th>
                 <th>IP-адрес</th>
             </tr>
@@ -46,29 +47,46 @@
 
             toggleTableBtn.addEventListener("click", function() {
                 messageDiv.textContent = "Загрузка данных, подождите...";
-                fetch('/get_log_analysis_data/')
+                fetch('/internal/get_log_analysis_data/')
                 .then(response => response.json())
                 .then(data => {
-                    table.innerHTML = "";
-                    data.client_data.forEach(client => {
-                        let row = table.insertRow();
-                        let cell1 = row.insertCell(0);
-                        let cell2 = row.insertCell(1);
-                        let cell3 = row.insertCell(2);
-                        let cell4 = row.insertCell(3);
+                    const taskId = data.task_id;
+                    const checkTask = () => {
+                        fetch(`/internal/get_task_status/${taskId}/`)
+                        .then(response => response.json())
+                        .then(taskStatus => {
+                            if (taskStatus.status === 'SUCCESS') {
+                                table.innerHTML = "";
+                                taskStatus.result.client_data.forEach(client => {
+                                    let row = table.insertRow();
+                                    let cell1 = row.insertCell(0);
+                                    let cell2 = row.insertCell(1);
+                                    let cell3 = row.insertCell(2);
+                                    let cell4 = row.insertCell(3);
+                                    let cell5 = row.insertCell(4);
 
-                        // Форматируем дату
-                        const date = new Date(client.log_date);
-                        const formattedDate = date.toLocaleDateString("ru-RU", {
-                            day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                                    const date = new Date(client.log_date);
+                                    const formattedDate = date.toLocaleDateString("ru-RU", {
+                                        day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                                    });
+
+                                    cell1.innerHTML = formattedDate;
+                                    cell2.innerHTML = client.account_name;
+                                    cell3.innerHTML = client.image_name;
+                                    cell4.innerHTML = client.version;
+                                    cell5.innerHTML = client.ip_address;
+                                });
+                                messageDiv.textContent = "Данные загружены.";
+                            } else if (taskStatus.status === 'PENDING' || taskStatus.status === 'STARTED') {
+                                setTimeout(checkTask, 30000); // Продолжаем проверку каждые 30 секунд
+                            } else if (taskStatus.status === 'FAILURE') {
+                                messageDiv.textContent = `Ошибка: ${taskStatus.error}`;
+                            } else {
+                                messageDiv.textContent = "Ошибка при загрузке данных.";
+                            }
                         });
-
-                        cell1.innerHTML = formattedDate;
-                        cell2.innerHTML = client.account_name;
-                        cell3.innerHTML = client.version;
-                        cell4.innerHTML = client.ip_address;
-                    });
-                    messageDiv.textContent = "Данные загружены.";
+                    };
+                    checkTask(); // Начинаем проверку задачи
                 })
                 .catch(error => {
                     messageDiv.textContent = "Ошибка при загрузке данных.";

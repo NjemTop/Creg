@@ -18,7 +18,7 @@ export const app = new Vue({
             { label: 'Дата ответа', field: 'last_reply_at' },
             { label: 'SLA', field: 'sla' },
             { label: 'Время SLA', field: 'sla_time' },
-            { label: 'Среднее время ответа', field: 'response_time' },
+            { label: 'Первое время ответа', field: 'first_response_time' },
             { label: 'Причина возникновения', field: 'cause' },
             { label: 'Модуль BoardMaps', field: 'module_boardmaps' },
             { label: 'Сообщений от саппорта', field: 'staff_message' },

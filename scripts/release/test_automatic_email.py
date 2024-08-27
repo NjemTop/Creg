@@ -1,10 +1,8 @@
 import requests
 import json
+import uuid
 import os
-import base64
-import imghdr
 import smtplib
-import requests
 import logging
 from jinja2 import Environment, FileSystemLoader
 from logger.log_config import setup_logger, get_abs_log_path
@@ -18,8 +16,8 @@ from email.mime.image import MIMEImage
 from email.mime.base import MIMEBase
 from email import encoders
 from email.utils import make_msgid
-from .confluence_get_info import get_server_release_notes, get_ipad_release_notes, get_android_release_notes
-from .yandex.yandexDocs import update_local_documentation
+from scripts.confluence.get_info_release import get_server_release_notes, get_ipad_release_notes, get_android_release_notes
+from scripts.yandex.yandexDocs import update_local_documentation
 
 
 load_dotenv()
@@ -82,28 +80,28 @@ def structure_updates_3x(updates):
     return structured_updates
 
 
-def send_test_email(version, email_send, mobile_version=None, mailing_type='standard_mailing', additional_type=None):
+def send_test_email(version, emails, mobile_version=None, mailing_type='standard_mailing', additional_type=None):
     """
     Функция для тестовой отправки версии релиза.
 
     Args:
         version (str): Версия релиза.
-        email_send (str): Адрес электронной почты для отправки.
+        emails (list): Список адресатов электронной почты для отправки письма рассылки.
         mobile_version (str, optional): Версия мобильного приложения.
         mailing_type (str): Тип рассылки ('standard_mailing' или 'hotfix').
         additional_type (str, optional): Дополнительный тип (например, 'ipad' или 'android').
     """
 
     # Проверка входных данных
-    if not version or not email_send:
+    if not version or not emails:
         error_message = "Ошибка: не указаны обязательные параметры (версия или адрес электронной почты)."
         scripts_error_logger.error(error_message)
         raise ValueError(error_message)
 
-    if mailing_type == 'standard_mailing' and version.startswith('3.') and not mobile_version:
-        error_message = "Ошибка: для стандартной рассылки версии 3.x необходимо указать мобильную версию."
-        scripts_error_logger.error(error_message)
-        raise ValueError(error_message)
+    # if mailing_type == 'standard_mailing' and version.startswith('3.') and not mobile_version:
+    #     error_message = "Ошибка: для стандартной рассылки версии 3.x необходимо указать мобильную версию."
+    #     scripts_error_logger.error(error_message)
+    #     raise ValueError(error_message)
 
     try:
         # Указываем путь к файлу с данными
@@ -127,21 +125,18 @@ def send_test_email(version, email_send, mobile_version=None, mailing_type='stan
 
         try:
             # Обновляем документацию перед отправкой письма
-            updated_folder_paths = [folder_path.format(version_SB=version) for folder_path in YANDEX_DISK_FOLDERS]
+            updated_folder_paths = [folder_path.format(version_info=version) for folder_path in YANDEX_DISK_FOLDERS]
             update_local_documentation(YANDEX_OAUTH_TOKEN, version, updated_folder_paths)
         except requests.exceptions.RequestException as error:
             error_message = f"Ошибка запроса к Яндекс.Диску: {error}"
             scripts_error_logger.error(error_message)
             raise
 
-        # Кодирование учетных данных в base64
-        credentials = base64.b64encode(f"{CREG_USERNAME}:{CREG_PASSWORD}".encode()).decode()
-
-        # Добавление заголовка Authorization в запрос
-        headers = {'Authorization': f'Basic {credentials}'}
-
         # Добавьте адрес электронной почты для скрытой копии
         bcc_email = MAIL_SETTINGS['FROM']
+
+        # Преобразование списка адресов электронной почты в строку
+        email_send = ", ".join(emails) if isinstance(emails, list) else emails
 
         # Создание письма
         msg = MIMEMultipart()
@@ -222,7 +217,15 @@ def send_test_email(version, email_send, mobile_version=None, mailing_type='stan
 
         # Рендеринг HTML из шаблона
         html = render_template(template_file, context)
+
+        # Генерация уникального идентификатора для каждого письма и добавление его в шаблон
+        unique_id = uuid.uuid4()
+        html += f'''
+        <!-- Скрытый уникальный идентификатор письма: {unique_id} -->
+        <div style="display:none;">ID письма: {unique_id}</div>
+        '''
         
+        # Добавление HTML шаблона в сообщение
         msg.attach(MIMEText(html, 'html'))
 
         # Добавление изображений для CID картинок в шаблоне HTML
@@ -253,7 +256,8 @@ def send_test_email(version, email_send, mobile_version=None, mailing_type='stan
             server.starttls()
             server.login(MAIL_SETTINGS['USER'], MAIL_SETTINGS['PASSWORD'])
             server.send_message(msg)
-            scripts_info_logger.info("Тестовое письмо было успешно отправлено на почту: %s", email_send)
+            scripts_info_logger.info("Письмо было успешно отправлено на почту: %s", email_send)
+            return True
 
         # Проверка наличия уведомлений о доставке и прочтении
         if 'Disposition-Notification-To' in msg and 'Return-Receipt-To' in msg:
@@ -265,14 +269,9 @@ def send_test_email(version, email_send, mobile_version=None, mailing_type='stan
                 print("Запросы уведомлений о прочтении поддерживаются.")
 
     except FileNotFoundError as error:
-        error_message = f"Файл не найден: {error.filename}"
         scripts_error_logger.error('Файл не найден: %s', error.filename)
-        raise FileNotFoundError(error_message)
     except smtplib.SMTPException as error:
-        error_message = ('Ошибка при отправке письма через SMTP: %s', str(error))
         scripts_error_logger.error('Ошибка при отправке письма через SMTP: %s', str(error))
-        raise smtplib.SMTPException(error_message)
     except Exception as error:
-        error_message = ('Неизвестная ошибка при отправке письма: %s', str(error))
         scripts_error_logger.error('Неизвестная ошибка при отправке письма: %s', str(error))
-        raise Exception(error_message)
+    return False

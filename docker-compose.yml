@@ -1,30 +1,28 @@
-version: '3.9'
+version: '3.10'
 
 services:
   base:
     build:
       context: .
       dockerfile: Dockerfile
-    image: creg2.0
+    image: creg
 
   web:
-    command: bash -c "python3.9 manage.py makemigrations && python3.9 manage.py migrate && python3.9 manage.py runserver 0.0.0.0:8137"
+    command: bash -c "python3.10 manage.py makemigrations && python3.10 manage.py migrate && python3.10 manage.py runserver 0.0.0.0:8137"
     volumes:
+      - .:/app
       - mediadata:/app/media
       - logdata:/app/logs
-      - migrationsdata:/app/main/migrations
     ports:
       - "8137:8137"
-    container_name: Crag
-    image: creg2.0
+    container_name: Creg
+    image: creg
     environment:
       - TZ=Europe/Moscow
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
     restart: always
     depends_on:
       - db
-      - rabbitmq
-      - graylog
 
   db:
     image: postgres:13
@@ -38,27 +36,15 @@ services:
       - dbdata:/var/lib/postgresql/data
     restart: always
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: RabbitMQ
-    environment:
-      - TZ=Europe/Moscow
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
-    restart: always
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-
   celery:
     command: bash -c "celery -A crag worker --loglevel=info"
     volumes:
       - .:/app
+      - logdata:/app/logs
     depends_on:
       - db
-      - rabbitmq
     container_name: Celery
-    image: creg2.0
+    image: creg
     environment:
       - TZ=Europe/Moscow
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
@@ -68,11 +54,11 @@ services:
     command: bash -c "celery -A crag beat -l info"
     volumes:
       - .:/app
+      - logdata:/app/logs
     depends_on:
       - db
-      - rabbitmq
     container_name: Celery_Beat
-    image: creg2.0
+    image: creg
     environment:
       - TZ=Europe/Moscow
       - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres

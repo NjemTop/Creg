@@ -53,6 +53,6 @@ $(document).ready(function() {
         
             // Перенаправление на страницу клиента.
             window.location.href = clientUrl;
-        }        
+        }
     });
 });

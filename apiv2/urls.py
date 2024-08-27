@@ -7,7 +7,10 @@ urlpatterns = [
     path('opened_tickets/', views.opened_tickets, name='opened_tickets'),
     path('closed_tickets/', views.closed_tickets, name='closed_tickets'),
     path('send_test_mailing/', views.send_test_mailing, name='send_test_mailing'),
+    path('send_prod_mailing/', views.send_prod_mailing, name='send_prod_mailing'),
+    path('send_service_request/', views.send_service_request, name='send_service_request'),
     path('clients/add/', views.add_client_and_card, name='add_client_and_card'),
+    path('client/<int:client_id>/<str:action>', views.change_client_status, name='change_client_status'),
     path('tech_account/add/<int:client_id>/', views.add_tech_account, name='add_tech_account'),
     path('tech_account/update/<int:account_id>/', views.update_tech_account, name='update_tech_account'),
     path('tech_account/delete/<int:account_id>/', views.delete_tech_account, name='delete_tech_account'),
@@ -30,4 +33,6 @@ urlpatterns = [
     path('upload_template/', views.upload_template, name='upload_template'),
     path('download_template/<str:template_name>/', views.download_template, name='download_template'),
     path('get_template_content/<str:template_name>/', views.get_template_content, name='get_template_content'),
+    path('report_tickets/', views.report_tickets, name='report_tickets'),
+    path('get_advanced_search/', views.get_advanced_search, name='get_advanced_search'),
 ]

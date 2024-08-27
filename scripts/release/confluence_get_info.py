@@ -98,8 +98,10 @@ def get_ipad_release_notes(ipad_version):
 
     try:
         ipad_page_content = confluence.get_page_by_title(title=ipad_title, space="development", expand='body.view')
-        if ipad_page_content:
-            ipad_updates = extract_list(ipad_page_content)
+        if not ipad_page_content or 'results' in ipad_page_content and not ipad_page_content['results']:
+            scripts_info_logger.info(f"Страница {ipad_title} не найдена.")
+            return []  # Возвращаем пустой список, если страница не найдена
+        ipad_updates = extract_list(ipad_page_content)
     except Exception as error_message:
         scripts_error_logger.error(f"Не удалось получить страницы: {str(error_message)}")
         raise Exception(error_message)
@@ -149,6 +151,8 @@ def get_android_release_notes(android_version):
         android_page_content = confluence.get_page_by_title(title=android_title, space="development", expand='body.view')
         if android_page_content:
             android_updates = extract_list(android_page_content)
+        else:
+            scripts_info_logger.info(f"Страница {android_title} не найдена.")
     except Exception as error_message:
         scripts_error_logger.error(f"Не удалось получить страницы: {str(error_message)}")
         raise Exception(error_message)

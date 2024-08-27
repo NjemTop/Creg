@@ -1,0 +1,18 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch("{% url 'get_advanced_search' %}")
+            .then(response => response.json())
+            .then(data => {
+                const managers = data.managers;
+                const tariffPlans = data.tariff_plans;
+
+                managers.forEach(function(manager) {
+                    document.getElementById('managerSelect').innerHTML += `<option value="${manager.id}">${manager.name}</option>`;
+                });
+
+                tariffPlans.forEach(function(plan) {
+                    document.getElementById('tariffPlanSelect').innerHTML += `<option value="${plan}">${plan}</option>`;
+                });
+            });
+    });
+</script>

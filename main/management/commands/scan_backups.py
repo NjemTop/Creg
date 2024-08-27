@@ -7,6 +7,7 @@ class Command(BaseCommand):
     help = 'Сканирует каталог резервных копий и добавляет новые резервные копии в базу данных.'
 
     def handle(self, *args, **kwargs):
+        self.stdout.write("Запуск процесса сканирования и добавления нового бэкапа в БД...")
         backup_directory = 'backup/db/'  # Путь к папке с бэкапами
         existing_backups = set(DatabaseBackup.objects.values_list('file_name', flat=True))
 

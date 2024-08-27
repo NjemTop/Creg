@@ -1,110 +1,104 @@
-<!-- Модальное окно для дополнительного поиска (браузерная версия) -->
-<div class="modal fade" id="advancedSearchModalDesktop" tabindex="-1" role="dialog" aria-labelledby="advancedSearchModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="advancedSearchModalLabel">Дополнительный поиск</h5>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <!-- Форма с фильтрами для дополнительного поиска -->
-        <form id="advancedSearchForm" action="{% url 'search_results' %}" method="GET">
-          <!-- Добавьте здесь фильтры, необходимые для вашего поиска -->
-          <div class="form-group">
-            <label for="integrationCheckbox">Интеграции</label>
-            <input type="checkbox" id="integrationCheckbox" name="integrationCheckbox">
-          </div>
-          <div class="form-group">
-            <label for="moduleCheckbox">Модули</label>
-            <input type="checkbox" id="moduleCheckbox" name="moduleCheckbox">
-          </div>
-          <div class="form-group">
-            <label for="planStatusCheckbox">Статус плана</label>
-            <input type="checkbox" id="planStatusCheckbox" name="planStatusCheckbox">
-          </div>
-          <div class="form-group">
-            <label for="serverVersionCheckbox">Версия сервера</label>
-            <input type="checkbox" id="serverVersionCheckbox" name="serverVersionCheckbox">
-            <div class="form-group" id="serverVersionInputWrapper" style="display: none;">
-              <label for="serverVersionInput">Введите версию сервера</label>
-              <input type="text" id="serverVersionInput" name="serverVersionInput" class="form-control">
-              <button type="button" id="showAllClients" class="btn btn-primary">Вывести всех клиентов</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Расширенный поиск</title>
+  <style>
+    /* Стили для автозаполнения */
+    .ui-autocomplete {
+        max-height: 200px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 1200; /* Делаем окно с подсказкой видимым */
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .ui-autocomplete li {
+        padding: 8px;
+        cursor: pointer;
+    }
+    .ui-autocomplete li:hover {
+        background-color: #f0f0f0;
+    }
+    * html .ui-autocomplete {
+        height: 200px;
+    }
+  </style>
+</head>
+<body>
+    <div class="modal fade" id="advancedSearchModalDesktop" tabindex="-1" role="dialog" aria-labelledby="advancedSearchModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="advancedSearchModalLabel">Расширенный поиск</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Форма с фильтрами для дополнительного поиска -->
+                    <form id="advancedSearchForm" action="{% url 'search_results' %}" method="GET">
+                        <div class="form-group">
+                            <input type="checkbox" id="planStatusCheckbox" name="plan_status" checked>
+                            <label for="planStatusCheckbox">Активные клиенты</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="checkbox" id="serverVersionCheckbox" name="server_version_checkbox">
+                            <label for="serverVersionCheckbox">Версия сервера</label>
+                            <div class="form-group" id="serverVersionInputWrapper" style="display: none;">
+                                <label for="serverVersionInput">Введите версию сервера</label>
+                                <input type="text" id="serverVersionInput" name="server_version_input" class="form-control" data-url="{% url 'search_versions' %}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="checkbox" id="filterByVersion" name="filter_by_version">
+                            <label for="filterByVersion">Фильтр по версии</label>
+                            <div id="versionSelectWrapper" style="display: none;">
+                                <select id="versionSelect" name="version" class="form-control">
+                                    <option value="2">2.x</option>
+                                    <option value="3">3.x</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="checkbox" id="filterByManager" name="filter_by_manager">
+                            <label for="filterByManager">Фильтр по менеджеру</label>
+                            <div id="managerSelectWrapper" style="display: none;">
+                                <select id="managerSelect" name="manager" class="form-control">
+                                    <!-- managers will be populated via JavaScript -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="checkbox" id="filterByTariffPlan" name="filter_by_tariff_plan">
+                            <label for="filterByTariffPlan">Фильтр по тарифному плану</label>
+                            <div id="tariffPlanSelectWrapper" style="display: none;">
+                                <select id="tariffPlanSelect" name="tariff_plan" class="form-control">
+                                    <!-- tariffPlans will be populated via JavaScript -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="checkbox" id="integrationCheckbox" name="integration">
+                            <label for="integrationCheckbox">Интеграции</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="checkbox" id="moduleCheckbox" name="module">
+                            <label for="moduleCheckbox">Модули</label>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" id="advancedSearchSubmit">Искать</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label for="managerCheckbox">Менеджеры</label>
-            <input type="checkbox" id="managerCheckbox" name="managerCheckbox">
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-primary" id="advancedSearchSubmit">Искать</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-          </div>
-        </form>
-      </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- Модальное окно для дополнительного поиска (мобильная версия) -->
-<div class="modal fade" id="advancedSearchModalMobile" tabindex="-1" role="dialog" aria-labelledby="advancedSearchModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="advancedSearchModalLabel">Дополнительный поиск</h5>
-              <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-              </button>
-          </div>
-          <div class="modal-body">
-              <!-- Форма с фильтрами для дополнительного поиска -->
-              <form id="advancedSearchFormMobile">
-                  <!-- Добавьте здесь фильтры, необходимые для вашего поиска -->
-                  <div class="form-group">
-                      <label for="integrationCheckboxMobile">Интеграции</label>
-                      <input type="checkbox" id="integrationCheckboxMobile" name="integrationCheckboxMobile">
-                  </div>
-                  <div class="form-group">
-                      <label for="moduleCheckboxMobile">Модули</label>
-                      <input type="checkbox" id="moduleCheckboxMobile" name="moduleCheckboxMobile">
-                  </div>
-                  <div class="form-group">
-                      <label for="planStatusCheckboxMobile">Статус плана</label>
-                      <input type="checkbox" id="planStatusCheckboxMobile" name="planStatusCheckboxMobile">
-                  </div>
-                  <div class="form-group">
-                      <label for="serverVersionCheckboxMobile">Версия сервера</label>
-                      <input type="checkbox" id="serverVersionCheckboxMobile" name="serverVersionCheckboxMobile">
-                  </div>
-                  <div class="form-group">
-                      <label for="managerCheckboxMobile">Менеджеры</label>
-                      <input type="checkbox" id="managerCheckboxMobile" name="managerCheckboxMobile">
-                  </div>
-              </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="advancedSearchSubmit">Искать</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-          </div>
-      </div>
-  </div>
-</div>
-
-<script>
-  $(document).ready(function() {
-    // При изменении состояния чекбокса "Версия сервера"
-    $('#serverVersionCheckbox').change(function() {
-      if ($(this).is(':checked')) {
-        $('#serverVersionInputWrapper').show(); // Показать поле ввода
-      } else {
-        $('#serverVersionInputWrapper').hide(); // Скрыть поле ввода
-      }
-    });
-
-    // Обработка клика по кнопке "Вывести всех клиентов"
-    $('#showAllClients').click(function() {
-      window.location.href = '/search_results?show_all=true';
-    });
-  });
-</script>
+    {% include 'main/search/data_loader.html' %}
+</body>
+</html>

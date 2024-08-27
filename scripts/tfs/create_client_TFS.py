@@ -1,13 +1,10 @@
 import json
 import requests
 import base64
-import logging
-from logger.log_config import setup_logger, get_abs_log_path
 import os
 from dotenv import load_dotenv
-
-
-load_dotenv()
+import logging
+from logger.log_config import setup_logger, get_abs_log_path
 
 
 # Указываем настройки логов для нашего файла с классами
@@ -15,17 +12,20 @@ scripts_error_logger = setup_logger('scripts_error', get_abs_log_path('scripts_e
 scripts_info_logger = setup_logger('scripts_info', get_abs_log_path('scripts_info.log'), logging.INFO)
 
 
-TFS_USER = os.environ.get('TFS_USER')
-TFS_PASSWORD = os.environ.get('TFS_PASSWORD')
+load_dotenv()
+
 TFS_URL = os.environ.get('TFS_URL')
+TFS_PASSWORD = os.environ.get('TFS_PASSWORD')
+DEVOPS_PROJECT_ID = os.environ.get('DEVOPS_PROJECT_ID')
+PIPELINE_ID = os.environ.get('PIPELINE_ID')
+
 
 def trigger_tfs_pipeline(client_name):
-    url = f'{TFS_URL}/346bbe88-c194-4b45-a6e1-7df74c908c3a/_apis/pipelines/148/runs?api-version=6.0-preview.1'
+    url = f'{TFS_URL}/{DEVOPS_PROJECT_ID}/_apis/pipelines/{PIPELINE_ID}/runs?api-version=6.0-preview.1'
 
-    base64string = base64.b64encode(f"{TFS_USER}:{TFS_PASSWORD}".encode('utf-8')).decode('utf-8')
+    encoded_pat = str(base64.b64encode(bytes(':' + TFS_PASSWORD, 'utf-8')), 'utf-8')
     headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Basic {base64string}'
+        'Authorization': 'Basic ' + encoded_pat
     }
 
     data = {
@@ -50,6 +50,11 @@ def trigger_tfs_pipeline(client_name):
 
     response = requests.post(url, json=data, headers=headers)
     if response.status_code == 200:
-        scripts_error_logger.info(f'Pipeline успешно запущен для клиента: {client_name}')
+        run_id = response.json()['id']  # Получаем run_id из ответа
+        return run_id
     else:
         scripts_error_logger.error(f"Не удалось запустить pipeline для клиента: {client_name}. Ошибка: {response.text}")
+        return None
+
+if __name__ == "__main__":
+    trigger_tfs_pipeline("Тестовый клиент")

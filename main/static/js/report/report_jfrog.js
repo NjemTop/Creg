@@ -67,6 +67,7 @@ const app = new Vue({
         columns: [
             { label: 'Дата', field: 'date' },
             { label: 'Учётная запись', field: 'account_name' },
+            { label: 'Образ', field: 'image_name' },
             { label: 'Версия', field: 'version_download' },
             { label: 'IP-адрес', field: 'ip_address' },
         ],

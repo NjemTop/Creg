@@ -5,8 +5,10 @@
 {% block extra_js %}
 <script>
     window.searchResultsData = {{ results_json|safe }};
+    var managers = JSON.parse('{{ managers|escapejs }}');
+    var tariffPlans = JSON.parse('{{ tariff_plans|escapejs }}');
 </script>
-<script src="{% static 'js/search/advanced_search.js' %}"></script>
+<script src="{% static 'js/search/search_results.js' %}"></script>
 {% endblock %}
 
 {% block content %}

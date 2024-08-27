@@ -1,163 +1,143 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Получаем элементы страницы
+    // Определения переменных и получение элементов страницы
+    const applyButton = document.getElementById('applyButton');
+    const applyButtonProd = document.getElementById('applyButtonProd');
+    const sendRequestButton = document.getElementById('sendRequestButton');
+    const applyButtonHotfix = document.getElementById('applyButtonHotfix');
     const releaseTypeSelect = document.getElementById('releaseTypeGroup');
-    const releaseViewSelect = document.getElementById('releaseViewGroup');
     const releaseGroupSelect = document.getElementById('releaseGroup');
-    const filterGroupSelect = document.getElementById('filterGroup');
-    const filterGroupRow = document.getElementById('filterGroupRow');
+    const languageSelect = document.getElementById('languageSelect');
     const emailRow = document.getElementById('emailRow');
-    const releaseGroupRow = document.getElementById('releaseGroup').parentNode.parentNode; // Получаем строку для скрытия
-    const mobileVersionRow = document.getElementById('mobileVersionRow');
+    const numberReleaseRow = document.getElementById('numberReleaseRow');
+    const iPadVersionRow = document.getElementById('iPadVersionRow');
+    const AndroidVersionRow = document.getElementById('AndroidVersionRow');
+    const releaseVersionInput = document.getElementById('numberRelease');
+    const iPadVersionInput = document.getElementById('iPadVersion');
+    const AndroidVersionInput = document.getElementById('AndroidVersion');
     const downloadButton = document.getElementById('downloadButton');
     const uploadButton = document.getElementById('uploadButton');
     const uploadInput = document.getElementById('uploadInput');
+    const previewIframe = document.getElementById('previewIframe');
+    const testMailingCheckbox = document.getElementById('testMailingCheckbox');
+    const testMailingRow = document.getElementById('testMailingRow');
+    
+    // Переменная для хранения выбранного файла
+    let selectedFile = null;
 
-    // Шаблоны опций для "Выберите рассылку"
-    const releaseOptionTemplates = {
-        'standard_mailing': `<option value="release2x">2.х</option>
-                             <option value="release3x">3.х</option>`,
-        'hotfix': `<option value="release2x">2.х</option>
-                   <option value="release3x">3.х</option>
-                   <option value="releaseiPad">iPad/iPhone</option>
-                   <option value="releaseAndroid">Android</option>
-                   <option value="releaseModule">По модулям</option>
-                   <option value="releaseIntegration">По интеграциям</option>`,
-        'request': `<option value="releaseGP">Gold/Platinum</option>
-                    <option value="releaseSaaS">SaaS</option>`,
-        'default': `<option value="release2x">Пока ничего нет</option>`
+    // Конфигурация видимости
+    const visibilityConfig = {
+        'standard_mailing': {
+            'release2x': { 'numberRelease': true, 'iPadVersion': true, 'AndroidVersion': true },
+            'release3x': { 'numberRelease': true, 'iPadVersion': true, 'AndroidVersion': true },
+            'default': { 'numberRelease': true }
+        },
+        'request': {
+            'releaseGP': { 'numberRelease': true },
+            'releaseSaaS': { 'numberRelease': true },
+            'default': { 'numberRelease': true }
+        },
+        'hotfix': {
+            'release2x': { 'numberRelease': true, 'iPadVersion': false, 'AndroidVersion': false },
+            'release3x': { 'numberRelease': true, 'iPadVersion': false, 'AndroidVersion': false },
+            'releaseiPad2x': { 'numberRelease': false, 'iPadVersion': true },
+            'releaseiPad3x': { 'numberRelease': false, 'iPadVersion': true },
+            'releaseAndroid2x': { 'numberRelease': false, 'AndroidVersion': true },
+            'releaseAndroid3x': { 'numberRelease': false, 'AndroidVersion': true },
+            'default': { 'numberRelease': true }
+        },
+        'default': { 'numberRelease': false, 'iPadVersion': false, 'AndroidVersion': false, 'email': false }
     };
 
-    // Шаблоны опций для "Фильтры"
-    const filterOptionTemplates = {
-        'test_mailing': `<option value="email">Кому отправлять</option>
-                         <option value="release_process">release_process</option>`,
-        'hotfix': `<option value="all_clients">Все клиенты</option>
-                   <option value="select_list">Выбор из списка</option>`,
-        'default': ''
-    };
-
-    // Функция обновления опций в выпадающем списке "Выберите рассылку"
     function updateReleaseGroupOptions() {
         const typeValue = releaseTypeSelect.value;
-        const viewValue = releaseViewSelect.value;
-        // Определяем ключ для выбора нужных опций
-        const key = typeValue === 'test_mailing' ? viewValue : typeValue;
-        // Обновляем опции в соответствии с выбранным ключом
-        releaseGroupSelect.innerHTML = releaseOptionTemplates[key] || releaseOptionTemplates['default'];
+
+        // Сначала очищаем текущие опции
+        releaseGroupSelect.innerHTML = '';
+
+        // Добавляем опции в зависимости от типа рассылки
+        if (typeValue === 'standard_mailing') {
+            releaseGroupSelect.add(new Option('2.x', 'release2x'));
+            releaseGroupSelect.add(new Option('3.x', 'release3x'));
+        } else if (typeValue === 'hotfix') {
+            releaseGroupSelect.add(new Option('2.x', 'release2x'));
+            releaseGroupSelect.add(new Option('3.x', 'release3x'));
+            releaseGroupSelect.add(new Option('iPad/iPhone 2.0', 'releaseiPad2x'));
+            releaseGroupSelect.add(new Option('iPad/iPhone 3.0', 'releaseiPad3x'));
+            releaseGroupSelect.add(new Option('Android 2.0', 'releaseAndroid2x'));
+            releaseGroupSelect.add(new Option('Android 3.0', 'releaseAndroid3x'));
+            releaseGroupSelect.add(new Option('По модулям', 'releaseModule'));
+            releaseGroupSelect.add(new Option('По интеграциям', 'releaseIntegration'));
+        } else if (typeValue === 'request') {
+            releaseGroupSelect.add(new Option('Gold/Platinum', 'releaseGP'));
+            releaseGroupSelect.add(new Option('SaaS', 'releaseSaaS'));
+        }
     }
 
-    // Функция отображение блока ввода почты
-    function toggleEmailInput() {
-        emailRow.style.display = filterGroupSelect.value === 'email' ? 'block' : 'none';
+    function toggleVisibility(element, condition) {
+        if (element) {
+            element.style.display = condition ? '' : 'none';
+        }
     }
 
-    // Функция обновления опций и видимости фильтров
-    function updateFilterGroupOptions() {
-        const typeValue = releaseTypeSelect.value;
-        const template = filterOptionTemplates[typeValue] || filterOptionTemplates['default'];
-        filterGroupSelect.innerHTML = template;
-        // Обновляем display для всей строки, чтобы скрыть и метку, и select
-        filterGroupRow.style.display = template ? 'flex' : 'none'; // Используйте 'flex', если ваш .row использует flexbox
-        emailRow.style.display = 'none'; // Скрываем поле email, если filterGroup не активен
-        // Сразу вызываем toggleEmailInput, чтобы обновить видимость поля email
-        toggleEmailInput();
-    }
-
-    // Функция обновления видимости разделов "Выберите рассылку" и "Фильтры"
     function updateVisibility() {
-        const viewValue = releaseViewSelect.value;
-        // Скрываем или показываем раздел "Выберите рассылку"
-        releaseGroupRow.style.display = viewValue === 'custom_mailing' ? 'none' : '';
-        // Показываем раздел "Фильтры" только для кастомной рассылки
-        filterGroupRow.style.display = viewValue === 'custom_mailing' ? '' : 'none';
+        const typeValue = releaseTypeSelect.value;
+        const groupValue = releaseGroupSelect.value;
+        const isTestMailing = testMailingCheckbox.checked;
+
+        // Получаем конфигурацию для выбранного типа и группы рассылки
+        let configForType = visibilityConfig[typeValue] || visibilityConfig['default'];
+        let config = configForType[groupValue] || configForType['default'];
+
+        // Управляем видимостью элементов
+        toggleVisibility(numberReleaseRow, config.numberRelease);
+        toggleVisibility(iPadVersionRow, config.iPadVersion);
+        toggleVisibility(AndroidVersionRow, config.AndroidVersion);
+        toggleVisibility(emailRow, isTestMailing);
+        toggleVisibility(languageSelect.closest('.row'), isTestMailing);
+        
+        // Кнопки
+        toggleVisibility(applyButton, isTestMailing);
+        toggleVisibility(applyButtonProd, !isTestMailing && typeValue === 'standard_mailing');
+        toggleVisibility(sendRequestButton, !isTestMailing && typeValue === 'request');
+        toggleVisibility(applyButtonHotfix, !isTestMailing && typeValue === 'hotfix');
+
+        // "Выберите рассылку:" должно всегда отображаться
+        toggleVisibility(testMailingRow, true);
     }
 
-    // Обработчик событий при изменении "Выберите вид рассылки"
-    releaseViewSelect.addEventListener('change', function() {
+    function clearFields() {
+        releaseVersionInput.value = '';
+        iPadVersionInput.value = '';
+        AndroidVersionInput.value = '';
+    }
+
+    // Установка обработчиков событий
+    releaseTypeSelect.addEventListener('change', function() {
+        clearFields();  // Очистка полей при смене типа рассылки
+        updateReleaseGroupOptions();
         updateVisibility();
-        // Также необходимо обновить предпросмотр, если это реализовано
     });
+
+    testMailingCheckbox.addEventListener('change', updateVisibility);
+    releaseGroupSelect.addEventListener('change', updateVisibility);
+
+    // Инициализация опций и видимости при загрузке страницы
+    updateReleaseGroupOptions();
+    updateVisibility();
 
     // Обработчик выбора файла
     uploadInput.addEventListener('change', function() {
         if (this.files.length > 0) {
-            // Предполагается, что файл сразу загружается и отображается в iframe для предпросмотра
-            const file = this.files[0];
+            selectedFile = this.files[0];
             const reader = new FileReader();
             reader.onload = function(e) {
                 previewIframe.contentWindow.document.open();
                 previewIframe.contentWindow.document.write(e.target.result);
                 previewIframe.contentWindow.document.close();
             };
-            reader.readAsText(file);
+            reader.readAsText(selectedFile);
         }
     });
-
-    releaseTypeSelect.addEventListener('change', updateFilterGroupOptions);
-
-    // Обработчик событий при изменении "Выберите тип рассылки"
-    releaseTypeSelect.addEventListener('change', function() {
-        updateReleaseGroupOptions();
-        updateFilterGroupOptions();
-        // Показываем или скрываем дополнительные опции на основе выбранного типа рассылки
-        testMailingRow.style.visibility = this.value === 'test_mailing' ? 'visible' : 'hidden';
-        testMailingRow.style.height = this.value === 'test_mailing' ? 'auto' : '0';
-        // Дополнительно вызываем toggleEmailInput для обновления поля email
-        toggleEmailInput();
-    });
-
-    filterGroupSelect.addEventListener('change', toggleEmailInput);
-
-    // Обработчик событий при изменении "Выберите вид рассылки"
-    releaseViewSelect.addEventListener('change', function() {
-        updateReleaseGroupOptions();
-        toggleMobileVersionInput();
-    });
-
-    // Обработчик событий при изменении "Выберите рассылку"
-    releaseGroupSelect.addEventListener('change', function() {
-        toggleMobileVersionInput();
-    });
-
-    // Функция для показа/скрытия поля мобильной версии
-    function toggleMobileVersionInput() {
-        const releaseViewValue = releaseViewSelect.value;
-        const releaseGroupValue = releaseGroupSelect.value;
-
-        // Показываем поле для мобильной версии только для версии 3.x и если не выбран "hotfix"
-        mobileVersionRow.style.display = (releaseViewValue !== 'hotfix' && releaseGroupValue === 'release3x') ? 'block' : 'none';
-    }
-
-    // Функция для определения имени шаблона
-    function getSelectedTemplateName() {
-        const releaseType = releaseTypeSelect.value;
-        const releaseView = releaseViewSelect.value;
-        const releaseGroup = releaseGroupSelect.value;
-
-        // Определите логику для выбора имени шаблона на основе выбранных параметров
-        if (releaseType === 'test_mailing' && releaseView === 'standard_mailing') {
-            if (releaseGroup === 'release2x') {
-                return 'index_2x.html';
-            } else if (releaseGroup === 'release3x') {
-                return 'index_3x.html';
-            }
-        } else if (releaseType === 'test_mailing' && releaseView === 'hotfix') {
-            if (releaseGroup === 'release2x') {
-                return 'index_2x_hotfix_server.html';
-            } else if (releaseGroup === 'release3x') {
-                return 'index_3x_hotfix_server.html';
-            } else if (releaseGroup === 'releaseiPad') {
-                return 'index_iPad.html';
-            } else if (releaseGroup === 'releaseAndroid') {
-                return 'index_Android.html';
-            } else if (releaseGroup === 'releaseModule') {
-                return 'index_Module.html';
-            }
-            // Остальные условие для шаблонов
-        }
-        // Возвращаем пустую строку или null, если шаблон не найден
-        return null;
-    }
 
     // Обработчик клика на кнопку скачивания
     downloadButton.addEventListener('click', function() {
@@ -168,18 +148,6 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             // Если имя шаблона не найдено, выводим сообщение об ошибке
             infoShowToast("Шаблон не выбран или отсутствует.");
-        }
-    });
-
-    // Переменная для хранения выбранного файла
-    let selectedFile = null;
-
-    // Обработчик выбора файла
-    uploadInput.addEventListener('change', function() {
-        if (this.files.length > 0) {
-            selectedFile = this.files[0]; // Сохраняем выбранный файл
-        } else {
-            selectedFile = null;
         }
     });
 
@@ -202,6 +170,47 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    /// Функции для предпросмотра шаблона в iframe
+    function getSelectedTemplateName() {
+        const releaseType = releaseTypeSelect.value;
+        const releaseGroup = releaseGroupSelect.value;
+        const language = languageSelect.value;
+
+        // Определяем язык суффикса
+        const languageSuffix = language === 'ru' ? '_ru' : '_en';
+
+        // Логика для выбора имени шаблона на основе выбранных параметров
+        if (releaseType === 'standard_mailing') {
+            if (releaseGroup === 'release2x') {
+                return `index_2x${languageSuffix}.html`;
+            } else if (releaseGroup === 'release3x') {
+                return `index_3x${languageSuffix}.html`;
+            }
+        } else if (releaseType === 'hotfix') {
+            if (releaseGroup === 'release2x') {
+                return `index_2x_hotfix_server${languageSuffix}.html`;
+            } else if (releaseGroup === 'release3x') {
+                return `index_3x_hotfix_server${languageSuffix}.html`;
+            } else if (releaseGroup === 'releaseAndroid2x') {
+                return `index_2x_hotfix_android${languageSuffix}.html`;
+            } else if (releaseGroup === 'releaseAndroid3x') {
+                return `index_3x_hotfix_android${languageSuffix}.html`;
+            } else if (releaseGroup === 'releaseiPad2x') {
+                return `index_2x_hotfix_ipad${languageSuffix}.html`;
+            } else if (releaseGroup === 'releaseiPad3x') {
+                return `index_3x_hotfix_ipad${languageSuffix}.html`;
+            } else if (releaseGroup === 'releaseModule') {
+                return `index_module_hotfix${languageSuffix}.html`;
+            } else if (releaseGroup === 'releaseIntegration') {
+                return `index_integration_hotfix${languageSuffix}.html`;
+            }
+        }
+
+        // Если не найден подходящий шаблон
+        return null;
+    }
+
+    // Функция загрузки предпросмотра шаблона рассылки
     function loadTemplatePreview(templateName) {
         fetch(`/apiv2/get_template_content/${templateName}`)
             .then(response => {
@@ -218,15 +227,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 iframe.contentWindow.document.close();
             })
             .catch(error => {
+                const iframe = document.getElementById('previewIframe');
+                iframe.contentWindow.document.open();
+                iframe.contentWindow.document.write('<div style="font-size: 16px; color: red; text-align: center; padding: 20px;">Не удалось загрузить предпросмотр.</div>');
+                iframe.contentWindow.document.close();
                 infoShowToast(error.message);
             });
     }
-    
-    // Обработчик событий при изменении параметров шаблона
-    releaseTypeSelect.addEventListener('change', updateTemplatePreview);
-    releaseViewSelect.addEventListener('change', updateTemplatePreview);
-    releaseGroupSelect.addEventListener('change', updateTemplatePreview);
-    
+
+    // Функция для обновления предпросмотра шаблона
     function updateTemplatePreview() {
         const selectedTemplateName = getSelectedTemplateName();
         if (selectedTemplateName) {
@@ -234,32 +243,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Инициализация при загрузке страницы
-    updateReleaseGroupOptions();
-    updateFilterGroupOptions();
-    toggleEmailInput();
-    updateVisibility();
-    toggleMobileVersionInput(); // Вызываем при загрузке, чтобы установить правильное состояние
-    const selectedTemplateName = getSelectedTemplateName();
-    loadTemplatePreview(selectedTemplateName);
+    // Функция для загрузки файла шаблона на сервер
+    function uploadFile(file, templateName) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('templateName', templateName);
+
+        fetch('/apiv2/upload_template/', {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            if (response.ok) {
+                successShowToast("Шаблон успешно загружен.");
+            } else {
+                errorShowToast(`Ошибка при загрузке шаблона.`);
+            }
+        }).catch(error => {
+            errorShowToast(`Ошибка: ${error.message}`);
+        });
+    }
+
+    // Инициализация предпросмотра шаблона
+    updateTemplatePreview();
+
+    // Обработчик событий при изменении параметров шаблона
+    releaseTypeSelect.addEventListener('change', updateTemplatePreview);
+    releaseGroupSelect.addEventListener('change', updateTemplatePreview);
+    languageSelect.addEventListener('change', updateTemplatePreview);
 });
-
-// Функция загрузки шаблона на сервер
-function uploadFile(file, templateName) {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('templateName', templateName);
-
-    fetch('/apiv2/upload_template/', {
-        method: 'POST',
-        body: formData
-    }).then(response => {
-        if (response.ok) {
-            successShowToast("Шаблон успешно загружен.");
-        } else {
-            errorShowToast(`Ошибка при загрузке шаблона.`);
-        }
-    }).catch(error => {
-        errorShowToast(`Ошибка: ${error.message}`);
-    });
-}

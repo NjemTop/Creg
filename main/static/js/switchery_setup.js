@@ -9,7 +9,10 @@ function initializeSwitchery(selector, options = {}) {
 
     let switches = Array.prototype.slice.call(document.querySelectorAll(selector));
     switches.forEach(function (element) {
-        new Switchery(element, {...defaults, ...options});
+        if (!element.getAttribute('data-switchery')) {
+            new Switchery(element, {...defaults, ...options});
+            element.setAttribute('data-switchery', true);
+        }
     });
 }
 

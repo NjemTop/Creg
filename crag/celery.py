@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 import os
 from celery import Celery
 import logging
-from celery.signals import after_setup_logger
+from celery.signals import after_setup_logger, after_setup_task_logger
 from django.conf import settings
 
 
@@ -26,6 +26,8 @@ app.conf.update(
 )
 
 @after_setup_logger.connect
+@after_setup_task_logger.connect
 def setup_loggers(logger, *args, **kwargs):
-    logger.handlers = []
+    for handler in logger.handlers:
+        logger.removeHandler(handler)
     logging.config.dictConfig(settings.LOGGING)

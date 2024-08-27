@@ -1,4 +1,6 @@
 from django.db import models
+from django_cryptography.fields import encrypt
+from django.utils import timezone
 from django.contrib.auth.hashers import make_password, check_password
 import uuid
 from django.core.files.storage import FileSystemStorage
@@ -80,12 +82,40 @@ def update_favicon_file(sender, instance, **kwargs):
     except Favicon.DoesNotExist:
         return False
 
+
+class Secret(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    value = encrypt(models.CharField(max_length=50))
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
+class TaskExecution(models.Model):
+    task_name = models.CharField(max_length=255, unique=True)
+    last_executed = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.task_name
+
+class ClientSyncStatus(models.Model):
+    client = models.OneToOneField('ClientsList', on_delete=models.CASCADE)
+    last_synced = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f'{self.client.client_name} - {self.last_synced}'
+
+
 class ReleaseInfo(models.Model):
     """Таблица с информацией о рассылки клиенту"""
     date = models.DateField(verbose_name="Дата рассылки")
     release_number = models.CharField(verbose_name="Номер релиза", max_length=10)
     client_name = models.CharField(verbose_name="Наименование клиента", max_length=100)
-    main_contact = models.CharField(verbose_name="Основной контакт", max_length=100)
+    client_email = models.CharField(verbose_name="Почта получателя рассылки", null=True, max_length=250, blank=True)
+    main_contact = models.CharField(verbose_name="Основной контакт", null=True, max_length=100)
     copy_contact = models.TextField(verbose_name="Копия", null=True, blank=True)
 
     class Meta:
@@ -98,39 +128,90 @@ class ReleaseInfo(models.Model):
 
 
 class ReportTicket(models.Model):
-    """Класс для таблицы БД информации с отчётами о тикетах"""
+    """Класс для таблицы БД информации с отчётами о заявках"""
     report_date = models.DateField(verbose_name='Дата отчёта', null=True, blank=True)
-    ticket_id = models.IntegerField(verbose_name='Номер тикета', unique=True, null=True, blank=True)
-    subject = models.CharField(verbose_name='Тема тикета', max_length=250, null=True, blank=True)
-    creation_date = models.DateField(verbose_name='Создан', null=True, blank=True)
-    closed_date = models.DateField(verbose_name='Закрыт', null=True, blank=True)
+    ticket_id = models.CharField(verbose_name='ID', unique=True, max_length=10, null=True, blank=True)
+    unique_id = models.CharField(verbose_name='Уникальный номер', unique=True, max_length=15, null=True, blank=True)
+    subject = models.CharField(verbose_name='Тема', max_length=250, null=True, blank=True)
+    type_name = models.CharField(verbose_name='Тип', max_length=100, null=True, blank=True)
+    creation_date = models.DateTimeField(verbose_name='Создан', null=True, blank=True)
+    closed_date = models.DateTimeField(verbose_name='Закрыт', null=True, blank=True)
     status = models.CharField(verbose_name='Статус', max_length=100, null=True, blank=True)
     client_name = models.CharField(verbose_name='Название клиента', max_length=250, null=True, blank=True)
     initiator = models.CharField(verbose_name='Инициатор', max_length=150, null=True, blank=True)
     priority = models.CharField(verbose_name='Приоритет', max_length=100, null=True, blank=True)
     assignee_name = models.CharField(verbose_name='Исполнитель', max_length=100, null=True, blank=True)
-    updated_at = models.DateField(verbose_name='Дата обновления', null=True, blank=True)
-    last_reply_at = models.DateField(verbose_name='Дата последнего ответа клиенту', null=True, blank=True)
+    updated_at = models.DateTimeField(verbose_name='Дата обновления', null=True, blank=True)
+    last_reply_at = models.DateTimeField(verbose_name='Дата последнего ответа клиенту', null=True, blank=True)
     sla = models.BooleanField(verbose_name='SLA', null=True, blank=True)
-    sla_time = models.IntegerField(verbose_name='Общее_время SLA', null=True, blank=True)
-    response_time = models.IntegerField(verbose_name='Среднее время ответа', null=True, blank=True)
+    first_response_time = models.DurationField(verbose_name='Первое время ответа', null=True, blank=True)
+    sla_time = models.DurationField(verbose_name='Общее время SLA', null=True, blank=True)
+    sla_violated = models.BooleanField(default=False)
+    response_violated = models.BooleanField(default=False)
+    sla_overdue_time = models.DurationField(null=True, blank=True)
+    response_overdue_time = models.DurationField(null=True, blank=True)
     cause = models.CharField(verbose_name='Причина возникновения', max_length=100, null=True, blank=True)
     module_boardmaps = models.CharField(verbose_name='Модуль BoardMaps', max_length=100, null=True, blank=True)
     ci = models.TextField(verbose_name='CI', null=True, blank=True)
     staff_message = models.IntegerField(verbose_name='Сообщений от саппорта', null=True, blank=True)
 
     class Meta:
-        verbose_name = "Отчёт о тикетах"
-        verbose_name_plural = "Отчёты о тикетах"
+        verbose_name = "Отчёт о заявке"
+        verbose_name_plural = "Отчёты о заявках"
         db_table = "report_ticket"
 
     def __str__(self):
         return str(self.ticket_id) if self.ticket_id else ''
 
+
+class SLAPolicy(models.Model):
+    PLAN_CHOICES = [
+        ('platinum', 'Platinum'),
+        ('gold', 'Gold'),
+        ('silver', 'Silver'),
+        ('bronze', 'Bronze'),
+    ]
+
+    PRIORITY_CHOICES = [
+        ('critical', 'Критический'),
+        ('high', 'Высокий'),
+        ('medium', 'Средний'),
+        ('low', 'Низкий'),
+    ]
+    
+    plan = models.CharField(max_length=10, choices=PLAN_CHOICES)
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES)
+    reaction_time = models.DurationField()
+    planned_resolution_time = models.DurationField()
+    max_resolution_time = models.DurationField()
+
+    class Meta:
+        ordering = ['plan', 'priority']
+
+    def __str__(self):
+        return f"{self.get_priority_display()} - {self.get_plan_display()}"
+    
+    def format_duration(self, duration):
+        days, seconds = duration.days, duration.seconds
+        hours = seconds // 3600
+        minutes = (seconds % 3600) // 60
+        return f"{days}d {hours}h {minutes}m"
+
+    def formatted_reaction_time(self):
+        return self.format_duration(self.reaction_time)
+
+    def formatted_planned_resolution_time(self):
+        return self.format_duration(self.planned_resolution_time)
+
+    def formatted_max_resolution_time(self):
+        return self.format_duration(self.max_resolution_time)
+
+
 class ReportDownloadjFrog(models.Model):
     """Класс для таблицы БД информации о скачивании с jFrog"""
     date = models.DateField(verbose_name='Дата')
     account_name = models.CharField(verbose_name='Учётная запись jFrog', max_length=100, null=True, blank=True)
+    image_name = models.CharField(verbose_name='Образ', max_length=150, null=True, blank=True)
     version_download = models.CharField(verbose_name='Версия скачивания', max_length=100, null=True, blank=True)
     ip_address = models.CharField(verbose_name='IP-адрес', max_length=20, null=True, blank=True)
 
@@ -147,8 +228,11 @@ class UsersBoardMaps(models.Model):
     name = models.CharField(verbose_name='Сотрудник', max_length=150, null=True, blank=True)
     email = models.CharField(verbose_name='Почта', max_length=100, null=True, blank=True)
     position = models.CharField(verbose_name='Должность', max_length=100, null=True, blank=True)
-    test_automatic_email = models.BooleanField(verbose_name='Тестовая отправка рассылки', null=True, blank=True)
-    new_client = models.BooleanField(verbose_name='Отправка информамции о новом созданном клиенте', null=True, blank=True)
+    agent_id = models.IntegerField(verbose_name='ID в тикет системе', null=True, blank=True)
+    telegram_id = models.IntegerField(verbose_name='ID в Telegram', null=True, blank=True)
+    telegram_username = models.CharField(verbose_name='UserName в Telegram', max_length=100, null=True, blank=True)
+    test_automatic_email = models.BooleanField(verbose_name='Тестовая отправка рассылки', null=True, blank=True, default=False)
+    new_client = models.BooleanField(verbose_name='Отправка информамции о новом созданном клиенте', null=True, blank=True, default=False)
 
     class Meta:
         verbose_name = "Сотрудники BoardMaps"
@@ -164,16 +248,23 @@ class UsersBoardMaps(models.Model):
 
 
 class ClientsList(models.Model):
+    LANGUAGE_CHOICES = [
+        ('ru', 'Русский'),
+        ('en', 'Английский'),
+    ]
+
     client_name = models.CharField(verbose_name="Название клиента", max_length=100, db_index=True)
-    short_name = models.CharField(verbose_name="Сокращенное наименование клиента", max_length=20, null=True, blank=True)
-    password = models.CharField(verbose_name="Пароль для JFrog", max_length=20, null=True, blank=True)
-    contact_status = models.BooleanField(verbose_name='Статус клиента', default=True)
+    short_name = models.CharField(verbose_name="Сокращенное наименование клиента", max_length=20, default='')
+    password = models.CharField(verbose_name="Пароль для JFrog", max_length=20, default='')
+    contact_status = models.BooleanField(verbose_name='Статус клиента', default=False)
+    language = models.CharField(verbose_name="Язык клиента", max_length=2, choices=LANGUAGE_CHOICES, default='ru')
+    saas = models.BooleanField(verbose_name='Клиент на SaaS', default=False)
     service = models.CharField(verbose_name="Обслуживание", max_length=255, default=generate_unique_id)
-    technical_information = models.CharField(verbose_name="Техническая информация", max_length=255,
-                                             default=generate_unique_id)
+    technical_information = models.CharField(verbose_name="Техническая информация", max_length=255, default=generate_unique_id)
     integration = models.CharField(verbose_name="Интеграции", max_length=255, default=generate_unique_id)
     documents = models.CharField(verbose_name="Документы", max_length=255, default=generate_unique_id)
     notes = models.TextField(verbose_name="Примечание", null=True, blank=True)
+    last_updated = models.DateTimeField(auto_now=True, verbose_name="Дата последнего обновления")
 
     class Meta:
         verbose_name = "Клиент"
@@ -206,12 +297,16 @@ class ClientsCard(models.Model):
 class ContactsCard(models.Model):
     client_card = models.ForeignKey(ClientsCard, on_delete=models.CASCADE, related_name='contact_cards',
                                     verbose_name="Client Card")
-    contact_name = models.CharField(verbose_name="ФИО", max_length=255)
+    contact_name = models.CharField(verbose_name="ФИО", max_length=255, null=True)
+    firstname = models.CharField(verbose_name="Имя", max_length=255)
+    lastname = models.CharField(verbose_name="Фамилия", max_length=255)
     contact_position = models.CharField(verbose_name="Должность", max_length=255, null=True, blank=True)
-    contact_email = models.EmailField(verbose_name="Почта", max_length=255)
+    contact_email = models.EmailField(verbose_name="Почта", max_length=255, default='')
     contact_number = models.CharField(verbose_name="Телефон", max_length=255, null=True, blank=True)
-    notification_update = models.CharField(verbose_name="Отправка рассылки", max_length=255, null=True, blank=True)
+    contact_number_extra = models.CharField(verbose_name="Телефон доп.", max_length=255, null=True, blank=True)
+    notification_update = models.BooleanField(verbose_name="Отправка рассылки", default=False)
     contact_notes = models.TextField(verbose_name="Примечание", null=True, blank=True)
+    last_updated = models.DateTimeField(auto_now=True, verbose_name="Дата последнего обновления")
 
     class Meta:
         verbose_name = "Контакт клиента"
@@ -219,7 +314,7 @@ class ContactsCard(models.Model):
         db_table = 'contacts_card'
 
     def __str__(self):
-        return f"{self.contact_name} ({self.client_card.client_info.client_name})"
+        return f"{self.contact_email} ({self.client_card.client_info.client_name})"
 
 
 class ConnectInfoCard(models.Model):
@@ -368,9 +463,9 @@ class ServiseCard(models.Model):
     client_card = models.OneToOneField(ClientsCard, on_delete=models.CASCADE, related_name='servise_card',
                                     verbose_name="Client Card")
     service_pack = models.CharField(verbose_name="Тарифный план", max_length=255)
-    manager = models.CharField(verbose_name="Менеджер", max_length=255)
-    manager_new = models.ForeignKey(UsersBoardMaps, on_delete=models.SET_NULL, null=True, blank=True, limit_choices_to={'position': 'Менеджер'}, verbose_name="Менеджер")
+    manager = models.ForeignKey(UsersBoardMaps, on_delete=models.SET_NULL, null=True, blank=True, limit_choices_to={'position': 'Менеджер'}, verbose_name="Менеджер")
     loyal = models.CharField(verbose_name="Лояльность", max_length=255, null=True, blank=True)
+    last_updated = models.DateTimeField(auto_now=True, verbose_name="Дата последнего обновления")
 
     class Meta:
         verbose_name = "Обслуживание клиента"
@@ -388,7 +483,7 @@ class TechInformationCard(models.Model):
     client_card = models.OneToOneField(ClientsCard, on_delete=models.CASCADE, related_name='tech_information',
                                     verbose_name="Client Card")
     server_version = models.CharField(verbose_name="Версия сервера", max_length=255)
-    update_date = models.DateField(verbose_name="Дата обновления", max_length=255)
+    update_date = models.DateField(verbose_name="Дата обновления", default=timezone.now)
     api = models.BooleanField(verbose_name="API", null=True, blank=True, default=False)
     ipad = models.CharField(verbose_name="iPad", max_length=255, null=True, blank=True)
     android = models.CharField(verbose_name="Android", max_length=255, null=True, blank=True)
@@ -397,6 +492,7 @@ class TechInformationCard(models.Model):
     localizable_ios = models.BooleanField(verbose_name="Локализация iOS", null=True, blank=True, default=False)
     skins_web = models.BooleanField(verbose_name="Скины Web", null=True, blank=True, default=False)
     skins_ios = models.BooleanField(verbose_name="Скины iOS", null=True, blank=True, default=False)
+    last_updated = models.DateTimeField(auto_now=True, verbose_name="Дата последнего обновления")
 
     class Meta:
         verbose_name = "Техническая информация клиента"

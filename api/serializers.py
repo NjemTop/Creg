@@ -18,7 +18,7 @@ class ContactsCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
     class Meta:
         model = ContactsCard
-        fields = ('client_id', 'contact_name', 'contact_position', 'contact_email', 'contact_number', 'notification_update', 'contact_notes')
+        fields = ('client_id', 'contact_name', 'firstname', 'lastname', 'contact_position', 'contact_email', 'contact_number', 'contact_number_extra', 'notification_update', 'contact_notes')
 
 class ConnectInfoCardSerializer(serializers.ModelSerializer):
     client_id = serializers.ReadOnlyField(source='client_id.client_info.id')
@@ -165,7 +165,7 @@ class ContactsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ContactsCard
-        fields = ('id', 'contact_name', 'contact_position', 'contact_email', 'contact_number', 'notification_update', 'contact_notes')
+        fields = ('id', 'contact_name', 'firstname', 'lastname', 'contact_position', 'contact_email', 'contact_number', 'contact_number_extra', 'notification_update', 'contact_notes')
 
     def get_id(self, obj):
         if self.context.get('request', None) and self.context['request'].method == 'POST':
@@ -565,7 +565,7 @@ class ClientsListSerializer(serializers.ModelSerializer):
 
     def get_contacts_card(self, obj):
         contacts = ContactsCard.objects.filter(client_card__client_info=obj)
-        return [{"contact_name": contact.contact_name, "contact_position": contact.contact_position, "contact_email": contact.contact_email, "contact_number": contact.contact_number, "notification_update": contact.notification_update} for contact in contacts]
+        return [{"contact_name": contact.contact_name, "firstname": contact.firstname, "lastname": contact.lastname, "contact_position": contact.contact_position, "contact_email": contact.contact_email, "contact_number": contact.contact_number, "contact_number_extra": contact.contact_number_extra, "notification_update": contact.notification_update} for contact in contacts]
 
 class Version2ClientsSerializer(serializers.ModelSerializer):
 
@@ -577,7 +577,7 @@ class Version2ClientsSerializer(serializers.ModelSerializer):
 
     def get_contacts_card(self, obj):
         contacts = ContactsCard.objects.filter(client_card__client_info=obj)
-        return [{"contact_name": contact.contact_name, "contact_email": contact.contact_email, "notification_update": contact.notification_update} for contact in contacts]
+        return [{"contact_name": contact.contact_name, "firstname": contact.firstname, "lastname": contact.lastname, "contact_email": contact.contact_email, "notification_update": contact.notification_update} for contact in contacts]
 
 class Version3ClientsSerializer(serializers.ModelSerializer):
     
@@ -589,7 +589,7 @@ class Version3ClientsSerializer(serializers.ModelSerializer):
 
     def get_contacts_card(self, obj):
         contacts = ContactsCard.objects.filter(client_card__client_info=obj)
-        return [{"contact_name": contact.contact_name, "contact_email": contact.contact_email, "notification_update": contact.notification_update} for contact in contacts]
+        return [{"contact_name": contact.contact_name, "firstname": contact.firstname, "lastname": contact.lastname, "contact_email": contact.contact_email, "notification_update": contact.notification_update} for contact in contacts]
 
 
 class ReleaseInfoSerializer(serializers.ModelSerializer):
@@ -607,4 +607,4 @@ class ReportTicketSerializer(serializers.ModelSerializer):
 class UsersBoardMapsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UsersBoardMaps
-        fields = ['name', 'email', 'position', 'test_automatic_email', 'new_client']
+        fields = ['name', 'email', 'position', 'agent_id', 'test_automatic_email', 'new_client']

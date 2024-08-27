@@ -1,155 +1,175 @@
-from .models import ClientsList, ContactsCard, ServiseCard, TechInformationCard, Integration
+from django.core.exceptions import ValidationError
+from .models import ClientsList, ContactsCard, ServiseCard, TechInformationCard, Integration, ModuleCard, UsersBoardMaps
 from django.forms import ModelForm, TextInput, Textarea, formset_factory, Select, CheckboxInput
 from django import forms
+from django.utils.safestring import mark_safe
 
 
-class ClientListForm(ModelForm):
+class ClientForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ClientForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                label = self.fields[field_name].label
+                if label:
+                    self.fields[field_name].label = mark_safe(label + '<span class="required-star">*</span>')
+
     class Meta:
         model = ClientsList
-        fields = ["client_name"]
+        fields = ['client_name', 'short_name', 'notes']
         widgets = {
             "client_name": TextInput(attrs={
                 "class": "form-control",
-                "placeholder": "Введите наименование клиента"
+                "placeholder": "Введите наименование клиента",
+                "required": 'required',
+                "oninvalid": "this.setCustomValidity('Поле Название клиента обязательно для заполнения.')",
+                "oninput": "this.setCustomValidity('')"
+            }),
+            "short_name": TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Вписать название для УЗ jFrog/NextCloud (по-английски, без пробелов и заглавных букв. Например, 'gpnserbia')",
+                "required": 'required',
+                "oninvalid": "this.setCustomValidity('Поле Сокращенное наименование клиента обязательно для заполнения.')",
+                "oninput": "this.setCustomValidity('')"
+            }),
+            'notes': forms.Textarea(attrs={
+                'rows': 2,  # Размера высоты поля
+                'cols': 10,  # Размер ширины поля
+                'class': 'form-control resizable',
+                "placeholder": "Здесь могут быть заметки для данного клиента"
             }),
         }
 
     def clean_client_name(self):
         client_name = self.cleaned_data.get("client_name")
-        # Дополнительная валидация и обработка ошибок для поля client_name
-        if not client_name:
-            raise forms.ValidationError("Поле 'Наименование клиента' обязательно для заполнения.")
+        # Проверяем, существует ли уже клиент с таким наименованием
+        if ClientsList.objects.filter(client_name__iexact=client_name).exists():
+            raise ValidationError("Клиент с таким наименованием уже существует.")
         return client_name
 
-
 class ContactForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ContactForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                label = self.fields[field_name].label
+                if label:
+                    self.fields[field_name].label = mark_safe(label + '<span class="required-star">*</span>')
+
     class Meta:
         model = ContactsCard
-        fields = ['contact_name', 'contact_position', 'contact_email', 'notification_update', 'contact_notes']
+        fields = ['firstname', 'lastname', 'contact_position', 'contact_email', 'notification_update', 'contact_notes']
         widgets = {
-            'contact_name': TextInput(attrs={'class': 'form-control'}),
-            'contact_position': TextInput(attrs={'class': 'form-control'}),
-            'contact_email': TextInput(attrs={'class': 'form-control'}),
-            'notification_update': Select(attrs={'class': 'form-control'}),
-            'contact_notes': Textarea(attrs={'class': 'form-control'}),
+            "firstname": TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Введите имя контакта",
+                "required": 'required',
+                "oninvalid": "this.setCustomValidity('Поле Имя обязательно для заполнения.')",
+                "oninput": "this.setCustomValidity('')"
+            }),
+            "lastname": TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Введите фамилию контакта",
+                "required": 'required',
+                "oninvalid": "this.setCustomValidity('Поле Фамилия обязательно для заполнения.')",
+                "oninput": "this.setCustomValidity('')"
+            }),
+            "contact_email": TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Введите почту контакта",
+                "required": 'required',
+                "oninvalid": "this.setCustomValidity('Поле Почта обязательно для заполнения.')",
+                "oninput": "this.setCustomValidity('')"
+            }),
+            "contact_position": TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Введите должность контакта"
+            }),
+            'contact_notes': forms.Textarea(attrs={
+                'rows': 2,  # Размера высоты поля
+                'cols': 10,  # Размер ширины поля
+                'class': 'form-control resizable',
+                "placeholder": "Здесь могут быть комментарии для данного контакта"
+            }),
+            'notification_update': forms.CheckboxInput(attrs={
+                'class': 'notification_update-toggle'
+                }),
         }
-
-    def clean_contact_name(self):
-        contact_name = self.cleaned_data.get("contact_name")
-        if not contact_name:
-            raise forms.ValidationError("Поле 'ФИО' обязательно для заполнения.")
-        return contact_name
-
-    def clean_contact_position(self):
-        contact_position = self.cleaned_data.get("contact_position")
-        if not contact_position:
-            raise forms.ValidationError("Поле 'Должность' обязательно для заполнения.")
-        return contact_position
-
-    def clean_contact_email(self):
-        contact_email = self.cleaned_data.get("contact_email")
-        if not contact_email:
-            raise forms.ValidationError("Поле 'Почта' обязательно для заполнения.")
-        return contact_email
-
-    def clean_notification_update(self):
-        notification_update = self.cleaned_data.get("notification_update")
-        if not notification_update:
-            raise forms.ValidationError("Поле 'Отправка рассылки' обязательно для заполнения.")
-        return notification_update
-
-
-ContactFormSet = formset_factory(ContactForm, extra=1)
-
-
-class ServiseCardForm(ModelForm):
-    class Meta:
-        model = ServiseCard
-        fields = ['service_pack', 'manager', 'loyal']
-        widgets = {
-            'service_pack': Select(attrs={'class': 'form-control'}),
-            'manager': Select(attrs={'class': 'form-control'}),
-            'loyal': Select(attrs={'class': 'form-control'}),
-        }
-
-    def clean_service_pack(self):
-        service_pack = self.cleaned_data.get("service_pack")
-        if not service_pack:
-            raise forms.ValidationError("Поле 'Сервис план' обязательно для заполнения.")
-        return service_pack
-
-    def clean_manager(self):
-        manager = self.cleaned_data.get("manager")
-        if not manager:
-            raise forms.ValidationError("Поле 'Менеджер' обязательно для заполнения.")
-        return manager
 
 
 class TechInformationCardForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(TechInformationCardForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                label = self.fields[field_name].label
+                if label:
+                    self.fields[field_name].label = mark_safe(label + '<span class="required-star">*</span>')
+
     class Meta:
         model = TechInformationCard
-        exclude = ['client_card']  # Исключаем поле client_card, так как оно будет автоматически привязано при сохранении
+        fields = ['server_version']
         widgets = {
-            'server_version': TextInput(attrs={'class': 'form-control'}),
-            'update_date': TextInput(attrs={'class': 'form-control'}),
-            'api': CheckboxInput(attrs={'class': 'form-check-input'}),
-            'ipad': TextInput(attrs={'class': 'form-control'}),
-            'android': TextInput(attrs={'class': 'form-control'}),
-            'mdm': TextInput(attrs={'class': 'form-control'}),
-            'localizable_web': CheckboxInput(attrs={'class': 'form-check-input'}),
-            'localizable_ios': CheckboxInput(attrs={'class': 'form-check-input'}),
-            'skins_web': CheckboxInput(attrs={'class': 'form-check-input'}),
-            'skins_ios': CheckboxInput(attrs={'class': 'form-check-input'}),
+            "server_version": TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Введите версию сервера при внедрении клиента",
+                "required": 'required',
+                "oninvalid": "this.setCustomValidity('Поле Версия сервера обязательно для заполнения.')",
+                "oninput": "this.setCustomValidity('')"
+            }),
         }
 
+class ModuleForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ModuleForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if isinstance(field, forms.BooleanField):
+                self.fields[field_name].widget = forms.CheckboxInput(attrs={'class': 'module-toggle'})
 
-class ClientForm(forms.Form):
-    client_id = forms.IntegerField()
-
+    class Meta:
+        model = ModuleCard
+        fields = '__all__'
+        exclude = ['client_card']
 
 class IntegrationForm(forms.ModelForm):
     class Meta:
         model = Integration
-        fields = [
-            'elasticsearch',
-            'ad',
-            'adfs',
-            'oauth_2',
-            'module_translate',
-            'ms_oos',
-            'exchange',
-            'office_365',
-            'sfb',
-            'zoom',
-            'teams',
-            'smtp',
-            'cryptopro_dss',
-            'cryptopro_csp',
-            'smpp',
-            'limesurvey',
-        ]
-        widgets = {
-            'elasticsearch': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-            'ad': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-            'adfs': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-            'oauth_2': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-            'module_translate': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-            'ms_oos': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-            'exchange': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-            'office_365': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-            'sfb': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-            'zoom': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-            'teams': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-            'smtp': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-            'cryptopro_dss': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-            'cryptopro_csp': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-            'smpp': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-            'limesurvey': forms.CheckboxInput(attrs={'class': 'js-switch'}),
-        }
+        fields = '__all__'
+        exclude = ['client_card'] # Исключаем поле client_card, так как оно будет автоматически привязано при сохранении
+
+class ServiseCardForm(ModelForm):
+    class Meta:
+        model = ServiseCard
+        fields = ['manager']
+
+class CommandForm(forms.Form):
+    command = forms.CharField(label='Введите команду', max_length=100)
+
+
+VERSION_CHOICES = [
+    ('2', '2.x'),
+    ('3', '3.x'),
+]
 
 class AdvancedSearchForm(forms.Form):
-    serverVersionCheckbox = forms.BooleanField(label='Версия сервера', required=False)
-    serverVersionInput = forms.CharField(label='Введите версию сервера', max_length=255, required=False)
+    integration = forms.BooleanField(required=False, label='Интеграции')
+    module = forms.BooleanField(required=False, label='Модули')
+    plan_status = forms.BooleanField(required=False, label='Статус плана', initial=True)
+    server_version_checkbox = forms.BooleanField(required=False, label='Версия сервера')
+    server_version_input = forms.CharField(required=False, label='Введите версию сервера')
+    filter_by_version = forms.BooleanField(required=False, label='Фильтр по версии')
+    version = forms.ChoiceField(choices=VERSION_CHOICES, required=False, label='Выберите версию')
+    filter_by_manager = forms.BooleanField(required=False, label='Фильтр по менеджеру')
+    manager = forms.ModelChoiceField(queryset=UsersBoardMaps.objects.filter(position='Менеджер'), required=False, label='Менеджеры')
+
+    filter_by_tariff_plan = forms.BooleanField(required=False, label='Фильтр по тарифному плану')
+    tariff_plan = forms.ChoiceField(required=False, choices=[], label='Тарифный план')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['tariff_plan'].choices = [
+            (plan, plan) for plan in ServiseCard.objects.values_list('service_pack', flat=True).distinct()
+        ]
 
 
 class URLInputForm(forms.Form):

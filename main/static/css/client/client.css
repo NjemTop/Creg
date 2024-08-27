@@ -113,3 +113,16 @@ td.delete-column {
     border: none;
     display: none;
 }
+
+/* Кнопка снятие клиента с ТП */
+.suspend-client-button {
+    margin-right: 20px;
+    color: rgb(0, 0, 0);
+    border: 0px;
+}
+
+.activate-client-button {
+    margin-right: 20px;
+    color: rgb(0, 0, 0);
+    border: 0px;
+}

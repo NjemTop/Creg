@@ -74,7 +74,6 @@ function enterEditMode() {
         initializeCalendar();
         initializeTextFields();
         initializeSelectFields();
-        
 
         // Устанавливаем атрибут data-edited для строки, которая редактируется
         $('.editable').on('input', function() {
@@ -94,6 +93,16 @@ function enterEditMode() {
             $this.siblings('.show-password-button, .copy-password-button').hide();
         });
 
+        // Инициализация выбора отправки уведомлений
+        $('.notification-update').each(function() {
+            // Преобразуем атрибут data-notification-update в булево значение
+            var currentValue = $(this).closest('tr').attr('data-notification-update') === 'True';
+            var select = $('<select>', { class: 'editField notification-update-select' })
+                .append($('<option>', { value: true, text: 'Отправлять', selected: currentValue }))
+                .append($('<option>', { value: false, text: 'Не отправлять', selected: !currentValue }));
+            $(this).html(select);
+        });
+
         setupEventHandlers();
     } catch (error) {
         console.error('Ошибка при заходе в редактор:', error);
@@ -109,7 +118,7 @@ function saveChanges() {
         savePasswordFields();
 
         // Обработка изменений в таблицах
-        saveChangesForTable('contact', '#contact-tbody', ['name', 'position', 'email', 'number', 'notification_update']);
+        saveChangesForTable('contact', '#contact-tbody', ['firstname', 'lastname', 'position', 'email', 'number', 'notification_update']);
         saveChangesForTable('connect_info', '#connect_info-tbody', ['name', 'account', 'password']);
         saveChangesForTable('tech_account', '#tech_account-tbody', ['description', 'account', 'password']);
         saveChangesForTable('bm_server', '#bm_server-tbody', ['circuit', 'servers_name', 'servers_adress', 'operation_system', 'url', 'role']);
@@ -148,7 +157,7 @@ function saveChanges() {
         // Задержка перед перезагрузкой страницы
         setTimeout(function() {
             location.reload();
-        }, 2000); // 2000 миллисекунд (2 секунды) задержки
+        }, 5000); // 5000 миллисекунд (5 секунд) задержки
 
     } catch (error) {
         console.error('Ошибка при сохранении данных:', error);
@@ -189,22 +198,36 @@ function exitEditMode() {
 
 // Функция для инициализации текстовых полей в режиме редактирования
 function initializeTextFields() {
+    // Обрабатываем все .editable, которые не содержат .phone-number
     $('.editable').each(function() {
-        var content;
-        var $this = $(this);
-        // Проверяем, является ли элемент блоком <pre>
-        if ($this.is('pre')) {
-            // Для блоков <pre> используем <textarea>, получаем HTML-содержимое
-            content = $this.html().replace(/<br\s*[\/]?>/gi, "\n").replace(/<a.*?>(.*?)<\/a>/gi, "$1");
-            $this.html('<textarea class="editField" style="width: 30%; height: 150px;">' + content + '</textarea>');
-        } else if ($this.find('a').length > 0) {
-            // Для URL-адресов извлекаем URL из атрибута href
-            content = $this.find('a').attr('href');
-            $this.html('<input type="text" class="editField" value="' + content + '" />');
-        } else {
-            content = $this.html();
-            $this.html('<input type="text" class="editField" value="' + content + '" />');
+        if (!$(this).find('.phone-number').length) {
+            var content;
+            var $this = $(this);
+            // Проверяем, является ли элемент блоком <pre>
+            if ($this.is('pre')) {
+                // Для блоков <pre> используем <textarea>, получаем HTML-содержимое
+                content = $this.html().replace(/<br\s*[\/]?>/gi, "\n").replace(/<a.*?>(.*?)<\/a>/gi, "$1");
+                $this.html('<textarea class="editField" style="width: 30%; height: 150px;">' + content + '</textarea>');
+            } else if ($this.find('a').length > 0) {
+                // Для URL-адресов извлекаем URL из атрибута href
+                content = $this.find('a').attr('href');
+                $this.html('<input type="text" class="editField" value="' + content + '" />');
+            } else {
+                content = $this.text();
+                $this.html('<input type="text" class="editField" value="' + content + '" />');
+            }
         }
+    });
+    // Инициализация поля ввода для номера телефона
+    $('.phone-number').each(function() {
+        var $this = $(this);
+        var content = $this.data('phone').trim(); // Берём номер телефона без пробелов
+        var input = $('<input>', {
+            type: 'text',
+            class: 'editField phone-mask',
+            value: content
+        }).mask('+7 (000) 000-00-00'); // Применяем маску непосредственно при создании элемента
+        $this.replaceWith(input);
     });
 }
 
@@ -268,7 +291,16 @@ function saveTextFields() {
     $('.editField').each(function() {
         var $this = $(this);
         var content = $this.val();
-        $this.parent().html(content);
+        // Для полей с маской телефона, восстанавливаем первоначальный формат отображения
+        if($this.hasClass('phone-mask')) {
+            var span = $('<span>', {
+                class: 'phone-number',
+                text: content
+            });
+            $this.replaceWith(span);
+        } else {
+            $this.parent().html(content);
+        }
     });
 }
 
@@ -296,6 +328,15 @@ function savePasswordFields() {
     });
 }
 
+// Функция для преобразования номера в необходимый формат на сервере
+function convertPhoneBack(phoneNumber) {
+    // Удаляем все символы кроме цифр
+    let justNumbers = phoneNumber.replace(/\D/g, '');
+    // Заменяем первую цифру (если это 8) на 7 для единообразия
+    justNumbers = justNumbers.replace(/^8/, '7');
+    return justNumbers;
+}
+
 // Функция для обработки добавления/изменений в таблицах
 function saveChangesForTable(EndPoint, tbodySelector, fieldNames) {
     try {
@@ -310,10 +351,21 @@ function saveChangesForTable(EndPoint, tbodySelector, fieldNames) {
             fieldNames.forEach((fieldName, index) => {
                 if (fieldName === 'password') {
                     // Получаем исходный пароль из поля ввода для новой записи или из данных элемента для существующей записи
-                    content[fieldName] = isNew ? row.find('.editable').eq(index).text() : row.find('.password-hidden').data('password');
+                    var passwordValue = isNew ? row.find('.editable').eq(index).text() : row.find('.password-hidden').data('password');
+                    content[fieldName] = passwordValue;
                 } else {
-                    content[fieldName] = row.find('.editable').eq(index).text();
+                    var value = row.find('.editable').eq(index).text();
+                    if (fieldName === 'number') {
+                        value = convertPhoneBack(value);
+                    }
+                    content[fieldName] = value;
                 }
+            });
+
+            row.find('select.notification-update-select').each(function() {
+                var selectedValue = $(this).val(); // Здесь будет "true" или "false" как строка
+                // Преобразование выбранного значения в строку, ожидаемую сервером
+                content['notification_update'] = selectedValue === 'true' ? 'True' : 'False';
             });
 
             if (isNew) {
@@ -417,8 +469,16 @@ function addNewRow(tableType, tbodyId) {
                     <td class="editable"><input type="text" class="editField" value="" /></td>
                     <td class="editable"><input type="text" class="editField" value="" /></td>
                     <td class="editable"><input type="text" class="editField" value="" /></td>
-                    <td class="editable"><input type="text" class="editField" value="" /></td>
-                    <td data-bs-toggle="tooltip" data-bs-placement="left" title="Удалить контакт"><button class="delete-row-button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
+                    <td class="editable"><input type="text" class="editField phone-mask" value="" /></td>
+                    <td class="editable notification-update">
+                        <select class="editField notification-update-select">
+                            <option value="True">Отправлять</option>
+                            <option value="False" selected>Не отправлять</option>
+                        </select>
+                    </td>
+                    <td class="delete-column" data-bs-toggle="tooltip" data-bs-placement="left" title="Удалить контакт">
+                        <button class="delete-row-button"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                    </td>
                 </tr>`;
                 break;
             case "connect_info":
@@ -457,6 +517,10 @@ function addNewRow(tableType, tbodyId) {
         var newRow = $(newRowHtml).attr('data-new', 'true');
         // Добавляем новую строку в соответствующее тело таблицы
         $('#' + tbodyId).append(newRow);
+
+        // Применяем маску к новому элементу input с классом phone-mask
+        newRow.find('.phone-mask').mask('+7 (000) 000-00-00');
+
         // Инициализируем всплывающие подсказки
         $('[data-bs-toggle="tooltip"]').tooltip();
     } catch (error) {

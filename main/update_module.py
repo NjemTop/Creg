@@ -50,5 +50,3 @@ def clean_client_name(client_name):
     # Удаляем лишние символы и приводим к нижнему регистру
     cleaned_name = ''.join(e for e in client_name if e.isalnum() or e.isspace()).lower()
     return cleaned_name
-
-update_module_info()

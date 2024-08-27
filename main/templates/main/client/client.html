@@ -1,4 +1,5 @@
 {% extends "main/base.html" %}
+{% load phone_filters %}
 {% load static %}
 
 {% block title %}
@@ -32,6 +33,13 @@
             </p>
         </div>
         <div class="col-md-6 settings-icon">
+            {% if client.contact_status %}
+                <!-- Кнопка для снятия клиента с ТП -->
+                <span class="suspend-client-button" data-bs-toggle="tooltip" data-bs-placement="right" title="Снятие клиента с ТП"><i class="fa fa-user-times fa-2x" aria-hidden="true"></i></span>
+            {% else %}
+                <!-- Кнопка для перевода клиента на ТП -->
+                <span class="activate-client-button" data-bs-toggle="tooltip" data-bs-placement="right" title="Перевод клиента на ТП"><i class="fa fa-user-plus fa-2x" aria-hidden="true"></i></span>
+            {% endif %}
             <span class="edit-button" data-bs-toggle="tooltip" data-bs-placement="right" title="Редактировать страницу"><i class="fa fa-pencil-square fa-2x" aria-hidden="true"></i></span>
             <span class="cancel-button" data-bs-toggle="tooltip" data-bs-placement="right" title="Отменить изменения" style="display: none;"><i class="fa fa-reply fa-2x" aria-hidden="true"></i></span>
             <span class="save-button" data-bs-toggle="tooltip" data-bs-placement="right" title="Сохранить изменения" style="display: none;"><i class="fa fa-check fa-2x" aria-hidden="true"></i></span>
@@ -60,6 +68,7 @@
         <thead>
             <tr>
                 <th scope="col">Имя</th>
+                <th scope="col">Фамилия</th>
                 <th scope="col">Должность</th>
                 <th scope="col">Email</th>
                 <th scope="col">Телефон</th>
@@ -68,13 +77,22 @@
         </thead>
         <tbody id="contact-tbody">
             {% for contact in contacts_list %}
-                <tr data-row-id="{{ contact.id }}">
-                    <td class="editable">{{ contact.contact_name }}</td>
+                <tr data-row-id="{{ contact.id }}" data-notification-update="{{ contact.notification_update }}">
+                    <td class="editable">{{ contact.firstname }}</td>
+                    <td class="editable">{{ contact.lastname }}</td>
                     <td class="editable">{{ contact.contact_position }}</td>
                     <td class="editable">{{ contact.contact_email }}</td>
-                    <td class="editable">{{ contact.contact_number }}</td>
-                    <td class="editable">{{ contact.notification_update }}</td>
-                    <td class="delete-column" data-bs-toggle="tooltip" data-bs-placement="left" title="Удалить контакт"><button class="delete-row-button"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
+                    <td class="editable">
+                        <span class="phone-number" data-phone="{{ contact.contact_number|default_if_none:''|phone_format }}">
+                            {{ contact.contact_number|default_if_none:''|phone_format }}
+                        </span>
+                    </td>
+                    <td class="editable notification-update">
+                        {{ contact.notification_update|yesno:"Отправлять,Не отправлять" }}
+                    </td>
+                    <td class="delete-column" data-bs-toggle="tooltip" data-bs-placement="left" title="Удалить контакт">
+                        <button class="delete-row-button"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -326,8 +344,10 @@
     <script src="{% static 'js/client/password.js' %}"></script>
     <script src="{% static 'js/client/account.js' %}"></script>
     <script src="{% static 'js/toastify-settings.js' %}"></script>
-    <!-- Для редима редактирования -->
+    <script src="{% static 'js/client/change_client_status.js' %}"></script>
+    <!-- Для режима редактирования -->
     <script src="{% static 'js/client/edit_mode.js' %}"></script>
+    <script src="{% static 'js/client/phone_mask.js' %}"></script>
 </section>
 </body>
 {% endblock %}

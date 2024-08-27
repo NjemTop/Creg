@@ -11,8 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from dotenv import load_dotenv
+from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 from pathlib import Path
 from celery.schedules import crontab
+from .version import __version__
 import os
 import graypy
 
@@ -22,6 +24,7 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Корневая директория проекта
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -37,9 +40,6 @@ CSRF_TRUSTED_ORIGINS = ['https://creg.boardmaps.ru']
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 # Указываем разрешение с какого адреса можно запускать сервер
 ALLOWED_HOSTS = ['*']
 
@@ -50,6 +50,7 @@ JSON_USE_UTF8 = True
 
 INSTALLED_APPS = [
     'dbbackup',
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,20 +58,44 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
-    'main',
+    'main.apps.MainConfig',
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
     'api',
     'apiv2',
+    'internal',
     # выключил проверку на HTTPS
     'corsheaders',
     'django_celery_beat',
     'django_celery_results',
+    'django_cryptography',
     # 'django_celery_monitor',
     'axes',
     'auditlog',
+    'widget_tweaks',
 ]
+
+JAZZMIN_SETTINGS = {
+    "site_logo": "img/logo.png",
+    "login_logo": "img/logo.png",
+    "show_ui_builder": True,
+    "language_chooser": True,
+    "login_logo_dark": None,  # если у вас темная тема и нужен другой логотип
+    "welcome_sign": "Добро пожаловать в Creg",
+    "topmenu_links": [
+
+        # Url that gets reversed (Permissions can be added)
+        {"name": "Главная страница",  "url": "/", "permissions": ["auth.view_user"]},
+
+        # external url that opens in a new window (Permissions can be added)
+        {"name": "Support", "url": "https://tfs03.boardmaps.ru/DefaultCollection/Support/_git/Crag", "new_window": True},
+
+        # model admin to link to (Permissions checked against model)
+        {"model": "auth.User"},
+
+    ],
+}
 
 # Настройки пути для сохранения резервных копий
 DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'  # Хранилище файлов
@@ -92,6 +117,7 @@ DBBACKUP_STORAGE_OPTIONS = {'location': './backup/db/'}  # Путь к папк�
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
@@ -118,6 +144,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'axes.middleware.AxesMiddleware',
     'auditlog.middleware.AuditlogMiddleware',
+    'main.middleware.CustomDatabaseErrorMiddleware',
 ]
 
 # выключил проверку на HTTPS
@@ -131,7 +158,10 @@ ROOT_URLCONF = 'crag.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'internal', 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -161,24 +191,23 @@ if DJANGO_ENV == 'local':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'database_1_test',
+            'NAME': 'creg',
             'USER': os.environ.get('POSTGRES_USER'),
             'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
             'HOST': 'localhost',
             'PORT': '5432',
         }
     }
-elif 'GITHUB_ACTIONS' in os.environ:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('POSTGRES_DB'),
-            'USER': os.environ.get('POSTGRES_USER'),
-            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-            'HOST': 'localhost',
-            'PORT': '5432',
-        }
-    }
+
+    DEBUG = True
+
+    # Настройки Celery для локальной среды
+    CELERY_BROKER_URL = 'sqla+postgresql://{user}:{password}@localhost/{dbname}'.format(
+        user=os.environ.get('POSTGRES_USER'),
+        password=os.environ.get('POSTGRES_PASSWORD'),
+        dbname='creg'
+    )
+    CELERY_RESULT_BACKEND = 'django-db'
 else:
     DATABASES = {
         'default': {
@@ -186,17 +215,25 @@ else:
             'NAME': os.environ.get('POSTGRES_DB'),
             'USER': os.environ.get('POSTGRES_USER'),
             'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-            'HOST': 'db',
-            'PORT': '5432',
+            'HOST': os.environ.get('DB_HOST', 'db'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
         }
     }
+
+    # Настройки Celery для продакшн среды
+    CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
+    CELERY_RESULT_BACKEND = 'django-db'
+
+    # SECURITY WARNING: don't run with debug turned on in production!
+    DEBUG = True
+
     from django_auth_ldap.config import LDAPSearch
     import ldap
 
     AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend', # Basic Django auth
     'django_auth_ldap.backend.LDAPBackend',      # LDAP auth
-    'axes.backends.AxesBackend',
+    'axes.backends.AxesStandaloneBackend',
     ]
 
     # Rонфигурации для django-axes:
@@ -269,10 +306,10 @@ STATIC_URL = 'static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-# Настройки Celery
-CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
-CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')
+# Общие настройки Celery
+CELERY_RESULT_EXTENDED = True
 CELERY_TIMEZONE = 'Europe/Moscow'
+CELERY_ENABLE_UTC = False
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -285,26 +322,46 @@ CELERY_BEAT_SCHEDULER = os.environ.get('CELERY_BEAT_SCHEDULER')
 CELERY_BEAT_SCHEDULE = {
     'update_module_info': {
         'task': 'api.tasks.update_module_info_task',
-        'schedule': crontab(hour=3, minute=0),  # Запуск в 3:00 по МСК
+        'schedule': crontab(hour=1, minute=0),  # Запуск в 3:00 по МСК
     },
     'update_tickets': {
-        'task': 'api.tasks.update_tickets_task',
-        'schedule': crontab(hour=22, minute=0),  # Запуск в 22:00 по МСК
+        'task': 'main.tasks.update_tickets',
+        'schedule': crontab(hour=20, minute=0),  # Запуск в 22:00 по МСК
+    },
+    'clean_up_tickets': {
+        'task': 'main.tasks.clean_up_tickets',
+        'schedule': crontab(hour=20, minute=12),  # Запуск в 22:12 по МСК
     },
     'artifactory_downloads_log': {
-        'task': 'api.tasks.artifactory_downloads_log_task',
-        'schedule': crontab(hour=23, minute=00),  # Запуск в 23:00 по МСК
+        'task': 'main.tasks.artifactory_downloads_log',
+        'schedule': crontab(minute=7),
+    },
+    'sync_contacts_with_ticket_system': {
+        'task': 'main.tasks.sync_contacts_with_ticket_system_task',
+        'schedule': crontab(minute='*/30'),  # Запуск каждые полчаса
+    },
+    'sync_server_versions_with_ticket_system': {
+        'task': 'main.tasks.sync_server_versions_with_ticket_system',
+        'schedule': crontab(minute=10),
+    },
+    'sync_manager_with_ticket_system': {
+        'task': 'main.tasks.sync_manager_with_ticket_system',
+        'schedule': crontab(minute=15),
+    },
+    'sync_client_statuses': {
+        'task': 'main.tasks.sync_client_statuses',
+        'schedule': crontab(minute=20),
     },
 }
 
-# Настройки почты
+# Настройки почты по умолчанию (для внутренних тестов и оповещений)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.environ.get('EMAIL_HOST')
-EMAIL_PORT = os.environ.get('EMAIL_PORT')
+EMAIL_HOST = os.environ.get('EMAIL_HOST_PROD')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT_PROD'))
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER_PROD')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD_PROD')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL_PROD')
 
 # Настройка, которая убирает слэш в конце "/"
 # APPEND_SLASH = False
@@ -327,7 +384,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': './logs/debug.log',
+            'filename': os.path.join(BASE_DIR, 'logs/debug.log'),
             'when': 'midnight',  # Устанавливаем создане нового файла логов на полночь
             'interval': 1,  # Устанавливаем создание файлов на каждый день свой
             'backupCount': 10,  # Устанавливаем количество лог файлов
@@ -336,7 +393,7 @@ LOGGING = {
         'info_file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': './logs/info.log',
+            'filename': os.path.join(BASE_DIR, 'logs/info.log'),
             'maxBytes': 1024*1024*2,  # Устанавливаем размер файла логов в 2 MB
             'backupCount': 5,  # Устанавливаем количество файлов логов в 5 файлов
             'formatter': 'verbose',  # Применяем форматтер
@@ -344,7 +401,7 @@ LOGGING = {
         'warning_file': {
             'level': 'WARNING',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': './logs/warning.log',
+            'filename': os.path.join(BASE_DIR, 'logs/warning.log'),
             'maxBytes': 1024*1024*5, # Устанавливаем размер файла логов в 5 MB
             'backupCount': 2, # Устанавливаем количество файлов логов в 2 файлов
             'formatter': 'verbose', # Применяем форматтер
@@ -352,7 +409,7 @@ LOGGING = {
         'error_file': {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': './logs/error.log',
+            'filename': os.path.join(BASE_DIR, 'logs/error.log'),
             'maxBytes': 1024*1024*2,  # Устанавливаем размер файла логов в 2 MB
             'backupCount': 3,  # Устанавливаем количество файлов логов в 3 файла
             'formatter': 'verbose',  # Применяем форматтер
@@ -360,7 +417,7 @@ LOGGING = {
         'critical_file': {
             'level': 'CRITICAL',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': './logs/critical.log',
+            'filename': os.path.join(BASE_DIR, 'logs/critical.log'),
             'maxBytes': 1024*1024*2,  # Устанавливаем размер файла логов в 1 MB
             'backupCount': 3,  # Устанавливаем количество файлов логов в 3 файла
             'formatter': 'verbose',  # Применяем форматтер
@@ -368,16 +425,16 @@ LOGGING = {
         'celery_info_file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': './logs/celery_info.log',
-            'maxBytes': 1024*1024*2,
+            'filename': os.path.join(BASE_DIR, 'logs/celery_info.log'),
+            'maxBytes': 1024 * 1024 * 2,
             'backupCount': 5,
             'formatter': 'verbose',
         },
         'celery_error_file': {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': './logs/celery_error.log',
-            'maxBytes': 1024*1024*2,
+            'filename': os.path.join(BASE_DIR, 'logs/celery_error.log'),
+            'maxBytes': 1024 * 1024 * 2,
             'backupCount': 3,
             'formatter': 'verbose',
         },
@@ -385,34 +442,34 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',  # Применяем форматтер
         },
-        'gelf': {
-        'level': 'INFO',
-        'class': 'graypy.GELFTCPHandler',
-        #'host': 'graylog.boardmaps.ru',
-        'host': '10.6.75.201',
-        'port': 12201,  # Порт Graylog GELF TCP input
-        'facility': 'Creg',  # Задаём имя источника для отображения в Graylog
-        },
-        'gelf_celery': {
-            'level': 'INFO',
-            'class': 'graypy.GELFTCPHandler',
-            'host': '10.6.75.201',
-            'port': 12201,
-            'facility': 'Celery',  # Задаём имя источника для отображения в Graylog
-        },
+        # 'gelf': {
+        # 'level': 'INFO',
+        # 'class': 'graypy.GELFTCPHandler',
+        # 'host': 'IT-GLOG-MON01P.corp.boardmaps.com',
+        # # 'host': '10.6.75.201',
+        # 'port': 12201,  # Порт Graylog GELF TCP input
+        # 'facility': 'Creg',  # Задаём имя источника для отображения в Graylog
+        # },
+        # 'gelf_celery': {
+        #     'level': 'INFO',
+        #     'class': 'graypy.GELFTCPHandler',
+        #     'host': 'IT-GLOG-MON01P.corp.boardmaps.com',
+        #     'port': 12201,
+        #     'facility': 'Celery',  # Задаём имя источника для отображения в Graylog
+        # },
     },
     'root': {
-        'handlers': ['file', 'console', 'gelf'],
+        'handlers': ['file', 'console', 'error_file', 'warning_file', 'critical_file'],
         'level': 'DEBUG',
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'info_file', 'warning_file', 'error_file', 'critical_file', 'console', 'gelf'],
+            'handlers': ['file', 'info_file', 'warning_file', 'error_file', 'critical_file', 'console'],
             'level': 'INFO',
             'propagate': True,
         },
         'celery': {
-            'handlers': ['file', 'celery_info_file', 'celery_error_file', 'console', 'gelf_celery'],
+            'handlers': ['file', 'celery_info_file', 'celery_error_file', 'console'],
             'level': 'DEBUG',
             'propagate': False,  # Убираем передачу сообщений в другие обработчики
         },

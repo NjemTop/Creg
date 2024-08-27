@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 { label: 'Дата ответа', field: 'last_reply_at' },
                 { label: 'SLA', field: 'sla' },
                 { label: 'Время SLA', field: 'sla_time' },
-                { label: 'Среднее время ответа', field: 'response_time' },
+                { label: 'Первое время ответа', field: 'first_response_time' },
                 { label: 'Причина возникновения', field: 'cause' },
                 { label: 'Модуль BoardMaps', field: 'module_boardmaps' },
                 { label: 'Сообщений от саппорта', field: 'staff_message' },
@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${entry.last_reply_at}</td>
                 <td>${entry.sla}</td>
                 <td>${entry.sla_time}</td>
-                <td>${entry.response_time}</td>
+                <td>${entry.first_response_time}</td>
                 <td>${entry.cause}</td>
                 <td>${entry.module_boardmaps}</td>
                 <td>${entry.staff_message}</td>

@@ -4,23 +4,32 @@
     gap: 20px;
 }
 
+/* Форма рамки УЗ и версии */
 .form-select-group {
     max-width: 200px;
+    margin-bottom: 20px;
+    width: 50%;
 }
 
-/* Уменьшение размера строки с календарём */
+/* Форма рамки календаря */
 .form-calendar-group {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .select2-container {
     width: 100% !important;
 }
 
+/* Ячейка ввода */
 .form-control, #report-date-range {
-    vertical-align: middle; /* Выравнивание по вертикали */
-    height: 38px;  /* Явная высота */
-    padding: 6px 12px;  /* Подгоните padding */
-    font-size: 14px;  /* Размер шрифта */
-    line-height: 26px;  /* Высота строки, подгоните под нужный размер */
+    vertical-align: top;
+    height: 33px;  
+    padding: 0px 5px;
+    font-size: 15px; 
+    line-height: 26px;
+    border-color: #a8adb1;
+}
+
+.select2-search, #select2-search--inline {
+    margin-top: -28px;
 }

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Уведомление о переводе на Техническую Поддержку</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+            --secondary-text-color: #999;
+            --font-family: Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        .client-info {
+            margin-top: 20px;
+        }
+
+        .client-info strong {
+            display: inline-block;
+            width: 150px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: var(--secondary-text-color);
+            font-size: small;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 0;
+            color: var(--button-text-color);
+            background-color: var(--button-background-color);
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #5b71eb;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .logo img {
+            max-width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="https://boardmaps.ru/build/images/logo_white_8MPoUTi.svg" alt="BoardMaps Logo">
+        </div>
+        <h1>Уведомление о переводе клиента на техническую поддержку</h1>
+        <p>Уважаемая команда,</p>
+        <p>сообщаем вам, что клиент <strong>{{ client.client_name }}</strong> был переведен на Техническую Поддержку (ТП).</p>
+        <p>Ниже приведена информация о контактах клиента:</p>
+        <div class="client-info">
+            {% if contacts %}
+                <ul>
+                    {% for contact in contacts %}
+                        <li>{{ contact.firstname }} {{ contact.lastname }} - {{ contact.contact_email }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Информация о контактах отсутствует.</p>
+            {% endif %}
+        </div>
+        <p>Все необходимые сообщения были отправлены клиентам.</p>
+        <p style="font-family: Arial, sans-serif; color: #999; font-size: medium;">С уважением,<br>Ваша техническая поддержка BoardMaps</p>
+        <div class="footer">
+            <p>© Creg. Никакие права не защищены.</p>
+            <p><a href="https://creg.boardmaps.ru" class="btn">Перейти на сайт</a></p>
+        </div>
+    </div>
+</body>
+</html>

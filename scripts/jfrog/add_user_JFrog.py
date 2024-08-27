@@ -129,14 +129,15 @@ def generate_random_password():
     return password
 
 
-# # Вызов функций авторизации
-# cookies = authenticate()
+if __name__ == "__main__":
+    # Вызов функций авторизации
+    cookies = authenticate()
 
-# if cookies:
-#     status_code = create_user("test_user", "Rfnzkj123123", cookies)
-#     if status_code:
-#         print(f"Пользователь успешно создан. Код ответа: {status_code}")
-#     else:
-#         print("Ошибка при создании пользователя")
-# else:
-#     print("Ошибка авторизации")
+    if cookies:
+        status_code = create_user("test_user", "test123", cookies)
+        if status_code:
+            print(f"Пользователь успешно создан. Код ответа: {status_code}")
+        else:
+            print("Ошибка при создании пользователя")
+    else:
+        print("Ошибка авторизации")

@@ -1,0 +1,232 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  namespace: creg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+      - name: db
+        image: postgres:13
+        envFrom:
+        - secretRef:
+            name: db-secret
+        env:
+        - name: TZ
+          value: "Europe/Moscow"
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: dbdata
+        ports:
+        - containerPort: 5432
+      volumes:
+      - name: dbdata
+        persistentVolumeClaim:
+          claimName: pvc-dbdata
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: creg
+  labels:
+    app: web
+    version: 1.1.5
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+        version: 1.1.5
+    spec:
+      containers:
+      - name: web
+        image: njem/creg:1.1.5
+        command: ["sh", "-c", "python3.10 manage.py makemigrations --verbosity 2 && ls -l /app/main/migrations && python3.10 manage.py migrate --verbosity 2 && python3.10 manage.py runserver 0.0.0.0:8137"]
+        ports:
+        - containerPort: 8137
+          name: web
+        envFrom:
+        - secretRef:
+            name: app-secrets
+        env:
+        - name: DB_HOST
+          value: "db"
+        - name: DB_PORT
+          value: "5432"
+        - name: TZ
+          value: "Europe/Moscow"
+        volumeMounts:
+        - mountPath: /app/media
+          name: mediadata
+        - mountPath: /app/backup/db
+          name: backup
+        - mountPath: /app/logs
+          name: logdata
+        - mountPath: /app/scripts/jfrog/artifactory_downloads_log/log
+          name: artifactory-logs
+        - mountPath: /app/scripts/release/HTML
+          name: templates
+        - mountPath: /app/main/migrations
+          name: migrations
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8137
+          initialDelaySeconds: 20
+          periodSeconds: 600
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8137
+          initialDelaySeconds: 20
+          periodSeconds: 600
+      volumes:
+      - name: mediadata
+        persistentVolumeClaim:
+          claimName: pvc-mediadata
+      - name: backup
+        persistentVolumeClaim:
+          claimName: pvc-backup
+      - name: logdata
+        persistentVolumeClaim:
+          claimName: pvc-logdata
+      - name: artifactory-logs
+        persistentVolumeClaim:
+          claimName: artifactory-pvc
+      - name: templates
+        persistentVolumeClaim:
+          claimName: pvc-templates
+      - name: migrations
+        persistentVolumeClaim:
+          claimName: pvc-migrations
+      imagePullSecrets:
+        - name: regcred
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery
+  namespace: creg
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery
+  template:
+    metadata:
+      labels:
+        app: celery
+    spec:
+      containers:
+      - name: celery
+        image: njem/creg:1.1.5
+        command: ["sh", "-c", "celery -A crag worker --loglevel=info"]
+        ports:
+        - containerPort: 8137
+          name: celery
+        envFrom:
+        - secretRef:
+            name: app-secrets
+        env:
+        - name: DB_HOST
+          value: "db"
+        - name: DB_PORT
+          value: "5432"
+        - name: TZ
+          value: "Europe/Moscow"
+        volumeMounts:
+        - mountPath: /app/logs
+          name: logdata
+        - mountPath: /app/scripts/jfrog/artifactory_downloads_log/log
+          name: artifactory-logs
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "125m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+      volumes:
+      - name: logdata
+        persistentVolumeClaim:
+          claimName: pvc-logdata
+      - name: artifactory-logs
+        persistentVolumeClaim:
+          claimName: artifactory-pvc
+      imagePullSecrets:
+        - name: regcred
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celerybeat
+  namespace: creg
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celerybeat
+  template:
+    metadata:
+      labels:
+        app: celerybeat
+    spec:
+      containers:
+      - name: celerybeat
+        image: njem/creg:1.1.5
+        command: ["sh", "-c", "celery -A crag beat --loglevel=info"]
+        envFrom:
+        - secretRef:
+            name: app-secrets
+        env:
+        - name: DB_HOST
+          value: "db"
+        - name: DB_PORT
+          value: "5432"
+        - name: TZ
+          value: "Europe/Moscow"
+        ports:
+        - containerPort: 8137
+          name: celerybeat
+        volumeMounts:
+        - mountPath: /app/logs
+          name: logdata
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "125m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+      volumes:
+      - name: logdata
+        persistentVolumeClaim:
+          claimName: pvc-logdata
+      imagePullSecrets:
+        - name: regcred

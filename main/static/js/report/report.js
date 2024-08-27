@@ -302,9 +302,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         { label: 'Исполнитель', field: 'assignee_name' },
                         { label: 'Дата обновления', field: 'updated_at' },
                         { label: 'Дата ответа', field: 'last_reply_at' },
-                        { label: 'SLA', field: 'sla' },
+                        { label: 'Первое время ответа', field: 'first_response_time' },
                         { label: 'Время SLA', field: 'sla_time' },
-                        { label: 'Среднее время ответа', field: 'response_time' },
+                        { label: 'SLA', field: 'sla' },
                         { label: 'Причина возникновения', field: 'cause' },
                         { label: 'Модуль BoardMaps', field: 'module_boardmaps' },
                         { label: 'Сообщений от саппорта', field: 'staff_message' },
@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         tickets.forEach(ticket => {
             const creationDate = new Date(ticket.creation_date).toLocaleDateString();
-            const closingDate = !onlyOpen && ticket.status === "Closed" ? new Date(ticket.closed_date).toLocaleDateString() : null;
+            const closingDate = !onlyOpen && (ticket.status === "Выполнено" || ticket.status === "Closed") ? new Date(ticket.closed_date).toLocaleDateString() : null;
     
             datesMap.set(creationDate, (datesMap.get(creationDate) || { created: 0, closed: 0 }));
             datesMap.get(creationDate).created++;
@@ -388,7 +388,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function getTopEntities(tickets, entity) {
         let entities = {};
 
-        tickets.filter(ticket => ticket.status === "Closed")
+        tickets.filter(ticket => ticket.status === "Выполнено" || ticket.status === "Closed")
             .forEach(ticket => {
                 entities[ticket[entity]] = (entities[ticket[entity]] || 0) + 1;
        });
@@ -476,7 +476,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     >
                         <template slot="table-row" slot-scope="props">
                             <span v-if="props.column.label === 'Тикет ID'">
-                                <a :href="'https://boardmaps.happyfox.com/staff/ticket/' + props.row.ticket_id">{{ props.row.ticket_id }}</a>
+                                <a :href="'https://cs.boardmaps.ru/ru/ticket/list/filter/id/11/ticket/' + props.row.ticket_id">{{ props.row.ticket_id }}</a>
                             </span>
                             <span v-else>
                                 {{ props.formattedRow[props.column.field] }}
