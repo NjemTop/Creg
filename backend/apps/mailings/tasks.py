@@ -26,14 +26,26 @@ class WebsocketLogHandler(logging.Handler):
     def emit(self, record):
         if getattr(record, "skip_ws", False):
             return
+        message = record.getMessage()
+        level = record.levelname.lower()
+        # Persist log so it is available when the client connects later
+        try:
+            MailingLog.objects.create(
+                mailing_id=self.mailing_id, level=level, message=message
+            )
+        except Exception:
+            # Avoid any errors bubbling up during logging
+            pass
+
+        # Forward the log record to the WebSocket group
         try:
             async_to_sync(self.channel_layer.group_send)(
                 f"mailing_{self.mailing_id}",
                 {
                     "type": "mailing_update",
                     "log": {
-                        "level": record.levelname.lower(),
-                        "message": record.getMessage(),
+                        "level": level,
+                        "message": message,
                         "timestamp": timezone.now().isoformat(),
                     },
                 },
