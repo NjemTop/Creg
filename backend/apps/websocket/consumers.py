@@ -1,5 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.db import database_sync_to_async
+from apps.mailings.models import MailingLog
 
 
 class EchoConsumer(AsyncWebsocketConsumer):
@@ -23,6 +25,25 @@ class MailingConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
+
+        # Отправляем уже накопленные логи при подключении
+        for log in await self._fetch_logs():
+            await self.send(text_data=json.dumps({"log": log}))
+
+    @database_sync_to_async
+    def _fetch_logs(self, limit=50):
+        logs = (
+            MailingLog.objects.filter(mailing_id=self.mailing_id)
+            .order_by("timestamp")[:limit]
+        )
+        return [
+            {
+                "level": log.level,
+                "message": log.message,
+                "timestamp": log.timestamp.isoformat(),
+            }
+            for log in logs
+        ]
 
     async def disconnect(self, close_code):
         """ Отключение от группы WebSocket """
