@@ -55,6 +55,15 @@ class ClientForm(forms.ModelForm):
             raise ValidationError("Клиент с таким наименованием уже существует.")
         return client_name
 
+    def clean_short_name(self):
+        """Проверка уникальности сокращённого имени"""
+        short_name = self.cleaned_data.get("short_name")
+        if short_name and Client.objects.filter(short_name__iexact=short_name).exists():
+            raise ValidationError(
+                f"Клиент с сокращённым наименованием '{short_name}' уже существует."
+            )
+        return short_name
+
     class Meta:
         model = Client
         fields = ['client_name', 'short_name', 'account_name', 'notes', 'saas', 'language', 'manager']

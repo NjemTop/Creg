@@ -22,20 +22,37 @@ def client_list(request):
 
 def client_detail(request, client_id):
     client = get_object_or_404(
-        Client.objects.prefetch_related("modules", "integrations", "contacts", "servers"),
-        id=client_id
+        Client.objects.select_related(
+            "language", "service_info__manager", "technical_info"
+        ).prefetch_related(
+            "modules",
+            "integrations",
+            "contacts",
+            "servers",
+            "server_version_history",
+            "tech_accounts",
+            "server_accesses",
+            "remote_access",
+            "tech_notes",
+        ),
+        id=client_id,
     )
-    
+
     context = {
         "client": client,
-        "manager": getattr(client.service_info, "manager", None),
-        "technical_info": getattr(client.technical_info, "server_version", "Не указано"),
+        "service_info": getattr(client, "service_info", None),
+        "technical_info": getattr(client, "technical_info", None),
         "contacts": client.contacts.all(),
         "modules": client.modules.all(),
         "integrations": client.integrations.all(),
         "servers": client.servers.all(),
+        "server_version_history": client.server_version_history.all(),
+        "tech_accounts": client.tech_accounts.all(),
+        "server_accesses": client.server_accesses.all(),
+        "remote_access": client.remote_access.all(),
+        "tech_notes": client.tech_notes.all(),
     }
-    
+
     return render(request, "clients/client_detail.html", context)
 
 def create_client(request):
@@ -91,6 +108,7 @@ def create_client(request):
         try:
             with transaction.atomic():
                 client = client_form.save(commit=False)
+                client.short_name = client_form.cleaned_data.get("short_name")
                 client.password = generate_secure_password()
                 client.save()
                 logger.info(f"✅ Клиент создан: ID={client.id}, Имя={client.client_name}, Учётная запись={client.account_name}")

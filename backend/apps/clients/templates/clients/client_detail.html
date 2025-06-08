@@ -14,16 +14,41 @@
     <h2>Информация о клиенте</h2>
     
     <p><strong>Название:</strong> {{ client.client_name }}</p>
-    <p><strong>Статус:</strong> {% if client.contact_status %} ✅ Активный {% else %} ❌ Неактивный {% endif %}</p>
-    <p><strong>Сокращенное название:</strong> {{ client.short_name }}</p>
+    <p><strong>Сокращенное название:</strong> {{ client.short_name|default:"-" }}</p>
     <p><strong>Учётная запись:</strong> {{ client.account_name }}</p>
+    <p><strong>Язык:</strong> {{ client.language.name|default:"-" }}</p>
+    <p><strong>SaaS:</strong> {% if client.saas %}✅{% else %}❌{% endif %}</p>
+    <p><strong>Статус:</strong> {% if client.contact_status %} ✅ Активный {% else %} ❌ Неактивный {% endif %}</p>
+    <p><strong>Примечание:</strong> {{ client.notes|default:"-" }}</p>
+    <p><strong>Создан:</strong> {{ client.created_at|date:'d.m.Y H:i' }}</p>
+    <p><strong>Обновлён:</strong> {{ client.updated_at|date:'d.m.Y H:i' }}</p>
 
-    <h3 class="mt-4">Ответственный менеджер</h3>
-    <p><strong>Менеджер:</strong> {{ manager.first_name }} {{ manager.last_name }}</p>
+    <h3 class="mt-4">Сервисная информация</h3>
+    {% if service_info %}
+        <p><strong>Тарифный план:</strong> {{ service_info.service_pack|default:"-" }}</p>
+        <p><strong>Менеджер:</strong> {{ service_info.manager.first_name }} {{ service_info.manager.last_name }}</p>
+        <p><strong>Лояльность:</strong> {{ service_info.loyalty|default:"-" }}</p>
+    {% else %}
+        <p>❌ Сервисная информация отсутствует</p>
+    {% endif %}
 
     <h3 class="mt-4">Техническая информация</h3>
-    <p><strong>Текущая версия сервера:</strong> {{ client.technical_info.server_version|default:"❌ Не указана" }}</p>
-    <p><strong>Дата последнего обновления:</strong> {{ client.technical_info.update_date|date:"d.m.Y" }}</p>
+    {% if technical_info %}
+        <p><strong>Текущая версия сервера:</strong> {{ technical_info.server_version }}</p>
+        <p><strong>Предыдущая версия:</strong> {{ technical_info.previous_version|default:"-" }}</p>
+        <p><strong>Дата последнего обновления:</strong> {{ technical_info.update_date|date:"d.m.Y" }}</p>
+        <p><strong>Дата предыдущего обновления:</strong> {{ technical_info.previous_update_date|date:"d.m.Y"|default:"-" }}</p>
+        <p><strong>API:</strong> {% if technical_info.api_enabled %}✅{% else %}❌{% endif %}</p>
+        <p><strong>MDM поддержка:</strong> {% if technical_info.mdm_support %}✅{% else %}❌{% endif %}</p>
+        <p><strong>Поддержка iPad:</strong> {% if technical_info.supports_ipad %}✅{% else %}❌{% endif %}</p>
+        <p><strong>Поддержка Android:</strong> {% if technical_info.supports_android %}✅{% else %}❌{% endif %}</p>
+        <p><strong>Локализация Web:</strong> {% if technical_info.localized_web %}✅{% else %}❌{% endif %}</p>
+        <p><strong>Локализация iOS:</strong> {% if technical_info.localized_ios %}✅{% else %}❌{% endif %}</p>
+        <p><strong>Скины Web:</strong> {% if technical_info.skins_web %}✅{% else %}❌{% endif %}</p>
+        <p><strong>Скины iOS:</strong> {% if technical_info.skins_ios %}✅{% else %}❌{% endif %}</p>
+    {% else %}
+        <p>❌ Техническая информация отсутствует</p>
+    {% endif %}
     
     <h3 class="mt-4">Контакты</h3>
     {% if client.contacts.all %}
@@ -68,6 +93,50 @@
         </ul>
     {% else %}
         <p>❌ Серверы не добавлены</p>
+    {% endif %}
+
+    <h3 class="mt-4">Учётные записи серверов</h3>
+    {% if server_accesses %}
+        <ul>
+            {% for acc in server_accesses %}
+                <li><strong>{{ acc.username }}</strong> – {{ acc.description|default:"-" }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>❌ Учётные записи не добавлены</p>
+    {% endif %}
+
+    <h3 class="mt-4">Технические учётные записи</h3>
+    {% if tech_accounts %}
+        <ul>
+            {% for acc in tech_accounts %}
+                <li><strong>{{ acc.username }}</strong> – {{ acc.description|default:"-" }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>❌ Технические учётные записи отсутствуют</p>
+    {% endif %}
+
+    <h3 class="mt-4">Информация о подключении</h3>
+    {% if remote_access %}
+        <ul>
+            {% for access in remote_access %}
+                <li>{{ access.connection_details }}{% if access.file_path %} (<a href="{{ access.file_path.url }}">файл</a>){% endif %}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>❌ Информация о подключении отсутствует</p>
+    {% endif %}
+
+    <h3 class="mt-4">Технические заметки</h3>
+    {% if tech_notes %}
+        <ul>
+            {% for note in tech_notes %}
+                <li>{{ note.note }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>❌ Технические заметки не добавлены</p>
     {% endif %}
 
     <h3 class="mt-4">История обновлений</h3>
