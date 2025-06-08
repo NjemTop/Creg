@@ -3,11 +3,12 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.utils import timezone
 from collections import defaultdict
 from .models import Mailing, MailingLog, MailingRecipient, MailingTestRecipient, Component, MailingStatus, MailingMode
 from apps.clients.models import Client
 from .constants import TEST_RECIPIENT_LABEL
-from .tasks import send_mailing_task
+from .tasks import send_mailing_task, send_ws_event, log_event
 from .forms import MailingForm
 
 
