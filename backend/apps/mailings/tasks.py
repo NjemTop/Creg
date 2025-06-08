@@ -14,6 +14,34 @@ from apps.configurations.models import SMTPSettings
 
 logger = logging.getLogger(__name__)
 
+
+class WebsocketLogHandler(logging.Handler):
+    """Logging handler that forwards records to WebSocket."""
+
+    def __init__(self, mailing_id):
+        super().__init__()
+        self.mailing_id = mailing_id
+        self.channel_layer = get_channel_layer()
+
+    def emit(self, record):
+        if getattr(record, "skip_ws", False):
+            return
+        try:
+            async_to_sync(self.channel_layer.group_send)(
+                f"mailing_{self.mailing_id}",
+                {
+                    "type": "mailing_update",
+                    "log": {
+                        "level": record.levelname.lower(),
+                        "message": record.getMessage(),
+                        "timestamp": timezone.now().isoformat(),
+                    },
+                },
+            )
+        except Exception:
+            # Avoid any errors bubbling up during logging
+            pass
+
 def get_smtp_backend():
     """Получаем настройки SMTP из базы и создаём EmailBackend"""
     smtp = SMTPSettings.objects.filter(enabled=True).first()
@@ -54,7 +82,7 @@ def log_event(mailing_id, level, message):
         LogLevel.CRITICAL: logger.critical
     }
     log_method = log_methods.get(level, logger.debug)
-    log_method(message)
+    log_method(message, extra={"skip_ws": True})
 
     # Записываем в БД
     MailingLog.objects.create(mailing=mailing, level=level, message=message)
@@ -77,8 +105,12 @@ def log_event(mailing_id, level, message):
 @shared_task(bind=True)
 def send_mailing_task(self, mailing_id):
     """Фоновая отправка рассылки клиентам с кастомным SMTP"""
+    handler = None
     try:
         mailing = Mailing.objects.get(id=mailing_id)
+        handler = WebsocketLogHandler(mailing.id)
+        logging.getLogger().addHandler(handler)
+
         mailing.status = MailingStatus.IN_PROGRESS
         mailing.started_at = timezone.now()
         mailing.save()
@@ -224,3 +256,6 @@ def send_mailing_task(self, mailing_id):
             log_event(mailing_id, "critical", error_msg)
 
         raise
+    finally:
+        if handler:
+            logging.getLogger().removeHandler(handler)
