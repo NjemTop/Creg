@@ -11,7 +11,12 @@ from apps.clients.models import Client
 from apps.configurations.models import SMTPSettings
 
 def get_smtp_backend():
-    """Получаем настройки SMTP из базы и создаём EmailBackend"""
+    """Возвращает EmailBackend на основе активных настроек SMTP.
+
+    Выбирает первую включённую запись в таблице ``SMTPSettings`` и
+    инициализирует объект :class:`EmailBackend`. Если активной
+    конфигурации нет, возбуждает ``ValueError``.
+    """
     smtp = SMTPSettings.objects.filter(enabled=True).first()
 
     if not smtp:
@@ -29,7 +34,19 @@ def get_smtp_backend():
 
 
 def populate_prod_recipients(mailing):
-    """Создаёт получателей для продакшен-рассылки, если они отсутствуют."""
+    """Создаёт получателей для продакшен-рассылки.
+
+    Если у рассылки нет получателей, метод подберёт всех активных клиентов,
+    подходящих по языку, и создаст записи :class:`MailingRecipient` для каждого
+    контакта с разрешёнными уведомлениями.
+
+    Args:
+        mailing (:class:`Mailing`): Объект рассылки, для которого формируются
+            получатели.
+
+    Returns:
+        int: Количество созданных получателей.
+    """
     clients = Client.objects.filter(contact_status=True)
     if mailing.language:
         clients = clients.filter(language=mailing.language)
@@ -48,7 +65,19 @@ def populate_prod_recipients(mailing):
 
 @shared_task(bind=True)
 def send_mailing_task(self, mailing_id):
-    """Фоновая отправка рассылки клиентам с кастомным SMTP"""
+    """Отправляет рассылку в фоновом режиме.
+
+    Задача Celery, которая формирует список получателей, подготавливает
+    SMTP-соединение и отправляет письма. В процессе работы отправляет
+    события по WebSocket и пишет логи в базу данных.
+
+    Args:
+        mailing_id (int): Идентификатор рассылки.
+
+    Raises:
+        RuntimeError: Если не найдено активных получателей или отсутствует
+            валидная SMTP-конфигурация.
+    """
     try:
         mailing = Mailing.objects.get(id=mailing_id)
         mail_logger = get_mailing_logger(mailing.id)
@@ -95,6 +124,11 @@ def send_mailing_task(self, mailing_id):
         }
 
         for recipient in recipients:
+            client_name = (
+                recipient.client.client_name
+                if getattr(recipient, "client", None)
+                else "Тестовый получатель"
+            )
             try:
                 lang = mailing.language.code if mailing.mode == MailingMode.TEST else (
                     recipient.client.language.code if recipient.client and recipient.client.language else "ru"
@@ -121,10 +155,17 @@ def send_mailing_task(self, mailing_id):
                 recipient.sent_at = timezone.now()
                 recipient.error_message = ""
                 success_count += 1
+                log_event(
+                    mailing.id,
+                    "info",
+                    f"📤 [{self.request.id}] Отправлено клиенту {client_name} <{recipient.email}>",
+                )
 
             except Exception as error:
                 recipient.status = RecipientStatus.ERROR
-                error_msg = f"⚠️ [{self.request.id}] Ошибка отправки на {recipient.email}: {str(error)}"
+                error_msg = (
+                    f"⚠️ [{self.request.id}] Ошибка отправки клиенту {client_name} <{recipient.email}>: {str(error)}"
+                )
                 recipient.error_message = error_msg
                 error_count += 1
                 log_event(mailing.id, "error", error_msg)
