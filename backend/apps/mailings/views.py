@@ -8,7 +8,7 @@ from collections import defaultdict
 from .models import Mailing, MailingLog, MailingRecipient, MailingTestRecipient, Component, MailingStatus, MailingMode
 from apps.clients.models import Client
 from .constants import TEST_RECIPIENT_LABEL
-from .tasks import send_mailing_task, send_ws_event, log_event
+from .utils.logging import log_event
 from .forms import MailingForm
 
 
@@ -97,7 +97,12 @@ def stop_mailing(request, mailing_id):
         mailing.error_message = "Рассылка остановлена вручную."
         mailing.save()
 
-        send_ws_event(mailing.id, "status", mailing.get_status_display())
+        log_event(
+            mailing.id,
+            "info",
+            mailing.get_status_display(),
+            event_type="status",
+        )
         log_event(mailing.id, "warning", "Рассылка была принудительно остановлена пользователем.")
 
         return JsonResponse({"status": "stopped", "message": "Рассылка остановлена вручную."})

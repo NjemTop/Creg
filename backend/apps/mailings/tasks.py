@@ -6,7 +6,7 @@ from django.core.mail.backends.smtp import EmailBackend
 from django.db import transaction
 from django.utils import timezone
 from apps.mailings.services.base.email_sender import EmailSender
-from apps.mailings.utils.logging import MailingLogHandler, send_ws_event, log_event
+from apps.mailings.utils.logging import MailingLogHandler, log_event
 from .models import Mailing, MailingLog, MailingRecipient, MailingTestRecipient, MailingStatus, RecipientStatus, MailingMode, LogLevel
 from apps.configurations.models import SMTPSettings
 
@@ -48,8 +48,17 @@ def send_mailing_task(self, mailing_id):
         mailing.started_at = timezone.now()
         mailing.save()
 
-        send_ws_event(mailing.id, "status", mailing.get_status_display())
-        log_event(mailing.id, "info", f"📨 [{self.request.id}] Рассылка запущена (Режим: {mailing.mode}, Язык: {mailing.language}).")
+        log_event(
+            mailing.id,
+            "info",
+            mailing.get_status_display(),
+            event_type="status",
+        )
+        log_event(
+            mailing.id,
+            "info",
+            f"📨 [{self.request.id}] Рассылка запущена (Режим: {mailing.mode}, Язык: {mailing.language}).",
+        )
 
         # Определяем список получателей (тест или прод)
         recipients = (
@@ -76,7 +85,12 @@ def send_mailing_task(self, mailing_id):
                 }
             )
 
-            send_ws_event(mailing.id, "status", mailing.get_status_display())
+            log_event(
+                mailing.id,
+                "info",
+                mailing.get_status_display(),
+                event_type="status",
+            )
             log_event(mailing.id, "error", error_msg)
 
             raise
@@ -101,7 +115,12 @@ def send_mailing_task(self, mailing_id):
                 }
             )
 
-            send_ws_event(mailing.id, "status", mailing.get_status_display())
+            log_event(
+                mailing.id,
+                "info",
+                mailing.get_status_display(),
+                event_type="status",
+            )
             log_event(mailing.id, "error", error_msg)
 
             raise
@@ -151,7 +170,12 @@ def send_mailing_task(self, mailing_id):
 
             recipient.save()
 
-            send_ws_event(mailing.id, "status", mailing.get_status_display())
+        log_event(
+            mailing.id,
+            "info",
+            mailing.get_status_display(),
+            event_type="status",
+        )
 
         # Итоговый статус рассылки
         with transaction.atomic():
@@ -161,7 +185,12 @@ def send_mailing_task(self, mailing_id):
         
         log_event(mailing.id, "info", f"✅ Рассылка завершена: {success_count} отправлено, {error_count} с ошибками.")
 
-        send_ws_event(mailing.id, "status", mailing.get_status_display())
+        log_event(
+            mailing.id,
+            "info",
+            mailing.get_status_display(),
+            event_type="status",
+        )
 
     except Exception as error:
         error_msg = f"❌ [{self.request.id}] Критическая ошибка: {str(error)}"
@@ -185,7 +214,12 @@ def send_mailing_task(self, mailing_id):
                 }
             )
 
-            send_ws_event(mailing.id, "status", mailing.get_status_display())
+            log_event(
+                mailing.id,
+                "info",
+                mailing.get_status_display(),
+                event_type="status",
+            )
             log_event(mailing_id, "critical", error_msg)
 
         raise

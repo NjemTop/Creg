@@ -38,19 +38,7 @@ class MailingLogHandler(logging.Handler):
             pass
 
 
-def send_ws_event(mailing_id, event_type, message):
-    """Send a WebSocket event for the specified mailing."""
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        f"mailing_{mailing_id}",
-        {
-            "type": "mailing_update",
-            event_type: message,
-        },
-    )
-
-
-def log_event(mailing_id, level, message):
+def log_event(mailing_id, level, message, event_type="log"):
     """Log a mailing event, store it in the DB and broadcast via WebSocket."""
     mailing = Mailing.objects.get(id=mailing_id)
 
@@ -66,14 +54,14 @@ def log_event(mailing_id, level, message):
     MailingLog.objects.create(mailing=mailing, level=level, message=message)
 
     channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        f"mailing_{mailing_id}",
-        {
-            "type": "mailing_update",
-            "log": {
-                "level": level,
-                "message": message,
-                "timestamp": timezone.now().isoformat(),
-            },
-        },
-    )
+    payload = {"type": "mailing_update"}
+    if event_type == "log":
+        payload["log"] = {
+            "level": level,
+            "message": message,
+            "timestamp": timezone.now().isoformat(),
+        }
+    else:
+        payload[event_type] = message
+
+    async_to_sync(channel_layer.group_send)(f"mailing_{mailing_id}", payload)
