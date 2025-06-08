@@ -7,3 +7,4 @@ backend/apps/company/migrations/*
 backend/apps/mailings/migrations/*
 backend/apps/configurations/migrations/*
 backend/staticfiles/*
+Main.config
