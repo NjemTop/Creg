@@ -172,4 +172,3 @@ def save_debug_html(soup):
         scripts_info_logger.info(f"HTML страницы сохранен в {debug_file_path} для отладки.")
     except Exception as e:
         scripts_error_logger.error(f"Не удалось сохранить HTML для отладки: {e}")
-

@@ -111,4 +111,3 @@ def update_local_documentation(access_token, folder_paths, release_type, languag
                         scripts_error_logger.error(f"Ошибка при скачивании файла {item['name']}: {error}")
         else:
             scripts_error_logger.error(f"Не удалось получить список файлов для пути: {folder_path}")
-

@@ -128,4 +128,3 @@ def move_skins_and_manage_share(version, component_type):
         error_msg = f'Произошла ошибка при перемещении {folder_type}-скинов: {error_message}'
         scripts_error_logger.error(error_msg)
         return error_msg
-

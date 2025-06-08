@@ -47,4 +47,3 @@ class NextcloudManager:
     def move_internal_folders(self, src_dir, dest_dir):
         if self.folder_exists(src_dir):
             self.move_folder(src_dir, dest_dir)
-
