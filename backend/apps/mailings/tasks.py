@@ -7,6 +7,7 @@ from django.utils import timezone
 from apps.mailings.services.base.email_sender import EmailSender
 from .logging_utils import send_ws_event, log_event, get_mailing_logger
 from .models import Mailing, MailingRecipient, MailingTestRecipient, MailingStatus, RecipientStatus, MailingMode
+from apps.clients.models import Client
 from apps.configurations.models import SMTPSettings
 
 def get_smtp_backend():
@@ -25,6 +26,24 @@ def get_smtp_backend():
         use_ssl=smtp.use_ssl,
         fail_silently=False
     )
+
+
+def populate_prod_recipients(mailing):
+    """Создаёт получателей для продакшен-рассылки, если они отсутствуют."""
+    clients = Client.objects.filter(contact_status=True)
+    if mailing.language:
+        clients = clients.filter(language=mailing.language)
+
+    created = 0
+    for client in clients:
+        for contact in client.contacts.filter(notification_update=True):
+            MailingRecipient.objects.create(
+                mailing=mailing,
+                client=client,
+                email=contact.email,
+            )
+            created += 1
+    return created
 
 
 @shared_task(bind=True)
@@ -51,71 +70,19 @@ def send_mailing_task(self, mailing_id):
             else MailingRecipient.objects.filter(mailing=mailing, status=RecipientStatus.PENDING)
         )
 
+        if not recipients.exists() and mailing.mode == MailingMode.PROD:
+            populate_prod_recipients(mailing)
+            recipients = MailingRecipient.objects.filter(mailing=mailing, status=RecipientStatus.PENDING)
+
         if not recipients.exists():
             error_msg = f"⚠️ [{self.request.id}] Рассылка {mailing.id} прервана: Нет получателей."
-            mail_logger.warning(error_msg)
-            mailing.status = MailingStatus.FAILED
-            mailing.completed_at = timezone.now()
-            mailing.error_message = error_msg
-            mailing.save()
-
-            self.update_state(
-                state="FAILURE",
-                meta={
-                    "task_name": self.name,
-                    "error": error_msg,
-                    "worker": self.request.hostname,
-                    "traceback": None,
-                }
-            )
-
-            send_ws_event(
-                mailing.id,
-                "status",
-                {"code": mailing.status, "display": mailing.get_status_display()},
-            )
-            send_ws_event(
-                mailing.id,
-                "completed_at",
-                timezone.localtime(mailing.completed_at).isoformat(),
-            )
-            log_event(mailing.id, "error", error_msg)
-
-            raise
+            raise RuntimeError(error_msg)
 
         try:
             email_backend = get_smtp_backend()
         except ValueError as error:
             error_msg = f"🚨 [{self.request.id}] Ошибка SMTP: {str(error)}"
-            mail_logger.error(error_msg)
-            mailing.status = MailingStatus.FAILED
-            mailing.completed_at = timezone.now()
-            mailing.error_message = error_msg
-            mailing.save()
-
-            self.update_state(
-                state="FAILURE",
-                meta={
-                    "task_name": self.name,
-                    "error": error_msg,
-                    "worker": self.request.hostname,
-                    "traceback": None,
-                }
-            )
-
-            send_ws_event(
-                mailing.id,
-                "status",
-                {"code": mailing.status, "display": mailing.get_status_display()},
-            )
-            send_ws_event(
-                mailing.id,
-                "completed_at",
-                timezone.localtime(mailing.completed_at).isoformat(),
-            )
-            log_event(mailing.id, "error", error_msg)
-
-            raise
+            raise RuntimeError(error_msg)
 
         success_count = 0
         error_count = 0
