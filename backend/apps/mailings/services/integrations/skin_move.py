@@ -1,5 +1,4 @@
 import os
-import json
 import subprocess
 import tempfile
 import shutil
@@ -7,27 +6,24 @@ import shlex
 from urllib.parse import quote
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
-from apps.clients.models import Client, TechnicalInfo
+from apps.clients.models import Client
 from apps.mailings.services.integrations.nextcloud import NextcloudManager
 from apps.mailings.services.integrations.yandex_disk import upload_to_nextcloud
-from apps.mailings.services.utils.config import get_config_path
+from apps.configurations.config_loader import get_integration_settings
 import logging
 
 logger = logging.getLogger(__name__)
 
-CONFIG_FILE = get_config_path()
-with open(CONFIG_FILE, 'r', encoding='utf-8-sig') as file:
-    data = json.load(file)
+data = get_integration_settings()
+USERNAME = data.get("FILE_SHARE", {}).get("USERNAME")
+PASSWORD = data.get("FILE_SHARE", {}).get("PASSWORD")
+DOMAIN = data.get("FILE_SHARE", {}).get("DOMAIN")
+SMB_SERVER = data.get("FILE_SHARE", {}).get("SMB_SERVER")
+SHARE_PATH = f"//{SMB_SERVER}.{DOMAIN}/data/" if SMB_SERVER and DOMAIN else ""
 
-USERNAME = data["FILE_SHARE"]["USERNAME"]
-PASSWORD = data["FILE_SHARE"]["PASSWORD"]
-DOMAIN = data["FILE_SHARE"]["DOMAIN"]
-SMB_SERVER = data["FILE_SHARE"]["SMB_SERVER"]
-SHARE_PATH = f"//{SMB_SERVER}.{DOMAIN}/data/"
-
-NEXTCLOUD_URL = data["NEXT_CLOUD"]["URL"]
-NEXTCLOUD_USERNAME = data["NEXT_CLOUD"]["USER"]
-NEXTCLOUD_PASSWORD = data["NEXT_CLOUD"]["PASSWORD"]
+NEXTCLOUD_URL = data.get("NEXT_CLOUD", {}).get("URL")
+NEXTCLOUD_USERNAME = data.get("NEXT_CLOUD", {}).get("USER")
+NEXTCLOUD_PASSWORD = data.get("NEXT_CLOUD", {}).get("PASSWORD")
 
 nextcloud_module = NextcloudManager(NEXTCLOUD_URL, NEXTCLOUD_USERNAME, NEXTCLOUD_PASSWORD)
 

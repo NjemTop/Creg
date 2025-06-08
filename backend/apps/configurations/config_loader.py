@@ -49,3 +49,34 @@ def get_smtp_settings():
     except Exception as e:
         logger.error(f"❌ Ошибка загрузки SMTP настроек: {e}")
         return None
+
+
+def get_integration_settings():
+    """Получает настройки интеграций из базы"""
+    try:
+        IntegrationSettings = apps.get_model("configurations", "IntegrationSettings")
+        settings_obj = IntegrationSettings.objects.first()
+        if not settings_obj:
+            return {}
+        return {
+            "YANDEX_DISK": {
+                "OAUTH-TOKEN": settings_obj.yandex_token,
+                "CLIENT_ID": settings_obj.yandex_client_id,
+                "CLIENT_SECRET": settings_obj.yandex_client_secret,
+            },
+            "YANDEX_DISK_FOLDERS": settings_obj.yandex_disk_folders,
+            "FILE_SHARE": {
+                "USERNAME": settings_obj.file_share_username,
+                "PASSWORD": settings_obj.file_share_password,
+                "DOMAIN": settings_obj.file_share_domain,
+                "SMB_SERVER": settings_obj.file_share_server,
+            },
+            "NEXT_CLOUD": {
+                "URL": settings_obj.nextcloud_url,
+                "USER": settings_obj.nextcloud_user,
+                "PASSWORD": settings_obj.nextcloud_password,
+            },
+        }
+    except Exception as e:
+        logger.error(f"❌ Ошибка загрузки интеграционных настроек: {e}")
+        return {}

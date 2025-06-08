@@ -1,9 +1,11 @@
 from django.contrib import admin
-from .models import OIDCSettings, SMTPSettings
+from .models import OIDCSettings, SMTPSettings, IntegrationSettings
+
 
 @admin.register(OIDCSettings)
 class OIDCSettingsAdmin(admin.ModelAdmin):
     list_display = ("keycloak_base_url", "realm", "client_id")
+
 
 @admin.register(SMTPSettings)
 class SMTPSettingsAdmin(admin.ModelAdmin):
@@ -15,3 +17,8 @@ class SMTPSettingsAdmin(admin.ModelAdmin):
         if obj.enabled:
             SMTPSettings.objects.exclude(id=obj.id).update(enabled=False)
         super().save_model(request, obj, form, change)
+
+
+@admin.register(IntegrationSettings)
+class IntegrationSettingsAdmin(admin.ModelAdmin):
+    list_display = ("id",)
