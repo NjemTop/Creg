@@ -4,10 +4,8 @@ import requests
 import logging
 from urllib.parse import quote
 from django.conf import settings
-from logger.log_config import setup_logger, get_abs_log_path
 
-scripts_error_logger = setup_logger('scripts_error', get_abs_log_path('scripts_errors.log'), logging.ERROR)
-scripts_info_logger = setup_logger('scripts_info', get_abs_log_path('scripts_info.log'), logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class YandexDiskManager:
@@ -23,11 +21,11 @@ class YandexDiskManager:
         try:
             response = requests.get(url, headers=headers, timeout=self.timeout)
         except requests.exceptions.RequestException as error:
-            scripts_error_logger.error("Ошибка при выполнении запроса: %s", error)
+            logger.error("Ошибка при выполнении запроса: %s", error)
             return []
         if response.status_code == 200:
             return response.json()['_embedded']['items']
-        scripts_error_logger.error("Ошибка при получении списка файлов. Код статуса: %s", response.status_code)
+        logger.error("Ошибка при получении списка файлов. Код статуса: %s", response.status_code)
         return []
 
     def download_file(self, download_url, local_file_path):
@@ -39,7 +37,7 @@ class YandexDiskManager:
                     file.write(resp.content)
                 return True
             except (requests.exceptions.RequestException, IOError) as e:
-                scripts_error_logger.error("Попытка %s/%s не удалась для файла %s: %s", attempt, self.max_retries, local_file_path, e)
+                logger.error("Попытка %s/%s не удалась для файла %s: %s", attempt, self.max_retries, local_file_path, e)
                 if attempt == self.max_retries:
                     raise
         return False
@@ -50,9 +48,9 @@ def upload_to_nextcloud(local_file_path, remote_file_path, nextcloud_url, userna
     with open(local_file_path, "rb") as file:
         resp = requests.put(url, data=file, auth=(username, password), timeout=30)
     if resp.status_code == 201:
-        scripts_info_logger.info("Файл %s успешно загружен на Nextcloud.", local_file_path)
+        logger.info("Файл %s успешно загружен на Nextcloud.", local_file_path)
     else:
-        scripts_error_logger.error("Ошибка при загрузке файла %s на Nextcloud: %s", local_file_path, resp.text)
+        logger.error("Ошибка при загрузке файла %s на Nextcloud: %s", local_file_path, resp.text)
 
 
 def determine_product_type(folder_path):
@@ -106,8 +104,8 @@ def update_local_documentation(access_token, folder_paths, release_type, languag
                             response = requests.get(item['file'], timeout=30)
                             response.raise_for_status()
                             file.write(response.content)
-                        scripts_info_logger.info(f"Скачан новый файл: {item['name']}")
+                        logger.info("Скачан новый файл: %s", item['name'])
                     except (requests.exceptions.RequestException, IOError) as error:
-                        scripts_error_logger.error(f"Ошибка при скачивании файла {item['name']}: {error}")
+                        logger.error("Ошибка при скачивании файла %s: %s", item['name'], error)
         else:
-            scripts_error_logger.error(f"Не удалось получить список файлов для пути: {folder_path}")
+            logger.error("Не удалось получить список файлов для пути: %s", folder_path)

@@ -1,5 +1,7 @@
 from apps.clients.models import Client, Contact, TechnicalInfo
-from logger.log_config import scripts_info_logger, scripts_error_logger
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def get_clients_for_mailing(version_prefix):
@@ -31,9 +33,9 @@ def get_clients_for_mailing(version_prefix):
             if emails:
                 clients_for_mailing[client_id] = list(emails)
 
-        scripts_info_logger.info(f"Найдено {len(clients_for_mailing)} клиентов для рассылки.")
+        logger.info("Найдено %s клиентов для рассылки.", len(clients_for_mailing))
         return clients_for_mailing
 
     except Exception as e:
-        scripts_error_logger.error(f"Ошибка при получении клиентов для рассылки: {e}")
+        logger.error("Ошибка при получении клиентов для рассылки: %s", e)
         return {}

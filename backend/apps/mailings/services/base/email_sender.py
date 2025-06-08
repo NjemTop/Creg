@@ -17,6 +17,7 @@ from apps.mailings.services.utils.attachments import (
     update_documentation,
     embed_hidden_logo,
 )
+from apps.mailings.services.utils.config import load_main_config
 from apps.mailings.services.base.helpers import log_updates
 from apps.mailings.services.integrations.confluence import (
     get_server_release_notes,
@@ -24,11 +25,10 @@ from apps.mailings.services.integrations.confluence import (
     get_android_release_notes,
 )
 
-# логгеры
-from logger.log_config import setup_logger, get_abs_log_path
+# logging
+import logging
 
-scripts_error_logger = setup_logger('scripts_error', get_abs_log_path('scripts_errors.log'))
-scripts_info_logger = setup_logger('scripts_info', get_abs_log_path('scripts_info.log'))
+logger = logging.getLogger(__name__)
 
 
 def send_email_extra_info(*args, **kwargs):
@@ -54,8 +54,8 @@ class EmailSender:
         self.ipad_version = ipad_version or ''
         self.android_version = android_version or ''
         self.language = language
-        self.logger = scripts_info_logger
-        self.error_logger = scripts_error_logger
+        self.logger = logger
+        self.error_logger = logger
         self.msg = MIMEMultipart()
         self.env = Environment(loader=FileSystemLoader(
             os.path.join(settings.BASE_DIR, 'scripts', 'release', 'HTML')
@@ -64,8 +64,8 @@ class EmailSender:
 
     @log_errors()
     def _load_config(self):
-        with open("./Main.config", 'r', encoding='utf-8-sig') as json_file:
-            return json.load(json_file)
+        """Load mailing configuration, falling back to an empty dict."""
+        return load_main_config()
 
     def _structure_updates_3x(self, updates):
         structured_updates = []
