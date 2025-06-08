@@ -21,7 +21,7 @@ jobs:
       DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       CSRF_TRUSTED_ORIGINS: http://localhost
-      DB_HOST: 127.0.0.1
+      DB_HOST: db
       DB_PORT: 5432
       CELERY_BROKER_URL: ${{ secrets.CELERY_BROKER_URL }}
       CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}
