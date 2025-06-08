@@ -91,7 +91,7 @@ def create_client(request):
         try:
             with transaction.atomic():
                 client = client_form.save(commit=False)
-                client.password = generate_secure_password(8)
+                client.password = generate_secure_password()
                 client.save()
                 logger.info(f"✅ Клиент создан: ID={client.id}, Имя={client.client_name}, Учётная запись={client.account_name}")
                 logger.debug(f"🔐 Сгенерированный пароль для клиента {client.client_name}: {client.password}")
