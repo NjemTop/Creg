@@ -81,7 +81,7 @@ def send_mailing_task(self, mailing_id):
             )
             log_event(mailing.id, "error", error_msg)
 
-            raise
+            raise RuntimeError(error_msg)
 
         try:
             email_backend = get_smtp_backend()
@@ -115,7 +115,7 @@ def send_mailing_task(self, mailing_id):
             )
             log_event(mailing.id, "error", error_msg)
 
-            raise
+            raise RuntimeError(error_msg)
 
         success_count = 0
         error_count = 0
