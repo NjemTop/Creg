@@ -18,9 +18,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function toggleTestModeFields() {
         let isTestMode = modeField.value === "test";
+
         testEmailWrapper.style.display = isTestMode ? "block" : "none";
         testEmailField.required = isTestMode;
+        testEmailField.disabled = !isTestMode;
+
         languageWrapper.style.display = isTestMode ? "block" : "none";
+        const languageField = document.getElementById("id_language");
+        languageField.disabled = !isTestMode;
+
+        if (!isTestMode) {
+            testEmailField.value = "";
+            languageField.value = "";
+        }
     }
 
     function toggleSaaSUpdateTime() {

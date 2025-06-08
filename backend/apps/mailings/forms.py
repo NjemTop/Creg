@@ -27,23 +27,30 @@ class MailingForm(forms.ModelForm):
         self.fields['mode'].initial = 'test'
 
     def clean_test_email(self):
-        """ Валидация: test_email обязателен в режиме 'test'. """
+        """Валидация и очистка тестового email."""
         mode = self.cleaned_data.get('mode')
         test_email = self.cleaned_data.get('test_email')
 
         if mode == MailingMode.TEST and not test_email:
             raise ValidationError("В тестовом режиме необходимо указать email.")
-        
+
+        if mode != MailingMode.TEST:
+            return None
+
         return test_email
 
     def clean_language(self):
-        """ Валидация: язык обязателен в тестовом режиме. """
+        """Валидация и очистка поля языка."""
         mode = self.cleaned_data.get('mode')
         language = self.cleaned_data.get('language')
 
         if mode == MailingMode.TEST and not language:
             raise ValidationError("В тестовом режиме необходимо указать язык ")
-        
+
+        # При продакшн-режиме язык не должен передаваться
+        if mode != MailingMode.TEST:
+            return None
+
         return language
 
     def clean(self):
