@@ -21,7 +21,7 @@ jobs:
       DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       CSRF_TRUSTED_ORIGINS: http://localhost
-      DB_HOST: db
+      DB_HOST: localhost
       DB_PORT: 5432
       CELERY_BROKER_URL: ${{ secrets.CELERY_BROKER_URL }}
       CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}
@@ -63,18 +63,6 @@ jobs:
         run: |
           mkdir -p logs
           touch logs/debug.log logs/info.log logs/warning.log logs/error.log logs/critical.log logs/celery_info.log logs/celery_error.log logs/scripts_errors.log
-
-      - name: Install PostgreSQL client
-        run: sudo apt-get install -y postgresql-client
-
-      - name: Wait for PostgreSQL
-        run: |
-          echo "Waiting for PostgreSQL to become available..."
-          for i in {1..10}; do
-            pg_isready -h db -p 5432 -U $DB_USER && break
-            echo "PostgreSQL is not ready yet. Retrying in 3s..."
-            sleep 3
-          done
 
       - name: Apply Database Migrations
         run: |
