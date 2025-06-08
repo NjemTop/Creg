@@ -6,8 +6,7 @@ from django.core.mail.backends.smtp import EmailBackend
 from django.db import transaction
 from django.utils import timezone
 from apps.mailings.services.base.email_sender import EmailSender
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
+from apps.mailings.utils.logging import MailingLogHandler, send_ws_event, log_event
 from .models import Mailing, MailingLog, MailingRecipient, MailingTestRecipient, MailingStatus, RecipientStatus, MailingMode, LogLevel
 from apps.configurations.models import SMTPSettings
 
@@ -31,54 +30,20 @@ def get_smtp_backend():
         fail_silently=False
     )
 
-def send_ws_event(mailing_id, event_type, message):
-    """ Универсальная функция отправки событий в WebSocket """
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        f"mailing_{mailing_id}",
-        {
-            "type": "mailing_update",
-            event_type: message
-        }
-    )
 
-def log_event(mailing_id, level, message):
-    """ Универсальная функция логирования (Logger + БД + WebSocket) """
-    mailing = Mailing.objects.get(id=mailing_id)
-
-    # Записываем в Django Logger
-    log_methods = {
-        LogLevel.INFO: logger.info,
-        LogLevel.WARNING: logger.warning,
-        LogLevel.ERROR: logger.error,
-        LogLevel.CRITICAL: logger.critical
-    }
-    log_method = log_methods.get(level, logger.debug)
-    log_method(message)
-
-    # Записываем в БД
-    MailingLog.objects.create(mailing=mailing, level=level, message=message)
-
-    # Отправляем WebSocket-событие
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        f"mailing_{mailing_id}",
-        {
-            "type": "mailing_update",
-            "log": {
-                "level": level,
-                "message": message,
-                "timestamp": timezone.now().isoformat()
-            }
-        }
-    )
 
 
 @shared_task(bind=True)
 def send_mailing_task(self, mailing_id):
     """Фоновая отправка рассылки клиентам с кастомным SMTP"""
+    handler = None
     try:
         mailing = Mailing.objects.get(id=mailing_id)
+
+        handler = MailingLogHandler(mailing.id)
+        handler.setFormatter(logging.Formatter("%(message)s"))
+        logging.getLogger().addHandler(handler)
+
         mailing.status = MailingStatus.IN_PROGRESS
         mailing.started_at = timezone.now()
         mailing.save()
@@ -224,3 +189,6 @@ def send_mailing_task(self, mailing_id):
             log_event(mailing_id, "critical", error_msg)
 
         raise
+    finally:
+        if handler:
+            logging.getLogger().removeHandler(handler)
