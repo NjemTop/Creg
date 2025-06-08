@@ -1,3 +1,5 @@
-from django.test import TestCase
+from django.test import SimpleTestCase
 
-# Create your tests here.
+class BasicTestCase(SimpleTestCase):
+    def test_dummy(self):
+        self.assertTrue(True)
