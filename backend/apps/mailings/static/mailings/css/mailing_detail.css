@@ -1,0 +1,186 @@
+.log-list {
+    list-style: none;
+    padding: 0;
+    height: 300px;
+    overflow-y: auto;
+    background: #1e1e1e;
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.log-entry {
+    padding: 3px 5px;
+    font-family: "Courier New", monospace;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+}
+
+.log-entry:last-child {
+    border-bottom: none;
+}
+
+.log-time {
+    color: #bbb;
+    margin-right: 5px;
+    min-width: 90px;
+    display: inline-block;
+}
+
+.log-level {
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-right: 5px;
+    min-width: 80px;
+    text-align: center;
+}
+
+.log-message {
+    color: #ddd;
+    flex-grow: 1;
+    white-space: pre-wrap;
+}
+
+/* Цвета уровней */
+.log-info .log-level { color: #17a2b8; }
+.log-warning .log-level { color: #ffc107; }
+.log-error .log-level { color: #dc3545; font-weight: bold; }
+.log-critical .log-level { color: #ff0000; font-weight: bold; background: rgba(255, 0, 0, 0.1); padding: 2px 5px; border-radius: 3px; }
+
+/* Анимация подсвечиваний крит ошибок */
+.log-critical {
+    animation: pulseRed 1s infinite alternate;
+}
+
+@keyframes pulseRed {
+    from { background-color: rgba(255, 0, 0, 0.1); }
+    to { background-color: rgba(255, 0, 0, 0.3); }
+}
+
+/* Подсветка новой строки логов */
+.log-entry.new-log {
+    animation: fadeInLog 1s ease-in-out;
+}
+
+@keyframes fadeInLog {
+    from { background-color: rgba(40, 167, 69, 0.2); }
+    to { background-color: transparent; }
+}
+
+.log-filter-btn {
+    border: 1px solid transparent;
+    background-color: #f8f9fa;
+    color: #333;
+    padding: 4px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.log-filter-btn:hover {
+    background-color: #e9ecef;
+}
+
+/* Уровни */
+.log-filter-btn[data-level="info"] {
+    color: #0d6efd;
+    border-color: #cce5ff;
+}
+.log-filter-btn[data-level="info"]:hover {
+    background-color: #e7f1ff;
+}
+
+.log-filter-btn[data-level="warning"] {
+    color: #b68900;
+    border-color: #ffe8a1;
+}
+.log-filter-btn[data-level="warning"]:hover {
+    background-color: #fff8e1;
+}
+
+.log-filter-btn[data-level="error"] {
+    color: #b02a37;
+    border-color: #f5b5b5;
+}
+.log-filter-btn[data-level="error"]:hover {
+    background-color: #fde2e2;
+}
+
+.log-filter-btn[data-level="critical"] {
+    color: #842029;
+    border-color: #f1aeb5;
+}
+.log-filter-btn[data-level="critical"]:hover {
+    background-color: #b04b7042;
+}
+
+/* Подсветка активной кнопки фильтра */
+.log-filter-btn.active {
+    background-color: #dee2e6;
+    border-color: #adb5bd;
+    font-weight: 600;
+}
+
+#search-input {
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    padding: 5px 10px;
+}
+
+#recipients-container {
+    max-height: 250px; /* Ограничиваем высоту */
+    overflow-y: auto; /* Добавляем скролл */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+/* Почты и контакты внутри клиента */
+.recipient-row td {
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* Выравниваем статус */
+.status-cell {
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Разные цвета статусов */
+td.recipient-pending {
+    color: #856404;
+}
+td.recipient-sent {
+    color: #155724;
+}
+td.recipient-error {
+    color: #721c24;
+}
+
+#recipients-container table th,
+#recipients-container table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+#recipients-container thead th {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 1;
+}
+
+@media (max-width: 576px) {
+    .client-name { font-size: 14px; }
+    #recipients-container table th,
+    #recipients-container table td {
+        font-size: 13px;
+        padding: 5px;
+    }
+}

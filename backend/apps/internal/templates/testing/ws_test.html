@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Echo Test</title>
+</head>
+<body>
+    <h1>WebSocket Echo Test</h1>
+    <div>
+        <input type="text" id="msgInput">
+        <button id="sendBtn">Send</button>
+    </div>
+    <pre id="log"></pre>
+
+    <script>
+    // Подключаемся к ws://<domain>/ws/test-echo/
+    let socket = new WebSocket("ws://" + window.location.host + "/ws/test-echo/");
+
+    socket.onopen = function(e) {
+        document.getElementById("log").textContent += "WebSocket connected!\n";
+    };
+
+    socket.onmessage = function(e) {
+        document.getElementById("log").textContent += "Received: " + e.data + "\n";
+    };
+
+    document.getElementById("sendBtn").onclick = function() {
+        let msg = document.getElementById("msgInput").value;
+        socket.send(JSON.stringify({ message: msg }));
+        document.getElementById("msgInput").value = "";
+    };
+    </script>
+</body>
+</html>

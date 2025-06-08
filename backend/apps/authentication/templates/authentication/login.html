@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Вход | Creg{% endblock %}
+{% block body_class %}vh-100 d-flex align-items-center justify-content-center{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'authentication/css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center vh-100">
+    <div class="card p-4 shadow-lg text-center login-card">
+        <h2 class="mb-3">Добро пожаловать в Creg</h2>
+
+        {% if messages %}
+            <div class="alert alert-dismissible fade show" role="alert">
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if request.user.is_authenticated %}
+            <p class="text-success">Вы вошли как <strong>{{ request.user.username }}</strong></p>
+            <a href="{% url 'logout' %}" class="btn btn-danger">Выйти</a>
+        {% else %}
+            {% if oidc_enabled %}
+                <a href="{% url 'oidc_login' %}" class="btn keycloak-btn w-100 mb-3">Войти через Keycloak</a>
+            {% endif %}
+            <button id="toggle-local-login" class="btn local-login-btn w-100">Войти локально</button>
+
+            <form id="local-login-form" action="{% url 'local_login' %}" method="post" style="display: none;" class="mt-3">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <input type="text" name="username" class="form-control" placeholder="Имя пользователя" required>
+                </div>
+                <div class="mb-3">
+                    <input type="password" name="password" class="form-control" placeholder="Пароль" required>
+                </div>
+                <button type="submit" class="btn submit-btn w-100">Войти</button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'authentication/js/login.js' %}"></script>
+{% endblock %}
+
+{% block footer %}{% endblock %}

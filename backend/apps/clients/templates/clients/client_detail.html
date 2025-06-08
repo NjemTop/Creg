@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% include "includes/messages.html" %}
+
+{% block title %} Клиент: {{ client.client_name }} {% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'clients/css/client_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2>Информация о клиенте</h2>
+    
+    <p><strong>Название:</strong> {{ client.client_name }}</p>
+    <p><strong>Статус:</strong> {% if client.contact_status %} ✅ Активный {% else %} ❌ Неактивный {% endif %}</p>
+    <p><strong>Сокращенное название:</strong> {{ client.short_name }}</p>
+    <p><strong>Учётная запись:</strong> {{ client.account_name }}</p>
+
+    <h3 class="mt-4">Ответственный менеджер</h3>
+    <p><strong>Менеджер:</strong> {{ manager.first_name }} {{ manager.last_name }}</p>
+
+    <h3 class="mt-4">Техническая информация</h3>
+    <p><strong>Текущая версия сервера:</strong> {{ client.technical_info.server_version|default:"❌ Не указана" }}</p>
+    <p><strong>Дата последнего обновления:</strong> {{ client.technical_info.update_date|date:"d.m.Y" }}</p>
+    
+    <h3 class="mt-4">Контакты</h3>
+    {% if client.contacts.all %}
+        <ul>
+            {% for contact in client.contacts.all %}
+                <li><strong>{{ contact.full_name }}</strong> – {{ contact.position }} <br>
+                    📧 {{ contact.email }} | 📞 {{ contact.phone_number|default:"-" }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>❌ Контакты не добавлены</p>
+    {% endif %}
+
+    <h3 class="mt-4">Модули</h3>
+    {% if client.modules.all %}
+        <ul>
+            {% for module in client.modules.all %}
+                <li>{{ module.name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>❌ Модули не подключены</p>
+    {% endif %}
+
+    <h3 class="mt-4">Интеграции</h3>
+    {% if client.integrations.all %}
+        <ul>
+            {% for integration in client.integrations.all %}
+                <li>{{ integration.name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>❌ Интеграции не подключены</p>
+    {% endif %}
+
+    <h3 class="mt-4">Серверы</h3>
+    {% if client.servers.all %}
+        <ul>
+            {% for server in client.servers.all %}
+                <li><strong>{{ server.name }}</strong> ({{ server.ip_address }}) – {{ server.operating_system }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>❌ Серверы не добавлены</p>
+    {% endif %}
+
+    <h3 class="mt-4">История обновлений</h3>
+    {% if client.server_version_history.all %}
+        <ul>
+            {% for history in client.server_version_history.all %}
+                <li>{{ history.version }} – {{ history.update_date|date:"d.m.Y" }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>❌ История обновлений отсутствует</p>
+    {% endif %}
+
+    <a href="{% url 'clients:client_list' %}" class="styled-btn mt-3">Вернуться к списку</a>
+</div>
+
+<script src="{% static 'clients/js/client_detail.js' %}"></script>
+
+{% endblock %}

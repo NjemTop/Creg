@@ -1,0 +1,18 @@
+/* Общий стиль контейнера */
+.container {
+    max-width: 700px;
+}
+
+/* Внутренние заголовки */
+.card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    padding: 20px;
+}

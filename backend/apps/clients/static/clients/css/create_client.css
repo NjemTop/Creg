@@ -1,0 +1,129 @@
+/* Общий стиль контейнера */
+.container {
+    max-width: 700px;
+}
+
+/* Карточки с контентом */
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    padding: 20px;
+}
+
+/* Внутренние заголовки */
+.card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* Отступы для input и select */
+/* .form-control, .form-select {
+    margin-bottom: 10px;
+} */
+
+/* Тёмная тема */
+.dark-mode .card {
+    background: #222;
+    border-color: #444;
+    color: white;
+}
+
+.dark-mode .form-control, .dark-mode .form-select {
+    background: #333;
+    color: white;
+    border-color: #555;
+}
+
+/* Анимация появления формы контакта */
+.contact-form {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (min-width: 768px) {
+    .col-md-4 label[for="short_name"] {
+        white-space: nowrap;
+    }
+
+    .col-md-4 input#short_name {
+        width: 100%;
+    }
+}
+
+/* Карточки контактов */
+.contact-card {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Ошибка валидации почты */
+.is-invalid {
+    border-color: red;
+    background-color: #ffe6e6;
+}
+
+/* Маска телефона: курсор всегда в конце */
+.phone-input {
+    caret-color: black;
+}
+
+/* Убираем резкие края у кнопки удаления */
+.remove-contact {
+    border-radius: 50%;
+}
+
+/* Анимация появления контакта */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Анимация исчезновения контакта */
+@keyframes fadeOutDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+/* Анимация плавного появления карточки */
+.contact-card {
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeInUp 0.4s ease-in-out forwards;
+}
+
+/* Анимация исчезновения карточки */
+.contact-card.removing {
+    animation: fadeOutDown 0.4s ease-in-out forwards;
+}
+
+/* Текст рядом с переключателем */
+.saas-label {
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: #333;
+}
+
+/* Темная тема */
+.dark-mode .saas-label {
+    color: white;
+}

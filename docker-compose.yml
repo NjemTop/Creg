@@ -1,86 +1,94 @@
-version: '3.10'
-
 services:
-  base:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: creg
+  db:
+    image: postgres:14
+    container_name: creg_db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - creg_net
+
+  migrate:
+    image: creg:latest
+    container_name: creg_migrate
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_started
+    command: >
+      sh -c "
+        cd backend &&
+        python manage.py makemigrations --noinput &&
+        python manage.py migrate --noinput &&
+        python manage.py collectstatic --noinput
+      "
+    volumes:
+      - .:/app
+    restart: "no"
+    networks:
+      - creg_net
 
   web:
-    command: bash -c "python3.10 manage.py makemigrations && python3.10 manage.py migrate && python3.10 manage.py runserver 0.0.0.0:8137"
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: creg:latest
+    container_name: creg_web
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    command: sh -c "cd backend && python run.py"
     volumes:
       - .:/app
-      - mediadata:/app/media
-      - logdata:/app/logs
     ports:
       - "8137:8137"
-    container_name: Creg
-    image: creg
-    environment:
-      - TZ=Europe/Moscow
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+    networks:
+      - creg_net
+
+  worker:
+    image: creg:latest
+    container_name: creg_worker
     restart: always
+    env_file:
+      - .env
     depends_on:
-      - db
-
-  db:
-    image: postgres:13
-    environment:
-      - TZ=Europe/Moscow
-      - POSTGRES_DB=database_1.db
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    container_name: DataBase
-    volumes:
-      - dbdata:/var/lib/postgresql/data
-    restart: always
-
-  celery:
-    command: bash -c "celery -A crag worker --loglevel=info"
+      migrate:
+        condition: service_completed_successfully
+    command: sh -c "cd backend && celery -A config worker -l info"
     volumes:
       - .:/app
-      - logdata:/app/logs
-    depends_on:
-      - db
-    container_name: Celery
-    image: creg
-    environment:
-      - TZ=Europe/Moscow
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
-    restart: always
+    networks:
+      - creg_net
 
-  celerybeat:
-    command: bash -c "celery -A crag beat -l info"
+  beat:
+    image: creg:latest
+    container_name: creg_beat
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    command: sh -c "cd backend && celery -A config beat -l info"
     volumes:
       - .:/app
-      - logdata:/app/logs
-    depends_on:
-      - db
-    container_name: Celery_Beat
-    image: creg
-    environment:
-      - TZ=Europe/Moscow
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
-    restart: always
+    networks:
+      - creg_net
 
 volumes:
-  dbdata:
-  migrationsdata:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${PWD}/main/migrations
-      o: bind
-  mediadata:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${PWD}/media
-      o: bind
-  logdata:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${PWD}/logs
-      o: bind
+  db_data:
+
+networks:
+  creg_net:

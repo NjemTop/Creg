@@ -1,0 +1,308 @@
+/* Светлая тема (по умолчанию) */
+body.default-bg {
+    background-color: white;
+    color: #333;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Выравниваем текст внутри таблицы */
+.table td, .table th {
+    vertical-align: middle !important;
+}
+
+/* Тёмная тема */
+.dark-mode body,
+.dark-mode .default-bg {
+    background-color: #121212 !important;
+    color: white;
+}
+
+.dark-mode .container {
+    background: none;
+}
+
+.dark-mode .form-control,
+.dark-mode .form-select {
+    background: #333;
+    color: white;
+    border-color: #555;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.dark-mode .form-control:focus,
+.dark-mode .form-select:focus {
+    background: #3a3a3a;
+    color: #fff;
+    border-color: #888;
+    box-shadow: none;
+}
+
+.dark-mode .form-control::placeholder,
+.dark-mode textarea::placeholder {
+    color: #bbb;
+}
+
+
+/* Тёмная тема для карточек */
+.dark-mode .card {
+    background-color: #222 !important;
+    color: white;
+}
+
+/* Тёмная тема для всплывающих сообщений (toasts) */
+.dark-mode .toast-container {
+    color: white;
+}
+
+/* Анимация появления всплывающих сообщений */
+.toast {
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+/* Отступ, чтобы контент не залезал под navbar */
+body {
+    padding-top: 56px;
+}
+
+/* Стили для модуля */
+.module-btn {
+    display: inline-block;
+    min-width: 120px;
+    text-align: center;
+    padding: 10px 15px;
+}
+
+/* Когда модуль выбран */
+.btn-check:checked + .module-btn {
+    background: #7A4F3D;
+    color: white;
+    border-color: #5A372B;
+}
+
+/* Тёмная тема - выбранные модули */
+.dark-mode .btn-check:checked + .module-btn {
+    background: #552267;
+    color: white;
+    border: 1px solid white;
+}
+
+/* Общий стиль кнопок */
+.styled-btn {
+    background: #FFE6D6;
+    color: #7A4F3D;
+    border: 1px solid #7A4F3D;
+    text-decoration: none !important;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-weight: normal;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+/* Эффект при наведении*/
+.styled-btn:hover {
+    background: #7A4F3D;
+    color: white;
+}
+
+/* Тёмная тема */
+.dark-mode .styled-btn {
+    background-color: #333;
+    color: white;
+    border-color: white;
+}
+
+/* Тёмная тема. Эффект при наведении*/
+.dark-mode .styled-btn:hover {
+    background-color: #3a3146;
+    color: white;
+    border-color: #fff;
+}
+
+/* Общий стиль уменьшенных кнопок */
+.styled-btn-sm {
+    background: #FFE6D6;
+    color: #7A4F3D;
+    border: 1px solid #7A4F3D;
+    text-decoration: none !important;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Эффект при наведении */
+.styled-btn-sm:hover {
+    background: #7A4F3D;
+    color: white;
+}
+
+/* Тёмная тема */
+.dark-mode .styled-btn-sm {
+    background-color: #333;
+    color: white;
+    border-color: white;
+}
+
+/* Тёмная тема. Эффект при наведении */
+.dark-mode .styled-btn-sm:hover {
+    background-color: #3a3146;
+    color: white;
+    border-color: #fff;
+}
+
+/* Кнопка "Добавить" */
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+/* Тёмная тема - кнопки "Добавить" */
+.dark-mode .btn-success {
+    background-color: #176a4d !important;
+    border-color: #145c41 !important;
+}
+
+/* При наведении в тёмной теме */
+.dark-mode .btn-success:hover {
+    background-color: #145c41 !important;
+    border-color: #124d38 !important;
+}
+
+/* Убираем тёмную обводку при клике */
+.dark-mode .btn-success:focus,
+.dark-mode .btn-success:active {
+    box-shadow: none !important;
+}
+
+/* Основной контейнер Switch */
+.custom-switch {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+/* Скрытый чекбокс */
+.custom-switch-input {
+    display: none;
+}
+
+/* Ползунок (фон) */
+.custom-switch-slider {
+    width: 48px;
+    height: 24px;
+    background-color: #ccc;
+    border-radius: 50px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Внутренний ползунок */
+.custom-switch-slider::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+    top: 50%;
+    left: 2px;
+    transform: translateY(-50%);
+    transition: left 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Включенное состояние */
+.custom-switch-input:checked + .custom-switch-slider {
+    background: linear-gradient(135deg, #7A4F3D 0%, #5A3628 100%);
+    box-shadow: 0 0 10px rgba(122, 79, 61, 0.4);
+}
+
+/* Перемещение круга */
+.custom-switch-input:checked + .custom-switch-slider::after {
+    left: 26px;
+}
+
+/* Отключённый переключатель (серый цвет) */
+.disabled-switch .custom-switch-slider {
+    background-color: #bbb !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Отключённый текст (бледный) */
+.disabled-switch .switch-label {
+    color: #aaa !important;
+}
+
+/* Тёмная тема */
+.dark-mode .custom-switch-slider {
+    background-color: #444;
+}
+
+.dark-mode .custom-switch-input:checked + .custom-switch-slider {
+    background: linear-gradient(135deg, #9c23c8, #3A2F2B);
+}
+
+.dark-mode .switch-label {
+    color: white;
+}
+
+/* Убираем подчёркивание у кнопок */
+.styled-btn {
+    text-decoration: none !important;
+}
+
+.faq-divider {
+    border: none;
+    height: 2px;
+    background-color: #ccc;
+    margin: 25px 0;
+    opacity: 0.7;
+}
+
+/* Общий стиль таблицы в тёмной теме */
+.dark-mode .table {
+    background-color: #222 !important;
+    color: #fff !important;
+    border-color: #444 !important;
+}
+
+/* Заголовки таблицы (thead) */
+.dark-mode .table thead {
+    background-color: #333 !important;
+    color: #ddd !important;
+}
+
+/* Ячейки таблицы */
+.dark-mode .table td, 
+.dark-mode .table th {
+    background-color: #282828 !important;
+    color: #fff !important;
+    border-color: #444 !important;
+}
+
+/* Чередующиеся строки */
+.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #333 !important;
+}
+
+/* Наведение на строки */
+.dark-mode .table tbody tr:hover {
+    background-color: #3a3a3a !important;
+}
+
+/* Стили для <code> внутри таблицы */
+.dark-mode .table code {
+    background-color: #444 !important;
+    color: #FFA500 !important;
+    padding: 2px 5px;
+    border-radius: 4px;
+}

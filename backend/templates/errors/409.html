@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Ошибка 409 - Конфликт{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h1 class="text-danger">Ошибка 409</h1>
+    <p class="lead">{{ message }}</p>
+    <a href="javascript:history.back()" class="btn btn-primary mt-3">Вернуться назад</a>
+</div>
+{% endblock %}

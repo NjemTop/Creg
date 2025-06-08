@@ -1,0 +1,407 @@
+/* Общие стили navbar */
+.custom-navbar {
+    background-color: #FFE6D6 !important;
+    border-bottom: 2px solid #7A4F3D;
+    padding: 4px 10px;
+    width: 100%;
+}
+
+/* Левый блок (логотип + главная) */
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+/* Центральный блок */
+.navbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Правый блок */
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+/* Если имя длинное - автоматическое расширение */
+.navbar-right .dropdown {
+    flex-shrink: 0;
+}
+
+/* Унификация высоты и отступов кнопок */
+.navbar-right .btn,
+.navbar-right .dropdown,
+.navbar-left .btn,
+.search-form {
+    padding: 8px 14px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Буквы подпрыгиванию при наведении */
+.navbar-brand:hover {
+    animation: bounce-logo 0.5s ease-in-out;
+}
+@keyframes bounce-logo {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Лого крутится при наведении */
+@keyframes rotate-logo {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+.navbar-brand:hover img {
+    animation: rotate-logo 0.6s linear;
+}
+
+/* Отступы для блоков */
+.ms-auto {
+    margin-left: auto !important;
+}
+
+.me-auto {
+    margin-right: auto !important;
+}
+
+/* Контейнер внутри navbar */
+.custom-navbar .container {
+    max-width: 1200px;
+}
+
+/* Цвет текста в navbar */
+.custom-navbar .navbar-brand,
+.custom-navbar .nav-link {
+    color: #7A4F3D !important;
+}
+
+/* Цвет при наведении */
+.custom-navbar .nav-link:hover {
+    color: #5A3628 !important;
+}
+
+/* Поле поиска */
+.search-form {
+    flex-grow: 1;
+    max-width: 380px;
+    display: flex;
+}
+
+/* Поле ввода поиска */
+.search-input {
+    background-color: #fffaf5;
+    border: 1px solid #7A4F3D;
+    border-radius: 0 25px 25px 0;
+    padding: 8px 12px;
+    outline: none;
+    flex-grow: 1;
+    font-size: 14px;
+}
+
+/* Убираем выделение блока при клике */
+.search-input:focus {
+    outline: none !important;
+    box-shadow: none !important; 
+    border-color: #7A4F3D;
+}
+
+/* Кнопка расширенного поиска */
+.search-btn-left {
+    border: 1px solid #7A4F3D;
+    border-radius: 25px 0 0 25px;
+    padding: 8px 12px;
+    background-color: transparent;
+    font-size: 14px;
+}
+
+/* Эффект при наведении */
+.search-btn-left:hover {
+    background-color: #7A4F3D;
+    color: white;
+}
+
+/* Контейнер с результатами поиска */
+.search-results-container {
+    position: absolute;
+    width: 100%;
+    top: 67px;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 999;
+}
+
+/* Внутренний блок с результатами поиска */
+.search-results {
+    background: white;
+    border: 2px solid #7A4F3D;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    max-width: 350px;
+    width: 75%;
+    padding: 8px;
+    display: none;
+    position: relative;
+}
+
+/* Элементы внутри поиска */
+.search-results .dropdown-item {
+    padding: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Стиль при наведении */
+.search-results .dropdown-item:hover {
+    background-color: #FFE6D6;
+    color: #5A3628;
+}
+
+/* Анимация появления */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Анимация исчезновения */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+/* Применение анимации к блоку с результатами */
+.search-results {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* При скрытии применение анимации закрытия */
+.search-results.hidden {
+    animation: fadeOut 0.2s ease-in-out;
+}
+
+/* Кнопка "Создать клиента" */
+.btn-create-client {
+    border-radius: 25px;
+    font-size: 14px;
+    padding: 8px 12px;
+    border: 1px solid #7A4F3D;
+    color: #7A4F3D;
+    background-color: transparent;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+}
+
+/* Иконка в кнопке */
+.btn-create-client i {
+    font-size: 16px;
+    margin-right: 5px;
+}
+
+/* Эффект при наведении */
+.btn-create-client:hover {
+    background-color: #7A4F3D;
+    color: white;
+}
+
+/* Кнопка профиля */
+#userDropdown {
+    padding: 8px 16px;
+    height: 40px;
+    min-width: 130px; /* Минимальная ширина, чтобы текст не сжимался */
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Равномерное распределение */
+    gap: 8px; /* Отступ между иконкой и текстом */
+}
+
+/* Выравниваем иконку и текст в профиле */
+#userDropdown i {
+    font-size: 18px;
+}
+
+/* Темная тема для navbar */
+.dark-mode .custom-navbar {
+    background-color: #333 !important;
+    border-bottom: 2px solid #222;
+}
+
+/* Тёмная тема для текста navbar */
+.dark-mode .custom-navbar .navbar-brand,
+.dark-mode .custom-navbar .nav-link {
+    color: #EEE !important;
+}
+
+/* Цвет при наведении */
+.dark-mode .custom-navbar .nav-link:hover {
+    color: #FFF !important;
+}
+
+/* Тёмная тема для поля поиска */
+.dark-mode .search-input {
+    background-color: #464151;
+    color: white;
+    border: 1px solid #ddd;
+    border-radius: 0 25px 25px 0;
+}
+
+/* Убираем синее выделение при клике */
+.dark-mode .search-input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    background-color: #3a3146;
+}
+
+/* Тёмная тема для крестика в поле поиска */
+.dark-mode .search-input::-webkit-search-cancel-button {
+    filter: invert(0);
+}
+
+/* Тёмная тема для кнопки расширенного поиска */
+.dark-mode .search-btn-left {
+    background-color: #464151;
+    color: white;
+    border: 1px solid #ddd;
+    border-radius: 25px 0 0 25px;
+}
+
+/* Наведения для кнопки переключения темы в тёмной теме */
+.dark-mode #themeToggle:hover {
+    background-color: #FFE6D6;
+    color: #333;
+    border-color: #FFE6D6;
+}
+
+/* Иконка внутри */
+.dark-mode #themeToggle:hover i {
+    color: #333 !important;
+}
+
+/* Исходное состояние в темной теме */
+.dark-mode #userDropdown {
+    background-color: transparent !important;
+    color: #EEE !important;
+    border-color: #FFF !important;
+}
+
+/* Наведение */
+.dark-mode #userDropdown:hover {
+    background-color: #3a3146 !important;
+    color: #FFF !important;
+    border-color: #FFF !important;
+}
+
+/* Когда меню открыто: кнопка в состоянии .show */
+.dark-mode #userDropdown.show {
+    background-color: #3a3146 !important;
+    color: #FFF !important;
+    border-color: #FFF !important;
+}
+
+/* Фокус с открытым меню (или пока не закрыли) */
+.dark-mode #userDropdown:focus,
+.dark-mode #userDropdown:active {
+    background-color: #3a3146 !important;
+    color: #FFF !important;
+    border-color: #FFF !important;
+}
+
+/* Когда кнопка в фокусе, но меню уже не открыто */
+.dark-mode #userDropdown:focus:not(.show) {
+    background-color: transparent !important;
+    color: #EEE !important;
+    border-color: #FFF !important;
+}
+
+/* Тёмная тема для меню профиля */
+.dark-mode .btn-outline-dark {
+    color: white !important;
+    border-color: white !important;
+}
+
+/* Темная тема для выпадающего меню профиля */
+.dark-mode .dropdown-menu {
+    background-color: #222 !important;
+    border: 1px solid #444;
+}
+
+/* Цвет текста в тёмной теме */
+.dark-mode .dropdown-menu .dropdown-item {
+    color: #EEE !important;
+}
+
+/* Цвет при наведении */
+.dark-mode .dropdown-menu .dropdown-item:hover {
+    background-color: #3a3146 !important;
+    color: white !important;
+}
+
+/* Цвет разделителя */
+.dark-mode .dropdown-divider {
+    border-color: #444 !important;
+}
+
+/* Тёмная тема для контейнера результатов */
+.dark-mode .search-results {
+    background-color: #222;
+    border-color: #666;
+}
+
+/* Тёмная тема для выпадающих элементов */
+.dark-mode .search-results .dropdown-item {
+    color: #ddd;
+    border-bottom: 1px solid #666;
+}
+
+.dark-mode .search-results .dropdown-item:hover {
+    background-color: #555;
+    color: white;
+}
+
+/* Тёмная тема для текста внутри поля поиска */
+.dark-mode .search-input::placeholder {
+    color: #bbb; 
+    opacity: 1;
+}
+
+/* Темная тема для кнопки "Создать клиента" */
+.dark-mode .btn-create-client {
+    border: 1px solid #ddd;
+    color: #ddd;
+    background-color: transparent;
+}

@@ -1,0 +1,96 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+
+<nav class="navbar navbar-expand-lg custom-navbar fixed-top">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <!-- Левый блок -->
+        <div class="d-flex align-items-center navbar-left me-auto">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'core:index' %}">
+                <img src="{% static 'images/logo128x128.png' %}" alt="Logo" width="30" height="30" class="me-2">
+                Creg
+            </a>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'clients:create_client' %}" class="btn styled-btn btn-create-client ms-3">
+                    <i class="bi bi-person-plus"></i> Создать клиента
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- Центральный блок -->
+        <div class="d-flex flex-grow-1 navbar-center">
+            <!-- Поле поиска клиентов -->
+            <form class="d-flex search-form position-relative">
+                <!-- Кнопка модального окна (слева) -->
+                <button type="button" class="btn styled-btn search-btn-left" data-bs-toggle="modal" data-bs-target="#searchModal">
+                    <i class="bi bi-filter"></i>
+                </button>
+
+                <!-- Поле ввода поиска -->
+                <input id="searchInput" class="form-control search-input" type="search" placeholder="Поиск клиентов..." aria-label="Search">
+            </form>
+
+            <!-- Контейнер для списка результатов -->
+            <div id="searchResultsContainer" class="search-results-container">
+                <div class="search-results" id="searchResults"></div>
+            </div>
+        </div>
+
+        <!-- Правый блок -->
+        <div class="d-flex align-items-center navbar-right ms-auto me-3">
+            <!-- Переключатель темы -->
+            <button id="themeToggle" class="btn btn-outline-dark me-3">
+                <i class="bi bi-moon"></i>
+            </button>
+
+            <!-- Выпадающее меню профиля -->
+            {% if request.user.is_authenticated %}
+                <div class="dropdown">
+                    <button class="btn btn-outline-dark dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i> {{ request.user.username }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        {% if request.user.is_staff %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'admin:index' %}">
+                                    <i class="bi bi-gear"></i> Панель администрирования
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                        {% endif %}
+                        <li>
+                            <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                <i class="bi bi-box-arrow-right"></i> Выйти
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            {% else %}
+                <a class="btn styled-btn" href="{% url 'local_login' %}">
+                    <i class="bi bi-person-circle"></i> Вход
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<!-- Модальное окно для расширенного поиска -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchModalLabel">🔎 Расширенный поиск клиентов</h5>
+                <button type="button" class="styled-btn btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="clientName" class="form-label">Имя клиента</label>
+                        <input type="text" class="form-control" id="clientName">
+                    </div>
+                    <button type="submit" class="styled-btn w-100">Поиск</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

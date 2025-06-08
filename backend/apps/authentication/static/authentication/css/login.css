@@ -1,0 +1,40 @@
+body {
+    background-color: #f8f9fa; /* Светло-серый фон */
+}
+
+.login-card {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.keycloak-btn {
+    background-color: #FFE6D6 !important;
+    color: #000 !important;
+    border: none;
+}
+
+.keycloak-btn:hover {
+    background-color: #FFCCB3 !important; /* Цвет при наведении */
+}
+
+.local-login-btn {
+    background-color: #495057 !important;
+    color: white !important;
+    border: none;
+}
+
+.local-login-btn:hover {
+    background-color: #6e7780 !important; /* Цвет при наведении */
+}
+
+.submit-btn {
+    background-color: #198F83 !important;
+    color: white !important;
+    border: none;
+}
+
+.submit-btn:hover {
+    background-color: #15766A !important; /* Чуть темнее при наведении */
+}

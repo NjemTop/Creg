@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %} Логи рассылки #{{ mailing.id }} {% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'mailings/css/mailing_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="mailing-container" class="container mt-4" data-mailing-id="{{ mailing.id }}">
+    <h2 class="text-center">Детали рассылки #{{ mailing.id }}</h2>
+
+    <div class="card p-3 mt-3">
+        <h5 class="mb-3">Управление рассылкой</h5>
+    
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'mailing:mailing_list' %}" class="styled-btn-sm">
+                ← Назад
+            </a>
+    
+            {% if mailing.status == "in_progress" %}
+                <button id="stop-mailing-btn" class="styled-btn-sm">
+                    🛑 Остановить рассылку
+                </button>
+            {% elif mailing.status == "completed" or mailing.status == "failed" %}
+                <button id="repeat-mailing-btn" class="styled-btn-sm">
+                    🔁 Повторить рассылку
+                </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card p-3 mt-3">
+        <h5>Информация о рассылке</h5>
+        <p><strong>Режим:</strong> {{ mailing.get_mode_display }}</p>
+        <p><strong>Язык:</strong> {{ mailing.language }}</p>
+        <p><strong>Статус:</strong> <span id="mailing-status">{{ mailing.get_status_display }}</span></p>
+        <p><strong>Версия:</strong> {{ mailing.release_number }}</p>
+        <p><strong>Начало:</strong> {{ mailing.started_at|default:"-" }}</p>
+        <p><strong>Завершение:</strong> {{ mailing.completed_at|default:"-" }}</p>
+    </div>
+
+    <div class="card p-3 mt-3">
+        <h5>Кому отправлено</h5>
+
+        <input type="text" id="search-input" class="form-control mb-3" placeholder="🔎 Поиск по клиенту или email">
+
+        <div class="table-responsive" id="recipients-container">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Клиент</th>
+                        <th>Email</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody id="recipients-list">
+                    {% for client, contacts in grouped_recipients.items %}
+                        {% for contact in contacts %}
+                            <tr class="recipient-row"
+                                data-client-id="{% if client == test_recipient_label %}test{% else %}{{ client.id }}{% endif %}"
+                                data-client-name="{% if client == test_recipient_label %}{{ client }}{% else %}{{ client.client_name }}{% endif %}"
+                                data-email="{{ contact.email }}">
+                                {% if forloop.first %}
+                                    <td class="client-name-cell" rowspan="{{ contacts|length }}">
+                                        {% if client == test_recipient_label %}
+                                            {{ client }}
+                                        {% else %}
+                                            {{ client.client_name|default:"—" }}
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                                <td>{{ contact.email }}</td>
+                                <td class="status-cell recipient-{{ contact.status }}">{{ contact.get_status_display }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-muted text-center">📭 Получателей нет</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card p-3 mt-3">
+        <h5 class="mb-3">Журнал событий</h5>
+    
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+            <div class="btn-group btn-group-sm" role="group">
+                <button class="btn log-filter-btn active" data-level="">Все</button>
+                <button class="btn log-filter-btn" data-level="info">INFO</button>
+                <button class="btn log-filter-btn" data-level="warning">WARNING</button>
+                <button class="btn log-filter-btn" data-level="error">ERROR</button>
+                <button class="btn log-filter-btn" data-level="critical">CRITICAL</button>
+            </div>
+    
+            <input type="text" id="log-search" class="form-control form-control-sm" placeholder="🔍 Поиск по сообщениям..." style="max-width: 250px;">
+        </div>
+    
+        <ul id="log-container" class="log-list">
+            {% for log in logs %}
+                <li class="log-entry log-{{ log.level }}">
+                    <span class="log-time">[{{ log.timestamp|date:"d.m.Y H:i:s" }}]</span>
+                    <span class="log-level">({{ log.get_level_display }})</span>
+                    <span class="log-message">{{ log.message }}</span>
+                </li>
+            {% empty %}
+                <li class="text-muted">Ожидание событий...</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script src="{% static 'mailings/js/mailing_detail.js' %}"></script>
+
+{% endblock %}

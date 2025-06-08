@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% include "includes/messages.html" %}
+
+{% block title %}Создание клиента{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'clients/css/create_client.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="text-center mb-4">Создание клиента</h2>
+
+    <form method="post" class="needs-validation">
+        {% csrf_token %}
+
+        <!-- Основная информация -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Основная информация</h5>
+                <div class="custom-switch">
+                    {{ client_form.saas|add_class:'custom-switch-input' }}
+                    <label class="custom-switch-slider" for="id_saas"></label>
+                    <span class="switch-label" data-bs-toggle="tooltip" title="Отметьте, если клиент будет на SaaS">SaaS</span>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-7">
+                        <label for="client_name" class="form-label">Полное наименование клиента <span class="text-danger">*</span></label>
+                        {{ client_form.client_name|add_class:'form-control' }}
+                    </div>
+                    <div class="col-md-5">
+                        <label for="short_name" class="form-label">
+                            Имя клиента кратко</label>
+                        {{ client_form.short_name|add_class:'form-control' }}
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-7">
+                        <label for="account_name" class="form-label" data-bs-toggle="tooltip"
+                            title="Вписать название для УЗ jFrog/NextCloud (по-английски, без пробелов и заглавных букв. Например, 'gpnserbia')">
+                            Учётная запись <span class="text-danger">*</span></label>
+                        {{ client_form.account_name|add_class:'form-control' }}
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label for="language" class="form-label">Язык клиента <span class="text-danger">*</span></label>
+                        {{ client_form.language }}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="manager" class="form-label">Менеджер <span class="text-danger">*</span></label>
+                        {{ client_form.manager }}
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <label for="notes" class="form-label" data-bs-toggle="tooltip" title="Дополнительные заметки по клиенту">Примечание</label>
+                    {{ client_form.notes|add_class:'form-control' }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Контакты -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Контакты клиента</h5>
+                {{ contact_formset.management_form }}
+                <div id="contact_list" class="d-flex flex-wrap gap-3"></div>
+                <button type="button" id="add_contact" class="styled-btn w-100 mt-3">
+                    <i class="bi bi-person-plus"></i> Добавить контакт
+                </button>
+            </div>
+        </div>
+
+        <!-- Техническая информация -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Техническая информация</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="server_version" class="form-label">Версия сервера <span class="text-danger">*</span></label>
+                        {{ tech_info_form.server_version|add_class:'form-control' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Выбор модулей -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Выберите модули</h5>
+                <div class="module-btn-group d-flex flex-wrap gap-2">
+                    {% for module in modules %}
+                        <input type="checkbox" class="btn-check" name="modules" value="{{ module.id }}"
+                            id="module_{{ module.id }}" autocomplete="off">
+                        <label class="styled-btn module-btn" for="module_{{ module.id }}">
+                            {{ module.name }}
+                        </label>
+                    {% empty %}
+                        <p class="text-muted">Нет доступных модулей.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" id="submitFormBtn" class="btn btn-success w-100">Добавить</button>
+    </form>
+</div>
+
+<script src="{% static 'clients/js/create_client.js' %}"></script>
+
+{% endblock %}

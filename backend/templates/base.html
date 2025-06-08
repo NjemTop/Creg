@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Creg{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <script src="{% static 'js/main.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'icons/bootstrap-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/loading-screen.css' %}">
+    <link rel="stylesheet" href="{% static 'css/intlTelInput.css' %}">
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/loading-screen.js' %}"></script>
+    <script src="{% static 'js/search.js' %}"></script>
+
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="default-bg {% block body_class %}default-bg{% endblock %}">
+    
+    <!-- Экран загрузки -->
+    <div id="loading-screen">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p>Загрузка...</p>
+    </div>
+
+    <div class="d-flex flex-column min-vh-100">
+        
+        {% if request.resolver_match.url_name != "login" and request.resolver_match.url_name != "local_login" %}
+            {% include "includes/navbar.html" %}
+        {% endif %}
+
+        <main class="container flex-grow-1 mt-4">
+            {% include "includes/messages.html" %}
+            {% block content %}{% endblock %}
+        </main>
+
+        {% block footer %}
+            {% include "includes/footer.html" %}
+        {% endblock %}
+
+        {% block extra_js %}{% endblock %}
+
+        <script src="{% static 'js/intlTelInput.min.js' %}"></script>
+        <script src="{% static 'js/imask.min.js' %}"></script>
+    </div>
+</body>
+</html>

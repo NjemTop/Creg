@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Ошибка 400 - Неверный запрос{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h1 class="text-danger">Ошибка 400</h1>
+    <p class="lead">Ошибка при обработке данных. Проверьте форму.</p>
+
+    {% if errors %}
+        <div class="alert alert-danger text-start">
+            <h5>Детали ошибки:</h5>
+            <ul>
+                {% for field, error_list in errors.items %}
+                    <li><strong>{{ field }}</strong>: 
+                        {% for error in error_list %}
+                            {{ error }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <p class="text-muted">Нет подробной информации об ошибке.</p>
+    {% endif %}
+
+    <a href="javascript:history.back()" class="btn btn-primary mt-3">Вернуться назад</a>
+</div>
+{% endblock %}

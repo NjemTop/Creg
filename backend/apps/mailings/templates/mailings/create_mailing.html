@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load custom_filters %}
+{% include "includes/messages.html" %}
+
+{% block title %}Создать рассылку{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'mailings/css/create_mailing.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="text-center mb-4">Создание рассылки</h2>
+
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        <!-- Общие ошибки формы -->
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                    <p class="mb-0">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Основная информация -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Основная информация</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_mode" class="form-label">Режим</label>
+                        {{ form.mode|add_class:"form-select" }}
+                        {% if form.mode.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.mode.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_release_type" class="form-label">Версия релиза</label>
+                        {{ form.release_type|add_class:"form-select" }}
+                        {% if form.release_type.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.release_type.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6" id="language_wrapper">
+                        <label for="id_language" class="form-label">Язык <span class="text-danger">*</span></label>
+                        {{ form.language|add_class:"form-select" }}
+                        {% if form.language.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.language.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-6" id="test_email_wrapper">
+                        <label for="id_test_email" class="form-label">Почта <span class="text-danger">*</span></label>
+                        {{ form.test_email|add_class:"form-control" }}
+                        {% if form.test_email.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.test_email.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Версии компонентов -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Версии компонентов</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="id_server_version" class="form-label">Версия сервера</label>
+                        {{ form.server_version|add_class:"form-control" }}
+                        {% if form.server_version.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.server_version.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label for="id_ipad_version" class="form-label">Версия iPad</label>
+                        {{ form.ipad_version|add_class:"form-control" }}
+                        {% if form.ipad_version.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.ipad_version.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label for="id_android_version" class="form-label">Версия Android</label>
+                        {{ form.android_version|add_class:"form-control" }}
+                        {% if form.android_version.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.android_version.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Опции рассылки -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Дополнительные опции</h5>
+
+                <div class="custom-switch mb-3 d-flex align-items-center">
+                    {{ form.service_window|add_class:'custom-switch-input' }}
+                    <label class="custom-switch-slider" for="id_service_window"></label>
+                    <span class="switch-label ms-2" data-bs-toggle="tooltip" 
+                        title="Отметьте, если необходимо вместе с рассылкой отправить запросы сервисных окон">
+                        Запрос сервисного окна
+                    </span>
+                </div>
+
+                <div class="custom-switch mb-3 d-flex align-items-center">
+                    {{ form.saas_notification|add_class:'custom-switch-input' }}
+                    <label class="custom-switch-slider" for="id_saas_notification"></label>
+                    <span class="switch-label ms-2" data-bs-toggle="tooltip" 
+                        title="Отметьте, если необходимо вместе с рассылкой отправить уведомление об установке обновлений клиенту">
+                        Отправить уведомление в SaaS
+                    </span>
+                </div>
+
+                <div class="mb-3" id="saas_update_time_wrapper">
+                    <label for="id_saas_update_time" class="form-label">Дата и время обновления SaaS</label>
+                    {{ form.saas_update_time|add_class:"form-control" }}
+                    {% if form.saas_update_time.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.saas_update_time.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success w-100">Создать рассылку</button>
+    </form>
+</div>
+
+<script>
+    window.mailingId = "{{ mailing.id }}";
+</script>
+<script src="{% static 'mailings/js/mailing_detail.js' %}"></script>
+
+{% endblock %}

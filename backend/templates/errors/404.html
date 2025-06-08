@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Страница не найдена{% endblock %}
+
+{% block content %}
+    <h1>Ошибка 404</h1>
+    <p>Извините, страница, которую вы ищете, не существует.</p>
+    <a href="{% url 'core:index' %}">Вернуться на главную</a>
+{% endblock %}

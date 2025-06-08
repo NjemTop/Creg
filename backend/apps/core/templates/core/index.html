@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Главная страница | Creg{% endblock %}
+{% block body_class %}index-bg no-scroll{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'core/css/index.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column justify-content-between" style="min-height: 100vh;">
+
+    <!-- Пустой блок для выравнивания -->
+    <div class="flex-grow-1"></div>
+
+    <div class="row text-center mb-3 button-container">
+        <div class="col-12 col-md">
+            <a href="{% url 'clients:client_list' %}" class="btn btn-light m-3 rounded button-main">Информация по клиентам</a>
+        </div>
+        <div class="col-12 col-md">
+            <a href="{% url 'reports:report' %}" class="btn btn-light m-3 rounded button-main">Отчёты</a>
+        </div>
+        <div class="col-12 col-md">
+            <a href="{% url 'reports:release_info' %}" class="btn btn-light m-3 rounded button-main">Информация по отправке релиза</a>
+        </div>
+        <div class="col-12 col-md">
+            <a href="{% url 'mailing:mailing_list' %}" class="btn btn-light m-3 rounded button-main">Рассылки</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}{% endblock %}

@@ -1,0 +1,14 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/footer.css' %}">
+
+<footer class="custom-footer">
+    <div class="container text-center py-3">
+        <p class="mb-1">&copy; 2025 Creg. Никаких прав нет.</p>
+        <p class="footer-links">
+            <a href="{% url 'core:contacts' %}">Контакты</a> |
+            <a href="{% url 'core:about' %}">О нас</a> |
+            <a href="{% url 'core:faq' %}">Помощь</a>
+        </p>
+    </div>
+</footer>

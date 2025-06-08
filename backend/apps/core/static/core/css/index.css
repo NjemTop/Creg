@@ -1,0 +1,72 @@
+/* Добавляем плавный переход для смены фона */
+body.index-bg {
+    background: url('/static/images/background.png') no-repeat center center fixed;
+    background-size: cover;
+    transition: background 0.5s ease-in-out, filter 0.5s ease-in-out;
+}
+
+/* Темная тема с плавным переходом */
+html.dark-mode .index-bg {
+    background: url('/static/images/background-dark.png') no-repeat center center fixed;
+    background-size: cover;
+    transition: background 0.5s ease-in-out, filter 0.5s ease-in-out;
+}
+
+/* Убираем прокрутку страницы */
+.no-scroll {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Контейнер с кнопками */
+.button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding-bottom: 60px;
+}
+
+/* Кнопки главного меню */
+.button-main {
+    background: linear-gradient(#f5debbd5, #dce5f3d0);
+    color: #0a0a0a;
+    border-radius: 50px;
+    border: none;
+    padding: 20px 15px;
+    box-shadow: 1px 1px 9px 6px rgba(80, 79, 79, 0.486);
+    text-align: center;
+    font-size: larger;
+    height: 80px;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* Статичный градиент */
+.dark-mode .button-main {
+    background: linear-gradient(135deg, #4b0082, #643098, #704591, #be85f0);
+    background-size: 300% 300%;
+    color: #fff;
+    box-shadow: 1px 1px 12px 5px rgba(255, 255, 255, 0.1);
+    transition: background 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+}
+
+/* Анимированный градиент при наведении */
+@keyframes gradientHover {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Эффект при наведении */
+.dark-mode .button-main:hover {
+    background: linear-gradient(135deg, #4b0082, #643098, #704591, #be85f0);
+    background-size: 300% 300%;
+    animation: gradientHover 4s ease infinite;
+    box-shadow: 1px 1px 18px 7px rgba(255, 255, 255, 0.2);
+}

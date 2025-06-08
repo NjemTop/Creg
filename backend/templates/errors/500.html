@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Ошибка 500 - Ошибка сервера{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h1 class="text-danger">Ошибка 500</h1>
+    <p class="lead">На сервере произошла критическая ошибка.</p>
+
+    {% if error_details %}
+        <div class="alert alert-danger text-start">
+            <h5>Детали ошибки:</h5>
+            <pre>{{ error_details }}</pre>
+        </div>
+    {% else %}
+        <p class="text-muted">Нет информации о проблеме.</p>
+    {% endif %}
+
+    <a href="{% url 'core:index' %}" class="btn btn-primary mt-3">Вернуться на главную</a>
+</div>
+{% endblock %}

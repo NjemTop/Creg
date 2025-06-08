@@ -1,0 +1,40 @@
+/* 🌟 Основные стили футера */
+.custom-footer {
+    background-color: #FFE6D6;
+    border-top: 2px solid #7A4F3D;
+    color: #7A4F3D;
+    padding: 15px 0;
+    font-size: 14px;
+}
+
+/* Ссылки в футере */
+.custom-footer .footer-links a {
+    color: #7A4F3D;
+    text-decoration: none;
+    margin: 0 8px;
+    transition: color 0.3s ease-in-out;
+}
+
+/* При наведении */
+.custom-footer .footer-links a:hover {
+    color: #5A3628;
+    text-decoration: underline;
+}
+
+/* 🌓 Темная тема для футера */
+.dark-mode .custom-footer {
+    background-color: #222;
+    border-top: 2px solid #444;
+    color: #EEE;
+}
+
+/* Темная тема для ссылок */
+.dark-mode .custom-footer .footer-links a {
+    color: #EEE;
+}
+
+/* Наведение в темной теме */
+.dark-mode .custom-footer .footer-links a:hover {
+    color: #BBB;
+    text-decoration: underline;
+}
