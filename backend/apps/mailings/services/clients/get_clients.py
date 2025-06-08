@@ -1,4 +1,4 @@
-from main.models import ClientsList, ContactsCard, TechInformationCard
+from apps.clients.models import Client, Contact, TechnicalInfo
 from logger.log_config import scripts_info_logger, scripts_error_logger
 
 
@@ -15,18 +15,18 @@ def get_clients_for_mailing(version_prefix):
     try:
         clients_for_mailing = {}
 
-        active_clients = ClientsList.objects.filter(contact_status=True)
+        active_clients = Client.objects.filter(contact_status=True)
 
-        client_ids = TechInformationCard.objects.filter(
+        client_ids = TechnicalInfo.objects.filter(
             server_version__startswith=version_prefix,
-            client_card__client_info__in=active_clients
-        ).values_list('client_card__client_info_id', flat=True)
+            client__in=active_clients
+        ).values_list('client_id', flat=True)
 
         for client_id in client_ids:
-            emails = ContactsCard.objects.filter(
-                client_card__client_info_id=client_id,
+            emails = Contact.objects.filter(
+                client_id=client_id,
                 notification_update=True
-            ).values_list('contact_email', flat=True)
+            ).values_list('email', flat=True)
 
             if emails:
                 clients_for_mailing[client_id] = list(emails)
