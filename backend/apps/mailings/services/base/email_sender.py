@@ -24,11 +24,10 @@ from apps.mailings.services.integrations.confluence import (
     get_android_release_notes,
 )
 
-# логгеры
-from logger.log_config import setup_logger, get_abs_log_path
+# logging
+import logging
 
-scripts_error_logger = setup_logger('scripts_error', get_abs_log_path('scripts_errors.log'))
-scripts_info_logger = setup_logger('scripts_info', get_abs_log_path('scripts_info.log'))
+logger = logging.getLogger(__name__)
 
 
 def send_email_extra_info(*args, **kwargs):
@@ -54,8 +53,8 @@ class EmailSender:
         self.ipad_version = ipad_version or ''
         self.android_version = android_version or ''
         self.language = language
-        self.logger = scripts_info_logger
-        self.error_logger = scripts_error_logger
+        self.logger = logger
+        self.error_logger = logger
         self.msg = MIMEMultipart()
         self.env = Environment(loader=FileSystemLoader(
             os.path.join(settings.BASE_DIR, 'scripts', 'release', 'HTML')
