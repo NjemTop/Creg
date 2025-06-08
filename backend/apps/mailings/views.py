@@ -8,7 +8,8 @@ from collections import defaultdict
 from .models import Mailing, MailingLog, MailingRecipient, MailingTestRecipient, Component, MailingStatus, MailingMode
 from apps.clients.models import Client
 from .constants import TEST_RECIPIENT_LABEL
-from .tasks import send_mailing_task, send_ws_event, log_event
+from .tasks import send_mailing_task
+from .logging_utils import send_ws_event, log_event
 from .forms import MailingForm
 
 

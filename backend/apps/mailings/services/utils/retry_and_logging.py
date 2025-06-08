@@ -13,7 +13,16 @@ def log_errors(logger=None, extra_info=None):
             try:
                 return func(*args, **kwargs)
             except Exception as exc:  # pragma: no cover - simple logging wrapper
-                log = logger or logging.getLogger(func.__module__)
+                if logger:
+                    log = logger
+                else:
+                    obj = args[0] if args else None
+                    if obj and hasattr(obj, "error_logger"):
+                        log = obj.error_logger
+                    elif obj and hasattr(obj, "logger"):
+                        log = obj.logger
+                    else:
+                        log = logging.getLogger(func.__module__)
                 message = str(exc)
                 if callable(extra_info):
                     try:

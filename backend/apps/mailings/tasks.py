@@ -1,18 +1,13 @@
 import logging
-import smtplib
 import traceback
 from celery import shared_task
 from django.core.mail.backends.smtp import EmailBackend
 from django.db import transaction
 from django.utils import timezone
 from apps.mailings.services.base.email_sender import EmailSender
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
-from .models import Mailing, MailingLog, MailingRecipient, MailingTestRecipient, MailingStatus, RecipientStatus, MailingMode, LogLevel
+from .logging_utils import send_ws_event, log_event, get_mailing_logger
+from .models import Mailing, MailingRecipient, MailingTestRecipient, MailingStatus, RecipientStatus, MailingMode
 from apps.configurations.models import SMTPSettings
-
-
-logger = logging.getLogger(__name__)
 
 def get_smtp_backend():
     """Получаем настройки SMTP из базы и создаём EmailBackend"""
@@ -31,54 +26,13 @@ def get_smtp_backend():
         fail_silently=False
     )
 
-def send_ws_event(mailing_id, event_type, message):
-    """ Универсальная функция отправки событий в WebSocket """
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        f"mailing_{mailing_id}",
-        {
-            "type": "mailing_update",
-            event_type: message
-        }
-    )
-
-def log_event(mailing_id, level, message):
-    """ Универсальная функция логирования (Logger + БД + WebSocket) """
-    mailing = Mailing.objects.get(id=mailing_id)
-
-    # Записываем в Django Logger
-    log_methods = {
-        LogLevel.INFO: logger.info,
-        LogLevel.WARNING: logger.warning,
-        LogLevel.ERROR: logger.error,
-        LogLevel.CRITICAL: logger.critical
-    }
-    log_method = log_methods.get(level, logger.debug)
-    log_method(message)
-
-    # Записываем в БД
-    MailingLog.objects.create(mailing=mailing, level=level, message=message)
-
-    # Отправляем WebSocket-событие
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        f"mailing_{mailing_id}",
-        {
-            "type": "mailing_update",
-            "log": {
-                "level": level,
-                "message": message,
-                "timestamp": timezone.now().isoformat()
-            }
-        }
-    )
-
 
 @shared_task(bind=True)
 def send_mailing_task(self, mailing_id):
     """Фоновая отправка рассылки клиентам с кастомным SMTP"""
     try:
         mailing = Mailing.objects.get(id=mailing_id)
+        mail_logger = get_mailing_logger(mailing.id)
         mailing.status = MailingStatus.IN_PROGRESS
         mailing.started_at = timezone.now()
         mailing.save()
@@ -95,7 +49,7 @@ def send_mailing_task(self, mailing_id):
 
         if not recipients.exists():
             error_msg = f"⚠️ [{self.request.id}] Рассылка {mailing.id} прервана: Нет получателей."
-            logger.warning(error_msg)
+            mail_logger.warning(error_msg)
             mailing.status = MailingStatus.FAILED
             mailing.completed_at = timezone.now()
             mailing.error_message = error_msg
@@ -120,7 +74,7 @@ def send_mailing_task(self, mailing_id):
             email_backend = get_smtp_backend()
         except ValueError as error:
             error_msg = f"🚨 [{self.request.id}] Ошибка SMTP: {str(error)}"
-            logger.error(error_msg)
+            mail_logger.error(error_msg)
             mailing.status = MailingStatus.FAILED
             mailing.completed_at = timezone.now()
             mailing.error_message = error_msg
@@ -166,6 +120,8 @@ def send_mailing_task(self, mailing_id):
                     android_version=mailing.android_version,
                     language=lang,
                 )
+                sender.logger = mail_logger
+                sender.error_logger = mail_logger
                 sender.config.update({
                     "MAIL_SETTINGS": smtp_config,
                     "MAIL_SETTINGS_SUPPORT": smtp_config,
@@ -203,7 +159,7 @@ def send_mailing_task(self, mailing_id):
         error_traceback = traceback.format_exc()
 
         if not isinstance(error, ValueError):
-            logger.critical(error_msg, exc_info=True)
+            mail_logger.critical(error_msg, exc_info=True)
 
             mailing.status = MailingStatus.FAILED
             mailing.completed_at = timezone.now()
