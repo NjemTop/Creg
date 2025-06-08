@@ -1,10 +1,8 @@
 import requests
 from urllib.parse import quote
 import logging
-from logger.log_config import setup_logger, get_abs_log_path
 
-scripts_error_logger = setup_logger('scripts_error', get_abs_log_path('scripts_errors.log'), logging.ERROR)
-scripts_info_logger = setup_logger('scripts_info', get_abs_log_path('scripts_info.log'), logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class NextcloudManager:
@@ -26,7 +24,7 @@ class NextcloudManager:
         with open(local_path, 'rb') as f:
             resp = requests.put(url, data=f, auth=(self.username, self.password), timeout=self.timeout)
         if resp.status_code not in (200, 201, 204):
-            scripts_error_logger.error("Ошибка загрузки %s: %s", remote_path, resp.text)
+            logger.error("Ошибка загрузки %s: %s", remote_path, resp.text)
 
     def folder_exists(self, path):
         url = self._build_url(path)

@@ -1,5 +1,7 @@
 from apps.clients.models import Client
-from logger.log_config import scripts_info_logger, scripts_error_logger
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def save_release_info(client_id, release_number, release_type, component_type, emails):
@@ -15,8 +17,13 @@ def save_release_info(client_id, release_number, release_type, component_type, e
     """
     try:
         client = Client.objects.get(pk=client_id)
-        scripts_info_logger.info(
-            f"Рассылка {release_number} ({release_type}/{component_type}) отправлена клиенту {client.client_name}: {emails}"
+        logger.info(
+            "Рассылка %s (%s/%s) отправлена клиенту %s: %s",
+            release_number,
+            release_type,
+            component_type,
+            client.client_name,
+            emails,
         )
     except Exception as e:
-        scripts_error_logger.error(f"Ошибка логирования рассылки: {e}")
+        logger.error("Ошибка логирования рассылки: %s", e)
