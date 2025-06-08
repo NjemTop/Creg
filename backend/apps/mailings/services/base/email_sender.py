@@ -9,11 +9,9 @@ from email.mime.text import MIMEText
 from smtplib import SMTP, SMTPException
 from retrying import retry
 from django.conf import settings
-from main.models import ReleaseInfo
 
 from apps.mailings.services.utils.retry_and_logging import log_errors
 from apps.mailings.services.utils.attachments import (
-    clear_attachments_directory,
     attach_images,
     attach_files,
     update_documentation,
@@ -154,8 +152,27 @@ class EmailSender:
                     context['android_updates'] = android_notes[0] if len(android_notes) == 1 else android_notes
 
             elif self.mailing_type == 'hotfix':
-                # аналогично стандартной логике — повторяющаяся структура
-                return self._prepare_context()  # можно переработать в будущем
+                if self.release_type in ['release2x', 'release3x']:
+                    server_notes = get_server_release_notes(self.server_version, lang_key)
+                    log_updates(self.logger, "Обновления сервера", server_notes, lang_key)
+                    if self.release_type == 'release3x':
+                        structured = self._structure_updates_3x(server_notes)
+                        context['server_updates'] = (
+                            structured[0]['updates'] if len(structured) == 1 and isinstance(structured[0]['updates'], str)
+                            else structured
+                        )
+                    else:
+                        context['server_updates'] = server_notes[0] if len(server_notes) == 1 else server_notes
+
+                if self.release_type in ['releaseAndroid2x', 'releaseAndroid3x'] and self.android_version:
+                    android_notes = get_android_release_notes(self.android_version, lang_key)
+                    log_updates(self.logger, "Обновления Android", android_notes, lang_key)
+                    context['android_updates'] = android_notes[0] if len(android_notes) == 1 else android_notes
+
+                if self.release_type in ['releaseiPad2x', 'releaseiPad3x'] and self.ipad_version:
+                    ipad_notes = get_ipad_release_notes(self.ipad_version, lang_key)
+                    log_updates(self.logger, "Обновления iPad", ipad_notes, lang_key)
+                    context['ipad_updates'] = ipad_notes[0] if len(ipad_notes) == 1 else ipad_notes
         except Exception as e:
             self.error_logger.error(f"Ошибка подготовки контекста: {e}")
             raise
@@ -206,3 +223,28 @@ class EmailSender:
             server.send_message(self.msg)
             self.logger.info(f"Письмо отправлено: {self.emails}")
             return True
+
+    def build_message_for_client(self, client_id, emails):
+        """Формирует письмо для конкретного клиента."""
+        from apps.clients.models import Client
+
+        client = Client.objects.get(pk=client_id)
+        self.msg = MIMEMultipart()
+        self.emails = emails if isinstance(emails, list) else [emails]
+        self.language = client.language.code if client.language else 'ru'
+
+        mail_settings = self.config['MAIL_SETTINGS_SUPPORT']
+        self.msg['From'] = mail_settings['FROM']
+        self.msg['To'] = ", ".join(self.emails)
+        self.msg['Subject'] = Header(self._get_subject(), 'utf-8')
+        self.msg['Message-ID'] = make_msgid()
+
+        update_documentation(self.language, self.release_type, self.server_version,
+                             self.ipad_version, self.android_version, self.config)
+        template = self._get_template_name()
+        context = self._prepare_context()
+        html = self._render_html(template, context)
+        self._attach_html(html)
+        attach_images(self.msg, self.logger)
+        attach_files(self.msg, self.language, self.logger)
+        return self.msg

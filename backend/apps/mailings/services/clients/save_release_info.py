@@ -1,5 +1,4 @@
-from main.models import ReleaseInfo, ClientsList
-from django.utils import timezone
+from apps.clients.models import Client
 from logger.log_config import scripts_info_logger, scripts_error_logger
 
 
@@ -15,17 +14,9 @@ def save_release_info(client_id, release_number, release_type, component_type, e
         emails (list)
     """
     try:
-        client = ClientsList.objects.get(pk=client_id)
-        ReleaseInfo.objects.create(
-            date=timezone.now().date(),
-            release_number=release_number,
-            release_type=release_type,
-            component_type=component_type,
-            client_name=client.client_name,
-            client_email=emails
-        )
+        client = Client.objects.get(pk=client_id)
         scripts_info_logger.info(
-            f"Запись в ReleaseInfo сохранена: {client.client_name} ({release_number})"
+            f"Рассылка {release_number} ({release_type}/{component_type}) отправлена клиенту {client.client_name}: {emails}"
         )
     except Exception as e:
-        scripts_error_logger.error(f"Ошибка при сохранении ReleaseInfo: {e}")
+        scripts_error_logger.error(f"Ошибка логирования рассылки: {e}")
