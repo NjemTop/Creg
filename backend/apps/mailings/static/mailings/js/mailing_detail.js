@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const logContainer = document.getElementById("log-container");
     const mailingStatus = document.getElementById("mailing-status");
+    const mailingCompleted = document.getElementById("mailing-completed-at");
     const mailingId = document.getElementById("mailing-container").dataset.mailingId;
 
     const searchInput = document.getElementById("search-input");
@@ -9,11 +10,65 @@ document.addEventListener("DOMContentLoaded", function () {
     let ws_protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
     let socket = new WebSocket(`${ws_protocol}${window.location.host}/ws/mailing/${mailingId}/`);
 
+    function attachRepeatHandler(btn) {
+        btn.addEventListener("click", function () {
+            if (confirm("Повторить рассылку с теми же параметрами?")) {
+                fetch(`/mailings/repeat/${mailingId}/`, {
+                    method: "POST",
+                    headers: {"X-CSRFToken": getCSRFToken()},
+                })
+                    .then((res) => res.json())
+                    .then((data) => {
+                        alert(data.message);
+                        if (data.redirect_url) {
+                            window.location.href = data.redirect_url;
+                        }
+                    });
+            }
+        });
+    }
+
     socket.onmessage = function (event) {
         let data = JSON.parse(event.data);
 
         if (data.status) {
-            mailingStatus.innerText = data.status;
+            let display = data.status.display || data.status;
+            mailingStatus.innerText = display;
+
+            if (data.status.code === "completed" || data.status.code === "failed") {
+                if (stopBtn) {
+                    stopBtn.remove();
+                    stopBtn = null;
+                }
+                if (!document.getElementById("repeat-mailing-btn")) {
+                    const container = document.querySelector("#mailing-container .d-flex");
+                    const btn = document.createElement("button");
+                    btn.id = "repeat-mailing-btn";
+                    btn.className = "styled-btn-sm";
+                    btn.textContent = "🔁 Повторить рассылку";
+                    container.appendChild(btn);
+                    attachRepeatHandler(btn);
+                }
+            }
+        }
+
+        if (data.recipient) {
+            const row = document.querySelector(`.recipient-row[data-recipient-id='${data.recipient.id}']`);
+            if (row) {
+                const cell = row.querySelector(".status-cell");
+                if (cell) {
+                    cell.textContent = data.recipient.status;
+                }
+                row.classList.forEach((cls) => {
+                    if (cls.startsWith("recipient-")) row.classList.remove(cls);
+                });
+                row.classList.add(`recipient-${data.recipient.status_code}`);
+            }
+        }
+
+        if (data.completed_at) {
+            const dt = new Date(data.completed_at);
+            mailingCompleted.innerText = dt.toLocaleString();
         }
 
         if (data.log) {
@@ -119,8 +174,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    const stopBtn = document.getElementById("stop-mailing-btn");
-    const repeatBtn = document.getElementById("repeat-mailing-btn");
+    let stopBtn = document.getElementById("stop-mailing-btn");
+    let repeatBtn = document.getElementById("repeat-mailing-btn");
 
     if (stopBtn) {
         stopBtn.addEventListener("click", function () {
@@ -141,23 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (repeatBtn) {
-        repeatBtn.addEventListener("click", function () {
-            if (confirm("Повторить рассылку с теми же параметрами?")) {
-                fetch(`/mailings/repeat/${mailingId}/`, {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": getCSRFToken(),
-                    }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    alert(data.message);
-                    if (data.redirect_url) {
-                        window.location.href = data.redirect_url;
-                    }
-                });
-            }
-        });
+        attachRepeatHandler(repeatBtn);
     }
 
     function getCSRFToken() {
