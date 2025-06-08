@@ -114,7 +114,7 @@ def repeat_mailing(request, mailing_id):
     new_mailing = Mailing.objects.create(
         mode=mailing.mode,
         release_type=mailing.release_type,
-        status=MailingStatus.PENDING,
+        status=MailingStatus.DRAFT,
         language=mailing.language,
         server_version=mailing.server_version,
         ipad_version=mailing.ipad_version,
@@ -138,15 +138,12 @@ def repeat_mailing(request, mailing_id):
                 email=r.email
             )
 
-    # Запускаем повторно
-    new_mailing.status = MailingStatus.PENDING
     new_mailing.save()
-    send_mailing_task.delay(new_mailing.id)
 
     return JsonResponse({
-        "status": "repeated",
-        "message": f"Создана и запущена новая рассылка #{new_mailing.id}",
-        "redirect_url": f"/mailings/detail/{new_mailing.id}/"
+        "status": "created",
+        "message": f"Создан черновик новой рассылки #{new_mailing.id}",
+        "redirect_url": f"/mailings/edit/{new_mailing.id}/"
     })
 
 
