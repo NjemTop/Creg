@@ -23,6 +23,7 @@ from apps.mailings.services.integrations.confluence import (
     get_ipad_release_notes,
     get_android_release_notes,
 )
+from apps.mailings.services.utils.config import get_config_path
 
 # logging
 import logging
@@ -68,7 +69,7 @@ class EmailSender:
         In the open-source version the configuration file is optional. When it
         is missing we return an empty dictionary so that the sender can be
         configured programmatically."""
-        config_path = os.path.join(settings.BASE_DIR, "Main.config")
+        config_path = get_config_path()
         if not os.path.exists(config_path):
             return {}
         with open(config_path, 'r', encoding='utf-8-sig') as json_file:
