@@ -166,10 +166,10 @@ def send_mailing_task(self, mailing_id):
                     android_version=mailing.android_version,
                     language=lang,
                 )
-                sender.config = {
+                sender.config.update({
                     "MAIL_SETTINGS": smtp_config,
                     "MAIL_SETTINGS_SUPPORT": smtp_config,
-                }
+                })
                 sender.send_email()
 
                 recipient.status = RecipientStatus.SENT
