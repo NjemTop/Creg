@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function attachRepeatHandler(btn) {
         btn.addEventListener("click", function () {
-            if (confirm("Повторить рассылку с теми же параметрами?")) {
+            if (confirm("Создать новую рассылку на основе этой?")) {
                 fetch(`/mailings/repeat/${mailingId}/`, {
                     method: "POST",
                     headers: {"X-CSRFToken": getCSRFToken()},
