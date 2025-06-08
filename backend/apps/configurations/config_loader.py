@@ -64,6 +64,11 @@ def get_integration_settings():
                 "CLIENT_ID": settings_obj.yandex_client_id,
                 "CLIENT_SECRET": settings_obj.yandex_client_secret,
             },
+            "YANDEX_DBS_TEAM": {
+                "OAUTH-TOKEN": settings_obj.yandex_dbs_token,
+                "CLIENT_ID": settings_obj.yandex_dbs_client_id,
+                "CLIENT_SECRET": settings_obj.yandex_dbs_client_secret,
+            },
             "YANDEX_DISK_FOLDERS": settings_obj.yandex_disk_folders,
             "FILE_SHARE": {
                 "USERNAME": settings_obj.file_share_username,
@@ -71,10 +76,32 @@ def get_integration_settings():
                 "DOMAIN": settings_obj.file_share_domain,
                 "SMB_SERVER": settings_obj.file_share_server,
             },
+            "CONFLUENCE": {
+                "USERNAME": settings_obj.confluence_username,
+                "PASSWORD": settings_obj.confluence_password,
+            },
             "NEXT_CLOUD": {
                 "URL": settings_obj.nextcloud_url,
                 "USER": settings_obj.nextcloud_user,
                 "PASSWORD": settings_obj.nextcloud_password,
+            },
+            "TELEGRAM_SETTINGS": {
+                "PROXY": settings_obj.telegram_proxy,
+                "BOT_ID": settings_obj.telegram_bot_id,
+                "BOT_TOKEN": settings_obj.telegram_bot_token,
+            },
+            "TFS": {
+                "assigned_to_product": settings_obj.tfs_assigned_to_product,
+            },
+            "TICKET_SETTINGS": {
+                "API_ENDPOINT": settings_obj.ticket_api_endpoint,
+                "API_KEY": settings_obj.ticket_api_key,
+                "API_SECRET": settings_obj.ticket_api_secret,
+            },
+            "SEND_ALERT": {
+                "GROUP_SUPPOR_TEAM": settings_obj.alert_group_support_team,
+                "GROUP_RELEASE": settings_obj.alert_group_release,
+                "GROUP_TICKETS": settings_obj.alert_group_tickets,
             },
         }
     except Exception as e:

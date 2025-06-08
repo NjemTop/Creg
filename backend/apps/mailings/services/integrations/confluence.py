@@ -15,8 +15,8 @@ logging.getLogger("rest_client").setLevel(logging.WARNING)
 def get_server_release_notes(server_version, lang_key):
     server_updates = None
     data = get_integration_settings()
-    USERNAME = data.get("FILE_SHARE", {}).get("USERNAME")
-    PASSWORD = data.get("FILE_SHARE", {}).get("PASSWORD")
+    USERNAME = data.get("CONFLUENCE", {}).get("USERNAME")
+    PASSWORD = data.get("CONFLUENCE", {}).get("PASSWORD")
     url = 'https://confluence.boardmaps.ru'
     try:
         confluence = Confluence(url=url, username=USERNAME, password=PASSWORD)
@@ -40,8 +40,8 @@ def get_ipad_release_notes(ipad_version, lang_key):
         logger.info("Мобильная версия iPad не указана.")
         return []
     data = get_integration_settings()
-    USERNAME = data.get("FILE_SHARE", {}).get("USERNAME")
-    PASSWORD = data.get("FILE_SHARE", {}).get("PASSWORD")
+    USERNAME = data.get("CONFLUENCE", {}).get("USERNAME")
+    PASSWORD = data.get("CONFLUENCE", {}).get("PASSWORD")
     url = 'https://confluence.boardmaps.ru'
     try:
         confluence = Confluence(url=url, username=USERNAME, password=PASSWORD)
@@ -66,8 +66,8 @@ def get_android_release_notes(android_version, lang_key):
         logger.info("Мобильная версия Android не указана.")
         return []
     data = get_integration_settings()
-    USERNAME = data.get("FILE_SHARE", {}).get("USERNAME")
-    PASSWORD = data.get("FILE_SHARE", {}).get("PASSWORD")
+    USERNAME = data.get("CONFLUENCE", {}).get("USERNAME")
+    PASSWORD = data.get("CONFLUENCE", {}).get("PASSWORD")
     url = 'https://confluence.boardmaps.ru'
     try:
         confluence = Confluence(url=url, username=USERNAME, password=PASSWORD)
