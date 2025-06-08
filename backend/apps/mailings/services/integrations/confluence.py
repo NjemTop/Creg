@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import json
 import os
 import logging
+from apps.mailings.services.utils.config import get_config_path
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +13,7 @@ logging.getLogger("rest_client").setLevel(logging.WARNING)
 
 def get_server_release_notes(server_version, lang_key):
     server_updates = None
-    with open("Main.config", 'r', encoding='utf-8-sig') as file:
+    with open(get_config_path(), 'r', encoding='utf-8-sig') as file:
         data = json.load(file)
     USERNAME = data["FILE_SHARE"]["USERNAME"]
     PASSWORD = data["FILE_SHARE"]["PASSWORD"]
@@ -38,7 +39,7 @@ def get_ipad_release_notes(ipad_version, lang_key):
     if not ipad_version:
         logger.info("Мобильная версия iPad не указана.")
         return []
-    with open("Main.config", 'r', encoding='utf-8-sig') as file:
+    with open(get_config_path(), 'r', encoding='utf-8-sig') as file:
         data = json.load(file)
     USERNAME = data["FILE_SHARE"]["USERNAME"]
     PASSWORD = data["FILE_SHARE"]["PASSWORD"]
@@ -65,7 +66,7 @@ def get_android_release_notes(android_version, lang_key):
     if not android_version:
         logger.info("Мобильная версия Android не указана.")
         return []
-    with open("Main.config", 'r', encoding='utf-8-sig') as file:
+    with open(get_config_path(), 'r', encoding='utf-8-sig') as file:
         data = json.load(file)
     USERNAME = data["FILE_SHARE"]["USERNAME"]
     PASSWORD = data["FILE_SHARE"]["PASSWORD"]

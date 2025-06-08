@@ -10,11 +10,12 @@ from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_excep
 from apps.clients.models import Client, TechnicalInfo
 from .nextcloud import NextcloudManager
 from .yandex_disk import upload_to_nextcloud
+from apps.mailings.services.utils.config import get_config_path
 import logging
 
 logger = logging.getLogger(__name__)
 
-CONFIG_FILE = "Main.config"
+CONFIG_FILE = get_config_path()
 with open(CONFIG_FILE, 'r', encoding='utf-8-sig') as file:
     data = json.load(file)
 
