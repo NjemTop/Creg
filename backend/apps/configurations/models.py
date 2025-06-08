@@ -57,6 +57,33 @@ class IntegrationSettings(models.Model):
     file_share_domain = models.CharField("SMB домен", max_length=255, blank=True)
     file_share_server = models.CharField("SMB сервер", max_length=255, blank=True)
 
+    # Confluence credentials
+    confluence_username = models.CharField("Confluence пользователь", max_length=255, blank=True)
+    confluence_password = models.CharField("Confluence пароль", max_length=255, blank=True)
+
+    # Telegram settings
+    telegram_proxy = models.CharField("Telegram прокси", max_length=255, blank=True)
+    telegram_bot_id = models.CharField("Telegram Bot ID", max_length=255, blank=True)
+    telegram_bot_token = models.CharField("Telegram Bot Token", max_length=255, blank=True)
+
+    # TFS settings
+    tfs_assigned_to_product = models.CharField("TFS Assigned To", max_length=255, blank=True)
+
+    # Ticket system settings
+    ticket_api_endpoint = models.URLField("Ticket API Endpoint", blank=True)
+    ticket_api_key = models.CharField("Ticket API Key", max_length=255, blank=True)
+    ticket_api_secret = models.CharField("Ticket API Secret", max_length=255, blank=True)
+
+    # Alert groups
+    alert_group_support_team = models.CharField("Группа поддержки", max_length=255, blank=True)
+    alert_group_release = models.CharField("Группа релизов", max_length=255, blank=True)
+    alert_group_tickets = models.CharField("Группа тикетов", max_length=255, blank=True)
+
+    # Yandex Disk for BMs Team
+    yandex_dbs_token = models.CharField("Yandex DBS OAuth-токен", max_length=255, blank=True)
+    yandex_dbs_client_id = models.CharField("Yandex DBS Client ID", max_length=255, blank=True)
+    yandex_dbs_client_secret = models.CharField("Yandex DBS Client Secret", max_length=255, blank=True)
+
     def __str__(self):
         return "Integration settings"
 
