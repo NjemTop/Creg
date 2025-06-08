@@ -8,8 +8,8 @@ from urllib.parse import quote
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 from apps.clients.models import Client, TechnicalInfo
-from .nextcloud import NextcloudManager
-from .yandex_disk import upload_to_nextcloud
+from apps.mailings.services.integrations.nextcloud import NextcloudManager
+from apps.mailings.services.integrations.yandex_disk import upload_to_nextcloud
 from apps.mailings.services.utils.config import get_config_path
 import logging
 
