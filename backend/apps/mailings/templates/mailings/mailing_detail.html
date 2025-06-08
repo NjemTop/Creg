@@ -39,7 +39,7 @@
         <p><strong>Статус:</strong> <span id="mailing-status">{{ mailing.get_status_display }}</span></p>
         <p><strong>Версия:</strong> {{ mailing.release_number }}</p>
         <p><strong>Начало:</strong> {{ mailing.started_at|default:"-" }}</p>
-        <p><strong>Завершение:</strong> {{ mailing.completed_at|default:"-" }}</p>
+        <p><strong>Завершение:</strong> <span id="mailing-completed-at">{{ mailing.completed_at|default:"-" }}</span></p>
     </div>
 
     <div class="card p-3 mt-3">
@@ -60,6 +60,7 @@
                     {% for client, contacts in grouped_recipients.items %}
                         {% for contact in contacts %}
                             <tr class="recipient-row"
+                                data-recipient-id="{{ contact.id }}"
                                 data-client-id="{% if client == test_recipient_label %}test{% else %}{{ client.id }}{% endif %}"
                                 data-client-name="{% if client == test_recipient_label %}{{ client }}{% else %}{{ client.client_name }}{% endif %}"
                                 data-email="{{ contact.email }}">

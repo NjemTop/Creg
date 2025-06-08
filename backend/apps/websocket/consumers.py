@@ -38,6 +38,10 @@ class MailingConsumer(AsyncWebsocketConsumer):
             data["error"] = event["error"]
         if "log" in event:
             data["log"] = event["log"]
+        if "recipient" in event:
+            data["recipient"] = event["recipient"]
+        if "completed_at" in event:
+            data["completed_at"] = event["completed_at"]
 
         if data:
             await self.send(text_data=json.dumps(data))

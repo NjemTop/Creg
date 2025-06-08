@@ -37,7 +37,11 @@ def send_mailing_task(self, mailing_id):
         mailing.started_at = timezone.now()
         mailing.save()
 
-        send_ws_event(mailing.id, "status", mailing.get_status_display())
+        send_ws_event(
+            mailing.id,
+            "status",
+            {"code": mailing.status, "display": mailing.get_status_display()},
+        )
         log_event(mailing.id, "info", f"📨 [{self.request.id}] Рассылка запущена (Режим: {mailing.mode}, Язык: {mailing.language}).")
 
         # Определяем список получателей (тест или прод)
@@ -65,7 +69,16 @@ def send_mailing_task(self, mailing_id):
                 }
             )
 
-            send_ws_event(mailing.id, "status", mailing.get_status_display())
+            send_ws_event(
+                mailing.id,
+                "status",
+                {"code": mailing.status, "display": mailing.get_status_display()},
+            )
+            send_ws_event(
+                mailing.id,
+                "completed_at",
+                timezone.localtime(mailing.completed_at).isoformat(),
+            )
             log_event(mailing.id, "error", error_msg)
 
             raise
@@ -90,7 +103,16 @@ def send_mailing_task(self, mailing_id):
                 }
             )
 
-            send_ws_event(mailing.id, "status", mailing.get_status_display())
+            send_ws_event(
+                mailing.id,
+                "status",
+                {"code": mailing.status, "display": mailing.get_status_display()},
+            )
+            send_ws_event(
+                mailing.id,
+                "completed_at",
+                timezone.localtime(mailing.completed_at).isoformat(),
+            )
             log_event(mailing.id, "error", error_msg)
 
             raise
@@ -142,7 +164,21 @@ def send_mailing_task(self, mailing_id):
 
             recipient.save()
 
-            send_ws_event(mailing.id, "status", mailing.get_status_display())
+            send_ws_event(
+                mailing.id,
+                "recipient",
+                {
+                    "id": recipient.id,
+                    "status": recipient.get_status_display(),
+                    "status_code": recipient.status,
+                },
+            )
+
+            send_ws_event(
+                mailing.id,
+                "status",
+                {"code": mailing.status, "display": mailing.get_status_display()},
+            )
 
         # Итоговый статус рассылки
         with transaction.atomic():
@@ -150,9 +186,22 @@ def send_mailing_task(self, mailing_id):
             mailing.status = MailingStatus.FAILED if error_count > 0 else MailingStatus.COMPLETED
             mailing.save()
         
-        log_event(mailing.id, "info", f"✅ Рассылка завершена: {success_count} отправлено, {error_count} с ошибками.")
+        log_event(
+            mailing.id,
+            "info",
+            f"✅ Рассылка завершена: {success_count} отправлено, {error_count} с ошибками.",
+        )
 
-        send_ws_event(mailing.id, "status", mailing.get_status_display())
+        send_ws_event(
+            mailing.id,
+            "status",
+            {"code": mailing.status, "display": mailing.get_status_display()},
+        )
+        send_ws_event(
+            mailing.id,
+            "completed_at",
+            timezone.localtime(mailing.completed_at).isoformat(),
+        )
 
     except Exception as error:
         error_msg = f"❌ [{self.request.id}] Критическая ошибка: {str(error)}"
@@ -176,7 +225,16 @@ def send_mailing_task(self, mailing_id):
                 }
             )
 
-            send_ws_event(mailing.id, "status", mailing.get_status_display())
+            send_ws_event(
+                mailing.id,
+                "status",
+                {"code": mailing.status, "display": mailing.get_status_display()},
+            )
+            send_ws_event(
+                mailing.id,
+                "completed_at",
+                timezone.localtime(mailing.completed_at).isoformat(),
+            )
             log_event(mailing_id, "critical", error_msg)
 
         raise
