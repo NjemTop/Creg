@@ -64,7 +64,15 @@ class EmailSender:
 
     @log_errors()
     def _load_config(self):
-        with open("./Main.config", 'r', encoding='utf-8-sig') as json_file:
+        """Load JSON configuration used by the mailing helpers.
+
+        In the open-source version the configuration file is optional. When it
+        is missing we return an empty dictionary so that the sender can be
+        configured programmatically."""
+        config_path = os.path.join(settings.BASE_DIR, "Main.config")
+        if not os.path.exists(config_path):
+            return {}
+        with open(config_path, 'r', encoding='utf-8-sig') as json_file:
             return json.load(json_file)
 
     def _structure_updates_3x(self, updates):
