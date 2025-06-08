@@ -2,10 +2,10 @@ import logging
 import smtplib
 import traceback
 from celery import shared_task
-from django.core.mail import send_mail
 from django.core.mail.backends.smtp import EmailBackend
 from django.db import transaction
 from django.utils import timezone
+from apps.mailings.services.base.email_sender import EmailSender
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from .models import Mailing, MailingLog, MailingRecipient, MailingTestRecipient, MailingStatus, RecipientStatus, MailingMode, LogLevel
@@ -141,46 +141,41 @@ def send_mailing_task(self, mailing_id):
 
             raise
 
-        LANG_MESSAGES = {
-            "ru": {
-                "subject": f"Обновление {mailing.server_version}",
-                "message": f"Версия сервера: {mailing.server_version}\nВерсия iPad: {mailing.ipad_version}\nВерсия Android: {mailing.android_version}",
-            },
-            "en": {
-                "subject": f"Update {mailing.server_version}",
-                "message": f"Server Version: {mailing.server_version}\n iPad Version: {mailing.ipad_version}\n Android Version: {mailing.android_version}",
-            },
-        }
-
         success_count = 0
         error_count = 0
 
+        smtp_config = {
+            "SMTP": email_backend.host,
+            "USER": email_backend.username or "",
+            "PASSWORD": email_backend.password or "",
+            "FROM": email_backend.username or "noreply@example.com",
+        }
+
         for recipient in recipients:
             try:
-                lang = mailing.language.code if mailing.mode == MailingMode.TEST else (recipient.client.language.code if recipient.client else 'ru')
-                email_content = LANG_MESSAGES.get(lang, LANG_MESSAGES["ru"])  # Если язык не найден, по умолчанию "ru"
-
-                send_mail(
-                    subject=email_content["subject"],
-                    message=email_content["message"],
-                    from_email=email_backend.username,
-                    recipient_list=[recipient.email],
-                    connection=email_backend,
-                    fail_silently=True
+                lang = mailing.language.code if mailing.mode == MailingMode.TEST else (
+                    recipient.client.language.code if recipient.client and recipient.client.language else "ru"
                 )
+
+                sender = EmailSender(
+                    emails=[recipient.email],
+                    mailing_type="standard_mailing",
+                    release_type=mailing.release_type,
+                    server_version=mailing.server_version,
+                    ipad_version=mailing.ipad_version,
+                    android_version=mailing.android_version,
+                    language=lang,
+                )
+                sender.config = {
+                    "MAIL_SETTINGS": smtp_config,
+                    "MAIL_SETTINGS_SUPPORT": smtp_config,
+                }
+                sender.send_email()
 
                 recipient.status = RecipientStatus.SENT
                 recipient.sent_at = timezone.now()
-                recipient.error_message = ''
+                recipient.error_message = ""
                 success_count += 1
-
-            except smtplib.SMTPException as smtp_error:
-                recipient.status = RecipientStatus.ERROR
-                error_msg = f"❌ [{self.request.id}] Ошибка SMTP при отправке {recipient.email}: {str(smtp_error)}"
-                recipient.error_message = error_msg
-                error_count += 1
-                logger.error(error_msg)
-                log_event(mailing.id, "error", error_msg)
 
             except Exception as error:
                 recipient.status = RecipientStatus.ERROR
