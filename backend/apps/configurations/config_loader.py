@@ -5,6 +5,10 @@ from urllib.parse import urljoin
 
 logger = logging.getLogger(__name__)
 
+def _get_model(model_name: str):
+    return apps.get_model("configurations", model_name)
+
+
 def get_oidc_settings():
     """Получает OIDC настройки из базы, если OIDC включен"""
     try:
@@ -51,59 +55,93 @@ def get_smtp_settings():
         return None
 
 
-def get_integration_settings():
-    """Получает настройки интеграций из базы"""
+def get_integration_settings() -> dict:
+    """
+    Возвращает словарь с параметрами из IntegrationSettings.
+    """
     try:
-        IntegrationSettings = apps.get_model("configurations", "IntegrationSettings")
-        settings_obj = IntegrationSettings.objects.first()
-        if not settings_obj:
+        IntegrationSettings = _get_model("IntegrationSettings")
+        obj = IntegrationSettings.objects.first()
+        if not obj:
             return {}
+
         return {
+            # ——— Яндекс.Диск ——————————————————————————
             "YANDEX_DISK": {
-                "OAUTH-TOKEN": settings_obj.yandex_token,
-                "CLIENT_ID": settings_obj.yandex_client_id,
-                "CLIENT_SECRET": settings_obj.yandex_client_secret,
+                "OAUTH_TOKEN": obj.yandex_token,
+                "CLIENT_ID": obj.yandex_client_id,
+                "CLIENT_SECRET": obj.yandex_client_secret,
             },
             "YANDEX_DBS_TEAM": {
-                "OAUTH-TOKEN": settings_obj.yandex_dbs_token,
-                "CLIENT_ID": settings_obj.yandex_dbs_client_id,
-                "CLIENT_SECRET": settings_obj.yandex_dbs_client_secret,
+                "OAUTH_TOKEN": obj.yandex_dbs_token,
+                "CLIENT_ID": obj.yandex_dbs_client_id,
+                "CLIENT_SECRET": obj.yandex_dbs_client_secret,
             },
-            "YANDEX_DISK_FOLDERS": settings_obj.yandex_disk_folders,
+            "YANDEX_DISK_FOLDERS": obj.yandex_disk_folders,
+            # ——— Файловые шары / SMB ————————————————
             "FILE_SHARE": {
-                "USERNAME": settings_obj.file_share_username,
-                "PASSWORD": settings_obj.file_share_password,
-                "DOMAIN": settings_obj.file_share_domain,
-                "SMB_SERVER": settings_obj.file_share_server,
+                "USERNAME": obj.file_share_username,
+                "PASSWORD": obj.file_share_password,
+                "DOMAIN": obj.file_share_domain,
+                "SMB_SERVER": obj.file_share_server,
             },
+            # ——— Confluence / Nextcloud ——————————————
             "CONFLUENCE": {
-                "USERNAME": settings_obj.confluence_username,
-                "PASSWORD": settings_obj.confluence_password,
+                "URL": obj.confluence_url,
+                "USERNAME": obj.confluence_username,
+                "PASSWORD": obj.confluence_password,
             },
             "NEXT_CLOUD": {
-                "URL": settings_obj.nextcloud_url,
-                "USER": settings_obj.nextcloud_user,
-                "PASSWORD": settings_obj.nextcloud_password,
+                "URL": obj.nextcloud_url,
+                "USER": obj.nextcloud_user,
+                "PASSWORD": obj.nextcloud_password,
             },
+            # ——— Telegram / TFS / Tickets / Alerts ————
             "TELEGRAM_SETTINGS": {
-                "PROXY": settings_obj.telegram_proxy,
-                "BOT_ID": settings_obj.telegram_bot_id,
-                "BOT_TOKEN": settings_obj.telegram_bot_token,
+                "PROXY": obj.telegram_proxy,
+                "BOT_ID": obj.telegram_bot_id,
+                "BOT_TOKEN": obj.telegram_bot_token,
             },
-            "TFS": {
-                "assigned_to_product": settings_obj.tfs_assigned_to_product,
-            },
+            "TFS": {"ASSIGNED_TO_PRODUCT": obj.tfs_assigned_to_product},
             "TICKET_SETTINGS": {
-                "API_ENDPOINT": settings_obj.ticket_api_endpoint,
-                "API_KEY": settings_obj.ticket_api_key,
-                "API_SECRET": settings_obj.ticket_api_secret,
+                "API_ENDPOINT": obj.ticket_api_endpoint,
+                "API_KEY": obj.ticket_api_key,
+                "API_SECRET": obj.ticket_api_secret,
             },
             "SEND_ALERT": {
-                "GROUP_SUPPOR_TEAM": settings_obj.alert_group_support_team,
-                "GROUP_RELEASE": settings_obj.alert_group_release,
-                "GROUP_TICKETS": settings_obj.alert_group_tickets,
+                "GROUP_SUPPORT_TEAM": obj.alert_group_support_team,
+                "GROUP_RELEASE": obj.alert_group_release,
+                "GROUP_TICKETS": obj.alert_group_tickets,
             },
         }
-    except Exception as e:
-        logger.error(f"❌ Ошибка загрузки интеграционных настроек: {e}")
+    except Exception as exc:
+        logger.error("❌ Ошибка загрузки IntegrationSettings: %s", exc, exc_info=True)
+        return {}
+
+
+def get_smtp_settings() -> dict:
+    """
+    Возвращает настройки SMTP из первой включённой записи.
+    """
+    try:
+        SMTPSettings = _get_model("SMTPSettings")
+        obj = (
+            SMTPSettings.objects.filter(enabled=True).first()
+            or SMTPSettings.objects.first()
+        )
+        if not obj:
+            return {}
+
+        return {
+            "SMTP": obj.smtp_host,
+            "PORT": obj.smtp_port,
+            "USER": obj.smtp_user or "",
+            "PASSWORD": obj.smtp_password or "",
+            "USE_TLS": obj.use_tls,
+            "USE_SSL": obj.use_ssl,
+            # «from» по умолчанию берём из имени пользователя
+            "FROM": obj.smtp_user,
+        }
+    except Exception as exc:
+        logger.error("❌ Ошибка загрузки SMTPSettings: %s", exc, exc_info=True)
         return {}

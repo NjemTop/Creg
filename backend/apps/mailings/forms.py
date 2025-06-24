@@ -26,6 +26,9 @@ class MailingForm(forms.ModelForm):
         # Режим по умолчанию — тест
         self.fields['mode'].initial = 'test'
 
+        ### Форматируем формат даты и времени для отображения на фронте
+        self.fields['saas_update_time'].input_formats = ['%Y-%m-%dT%H:%M']
+
     def clean_test_email(self):
         """Валидация и очистка тестового email."""
         mode = self.cleaned_data.get('mode')
@@ -62,6 +65,9 @@ class MailingForm(forms.ModelForm):
 
         if not (server_version or ipad_version or android_version):
             raise ValidationError("Необходимо указать хотя бы одну версию (Server, iPad или Android).")
+
+        if cleaned_data.get("saas_notification") and not cleaned_data.get("saas_update_time"):
+            raise ValidationError("Укажите дату и время обновления для SaaS-клиентов.")
 
         return cleaned_data
 

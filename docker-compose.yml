@@ -15,6 +15,11 @@ services:
       - "5432:5432"
     networks:
       - creg_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   migrate:
     image: creg:latest
@@ -23,13 +28,16 @@ services:
       - .env
     depends_on:
       db:
-        condition: service_started
+        condition: service_healthy
     command: >
       sh -c "
         cd backend &&
         python manage.py makemigrations --noinput &&
         python manage.py migrate --noinput &&
-        python manage.py collectstatic --noinput
+        python manage.py init_languages &&
+        python manage.py init_components &&
+        python manage.py init_service_packs &&
+        python manage.py init_server_roles_and_platforms
       "
     volumes:
       - .:/app
@@ -49,7 +57,12 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
-    command: sh -c "cd backend && python run.py"
+    command: >
+      sh -c "
+        cd backend &&
+        python manage.py collectstatic --noinput &&
+        python run.py
+      "
     volumes:
       - .:/app
     ports:

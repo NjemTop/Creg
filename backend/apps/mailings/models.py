@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from apps.clients.models import Client
+from apps.clients.models import Module
 
 
 User = get_user_model()
@@ -72,14 +72,14 @@ class Mailing(models.Model):
     """Таблица с информацией о рассылке клиенту"""
 
     mode = models.CharField(
-        max_length=10, 
+        max_length=10,
         choices=MailingMode.choices, 
         default=MailingMode.PROD, 
         verbose_name="Режим"
     )
 
     release_type = models.CharField(
-        max_length=50, 
+        max_length=50,
         choices=ReleaseType.choices, 
         default=ReleaseType.RELEASE_3X, 
         verbose_name="Версия релиза"
@@ -98,6 +98,7 @@ class Mailing(models.Model):
     service_window = models.BooleanField(default=False, verbose_name="Запрос сервисного окна")
     saas_notification = models.BooleanField(default=False, verbose_name="Отправить уведомление в SaaS")
     saas_update_time = models.DateTimeField(blank=True, null=True, verbose_name="Время обновления SaaS")
+    module = models.ForeignKey(Module, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Модуль")
 
     status = models.CharField(max_length=20, choices=MailingStatus.choices, default=MailingStatus.PENDING, verbose_name="Статус")
     language = models.ForeignKey('clients.Language', on_delete=models.SET_NULL, verbose_name="Язык рассылки", blank=True, null=True)

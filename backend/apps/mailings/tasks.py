@@ -1,66 +1,11 @@
-import logging
 import traceback
 from celery import shared_task
-from django.core.mail.backends.smtp import EmailBackend
 from django.db import transaction
 from django.utils import timezone
 from apps.mailings.services.base.email_sender import EmailSender
-from .logging_utils import send_ws_event, log_event, get_mailing_logger
-from .models import Mailing, MailingRecipient, MailingTestRecipient, MailingStatus, RecipientStatus, MailingMode
-from apps.clients.models import Client
-from apps.configurations.models import SMTPSettings
-
-def get_smtp_backend():
-    """Возвращает EmailBackend на основе активных настроек SMTP.
-
-    Выбирает первую включённую запись в таблице ``SMTPSettings`` и
-    инициализирует объект :class:`EmailBackend`. Если активной
-    конфигурации нет, возбуждает ``ValueError``.
-    """
-    smtp = SMTPSettings.objects.filter(enabled=True).first()
-
-    if not smtp:
-        raise ValueError("SMTP-отправка отключена. Включите её в настройках.")
-
-    return EmailBackend(
-        host=smtp.smtp_host,
-        port=smtp.smtp_port,
-        username=smtp.smtp_user,
-        password=smtp.smtp_password,
-        use_tls=smtp.use_tls,
-        use_ssl=smtp.use_ssl,
-        fail_silently=False
-    )
-
-
-def populate_prod_recipients(mailing):
-    """Создаёт получателей для продакшен-рассылки.
-
-    Если у рассылки нет получателей, метод подберёт всех активных клиентов,
-    подходящих по языку, и создаст записи :class:`MailingRecipient` для каждого
-    контакта с разрешёнными уведомлениями.
-
-    Args:
-        mailing (:class:`Mailing`): Объект рассылки, для которого формируются
-            получатели.
-
-    Returns:
-        int: Количество созданных получателей.
-    """
-    clients = Client.objects.filter(contact_status=True)
-    if mailing.language:
-        clients = clients.filter(language=mailing.language)
-
-    created = 0
-    for client in clients:
-        for contact in client.contacts.filter(notification_update=True):
-            MailingRecipient.objects.create(
-                mailing=mailing,
-                client=client,
-                email=contact.email,
-            )
-            created += 1
-    return created
+from apps.mailings.services.recipients import get_recipient_strategy
+from apps.mailings.logging_utils import send_ws_event, log_event, get_mailing_logger
+from apps.mailings.models import Mailing, MailingRecipient, MailingTestRecipient, MailingStatus, RecipientStatus, MailingMode
 
 
 @shared_task(bind=True)
@@ -100,28 +45,18 @@ def send_mailing_task(self, mailing_id):
         )
 
         if not recipients.exists() and mailing.mode == MailingMode.PROD:
-            populate_prod_recipients(mailing)
+            strategy = get_recipient_strategy(mailing)
+            log_event(mailing.id, "debug", f"🔁 Выбрана стратегия получателей: {strategy.__class__.__name__}")
+            send_ws_event(mailing.id, "info", {"message": f"Стратегия: {strategy.__class__.__name__}"})
+            strategy.execute()
             recipients = MailingRecipient.objects.filter(mailing=mailing, status=RecipientStatus.PENDING)
 
         if not recipients.exists():
             error_msg = f"⚠️ [{self.request.id}] Рассылка {mailing.id} прервана: Нет получателей."
             raise RuntimeError(error_msg)
 
-        try:
-            email_backend = get_smtp_backend()
-        except ValueError as error:
-            error_msg = f"🚨 [{self.request.id}] Ошибка SMTP: {str(error)}"
-            raise RuntimeError(error_msg)
-
         success_count = 0
         error_count = 0
-
-        smtp_config = {
-            "SMTP": email_backend.host,
-            "USER": email_backend.username or "",
-            "PASSWORD": email_backend.password or "",
-            "FROM": email_backend.username or "noreply@example.com",
-        }
 
         for recipient in recipients:
             client_name = (
@@ -142,14 +77,23 @@ def send_mailing_task(self, mailing_id):
                     ipad_version=mailing.ipad_version,
                     android_version=mailing.android_version,
                     language=lang,
+                    mailing_id=mailing.id,
                 )
                 sender.logger = mail_logger
                 sender.error_logger = mail_logger
-                sender.config.update({
-                    "MAIL_SETTINGS": smtp_config,
-                    "MAIL_SETTINGS_SUPPORT": smtp_config,
-                })
-                sender.send_email()
+                try:
+                    sender.send_email()
+                except ValueError as smtp_error:
+                    error_msg = f"🚨 [{self.request.id}] SMTP не настроен: {smtp_error}"
+                    log_event(mailing.id, "critical", error_msg)
+                    send_ws_event(mailing.id, "error", {"message": error_msg})
+                    raise RuntimeError(error_msg)
+                except Exception as send_error:
+                    error_msg = f"❌ [{self.request.id}] Ошибка отправки письма: {send_error}"
+                    log_event(mailing.id, "error", error_msg)
+                    send_ws_event(mailing.id, "error", {"message": error_msg})
+                    raise
+
 
                 recipient.status = RecipientStatus.SENT
                 recipient.sent_at = timezone.now()
@@ -215,34 +159,30 @@ def send_mailing_task(self, mailing_id):
         error_msg = f"❌ [{self.request.id}] Критическая ошибка: {str(error)}"
         error_traceback = traceback.format_exc()
 
-        if not isinstance(error, ValueError):
-            mail_logger.critical(error_msg, exc_info=True)
+        mail_logger = get_mailing_logger(mailing_id)
+        log_event(mailing_id, "critical", error_msg)
+        send_ws_event(mailing_id, "error", {"message": error_msg})
 
+        try:
+            mailing = Mailing.objects.get(id=mailing_id)
             mailing.status = MailingStatus.FAILED
             mailing.completed_at = timezone.now()
             mailing.error_message = error_msg
             mailing.save()
 
-            self.update_state(
-                state="FAILURE",
-                meta={
-                    "task_name": self.name,
-                    "error": error_msg,
-                    "worker": self.request.hostname,
-                    "traceback": error_traceback,
-                }
-            )
+            send_ws_event(mailing_id, "status", {"code": mailing.status, "display": mailing.get_status_display()})
+            send_ws_event(mailing_id, "completed_at", timezone.localtime(mailing.completed_at).isoformat())
+        except Exception:
+            pass
 
-            send_ws_event(
-                mailing.id,
-                "status",
-                {"code": mailing.status, "display": mailing.get_status_display()},
-            )
-            send_ws_event(
-                mailing.id,
-                "completed_at",
-                timezone.localtime(mailing.completed_at).isoformat(),
-            )
-            log_event(mailing_id, "critical", error_msg)
+        self.update_state(
+            state="FAILURE",
+            meta={
+                "task_name": self.name,
+                "error": error_msg,
+                "worker": self.request.hostname,
+                "traceback": error_traceback,
+            }
+        )
 
         raise

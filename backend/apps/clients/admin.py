@@ -1,8 +1,9 @@
+from simple_history.admin import SimpleHistoryAdmin
 from django.contrib import admin
 from apps.clients.models import (
-    Language, Client, Contact, ServiceInfo, TechnicalInfo, ServerVersionHistory,
+    Language, ServicePack, Client, Contact, ServiceInfo, TechnicalInfo, ServerVersionHistory,
     Module, ClientModule, Integration, ClientIntegration, 
-    Server, ServerRole, TechAccount, TechNote, RemoteAccess, ServerAccess
+    Server, ServerRole, Platform, TechAccount, TechNote, RemoteAccess, ServerAccess
 )
 
 
@@ -53,10 +54,16 @@ class LanguageAdmin(admin.ModelAdmin):
     search_fields = ("name", "code")
     ordering = ["name"]
 
+@admin.register(ServicePack)
+class ServicePackAdmin(admin.ModelAdmin):
+    list_display = ("name", "code")
+    search_fields = ("name", "code")
+    ordering = ["name"]
+
 
 # Клиенты
 @admin.register(Client)
-class ClientAdmin(admin.ModelAdmin):
+class ClientAdmin(SimpleHistoryAdmin):
     list_display = ("client_name", "short_name", "contact_status", "saas", "language", "created_at", "updated_at")
     list_filter = ("contact_status", "saas", "language__name", "created_at")
     search_fields = ("client_name", "short_name", "language__name")
@@ -70,7 +77,7 @@ class ClientAdmin(admin.ModelAdmin):
 
 # Контакты
 @admin.register(Contact)
-class ContactAdmin(admin.ModelAdmin):
+class ContactAdmin(SimpleHistoryAdmin):
     list_display = ("full_name", "client", "email", "position", "phone_number", "notification_update", "updated_at")
     list_filter = ("notification_update", "client")
     search_fields = ("first_name", "last_name", "email")
@@ -83,7 +90,7 @@ class ContactAdmin(admin.ModelAdmin):
 
 # Обслуживание клиента
 @admin.register(ServiceInfo)
-class ServiceInfoAdmin(admin.ModelAdmin):
+class ServiceInfoAdmin(SimpleHistoryAdmin):
     list_display = ("client", "service_pack", "manager", "loyalty", "updated_at")
     list_filter = ("service_pack", "loyalty")
     search_fields = ("client__client_name", "manager__name")
@@ -91,7 +98,7 @@ class ServiceInfoAdmin(admin.ModelAdmin):
 
 # Техническая информация клиента
 @admin.register(TechnicalInfo)
-class TechnicalInfoAdmin(admin.ModelAdmin):
+class TechnicalInfoAdmin(SimpleHistoryAdmin):
     list_display = ("client", "server_version", "update_date", "api_enabled", "mdm_support")
     list_filter = ("api_enabled", "mdm_support", "localized_web", "localized_ios", "skins_web", "skins_ios")
     search_fields = ("client__client_name", "server_version")
@@ -136,7 +143,7 @@ class ClientIntegrationAdmin(admin.ModelAdmin):
 
 # Серверы и роли серверов
 @admin.register(Server)
-class ServerAdmin(admin.ModelAdmin):
+class ServerAdmin(SimpleHistoryAdmin):
     list_display = ("client", "name", "ip_address", "role", "operating_system", "updated_at")
     list_filter = ("role", "client")
     search_fields = ("name", "ip_address", "client__client_name")
@@ -148,10 +155,15 @@ class ServerRoleAdmin(admin.ModelAdmin):
     list_display = ("name", "description")
     search_fields = ("name",)
 
+@admin.register(Platform)
+class PlatformAdmin(admin.ModelAdmin):
+    list_display = ("name", "description")
+    search_fields = ("name",)
+
 
 # Учётные записи (тех. и серверные)
 @admin.register(TechAccount)
-class TechAccountAdmin(admin.ModelAdmin):
+class TechAccountAdmin(SimpleHistoryAdmin):
     list_display = ("client", "username", "description", "updated_at")
     search_fields = ("username", "client__client_name")
     ordering = ["client__client_name"]

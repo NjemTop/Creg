@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
+    'simple_history',
     'channels_postgres',
     'django_celery_beat',
     'django_celery_results',
@@ -125,6 +126,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'apps.authentication.middleware.LoginRequiredMiddleware',
     'apps.configurations.middleware.BaseURLMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -160,16 +162,6 @@ CHANNEL_LAYERS = {
         },
     },
 }
-
-
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = ""
-EMAIL_PORT = 0
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = False
-EMAIL_HOST_USER = ""
-EMAIL_HOST_PASSWORD = ""
-
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases

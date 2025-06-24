@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class OIDCSettings(models.Model):
@@ -44,7 +45,26 @@ class IntegrationSettings(models.Model):
     yandex_token = models.CharField("OAuth-токен", max_length=255, blank=True)
     yandex_client_id = models.CharField("Yandex Client ID", max_length=255, blank=True)
     yandex_client_secret = models.CharField("Yandex Client Secret", max_length=255, blank=True)
-    yandex_disk_folders = models.JSONField("Пути Яндекс.Диска", default=dict, blank=True)
+    yandex_disk_folders = models.JSONField(
+        "Пути Яндекс.Диска",
+        default=dict,
+        blank=True,
+        help_text=(
+            "Ожидаемый формат:\n"
+            "{\n"
+            "  'release2x': {\n"
+            "    'server': [<пути>],\n"
+            "    'ipad': [<пути>],\n"
+            "    'android': [<пути>]\n"
+            "  },\n"
+            "  'release3x': {\n"
+            "    'server': [<пути>],\n"
+            "    'ipad': [<пути>],\n"
+            "    'android': [<пути>]\n"
+            "  }\n"
+            "}"
+        )
+    )
 
     # Nextcloud
     nextcloud_url = models.URLField("Nextcloud URL", blank=True)
@@ -57,7 +77,8 @@ class IntegrationSettings(models.Model):
     file_share_domain = models.CharField("SMB домен", max_length=255, blank=True)
     file_share_server = models.CharField("SMB сервер", max_length=255, blank=True)
 
-    # Confluence credentials
+    # Confluence
+    confluence_url = models.URLField("Confluence URL", blank=True)
     confluence_username = models.CharField("Confluence пользователь", max_length=255, blank=True)
     confluence_password = models.CharField("Confluence пароль", max_length=255, blank=True)
 
@@ -84,10 +105,26 @@ class IntegrationSettings(models.Model):
     yandex_dbs_client_id = models.CharField("Yandex DBS Client ID", max_length=255, blank=True)
     yandex_dbs_client_secret = models.CharField("Yandex DBS Client Secret", max_length=255, blank=True)
 
+    def clean(self):
+        super().clean()
+        folders = self.yandex_disk_folders
+        allowed_keys = {"server", "ipad", "android"}
+
+        if not isinstance(folders, dict):
+            raise ValidationError({"yandex_disk_folders": "Должен быть словарём с ключами версий (например, 'release2x')."})
+
+        for release_key, platforms in folders.items():
+            if not isinstance(platforms, dict):
+                raise ValidationError({f"yandex_disk_folders[{release_key}]": "Значение должно быть словарём с ключами 'server', 'ipad', 'android'."})
+            for platform_key, paths in platforms.items():
+                if platform_key not in allowed_keys:
+                    raise ValidationError({f"yandex_disk_folders[{release_key}][{platform_key}]": f"Недопустимый ключ: {platform_key}. Разрешены: {allowed_keys}."})
+                if not isinstance(paths, list) or not all(isinstance(p, str) for p in paths):
+                    raise ValidationError({f"yandex_disk_folders[{release_key}][{platform_key}]": "Значение должно быть списком строк."})
+
     def __str__(self):
         return "Integration settings"
 
     class Meta:
         verbose_name = "Интеграционные настройки"
         verbose_name_plural = "Интеграционные настройки"
-

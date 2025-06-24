@@ -177,7 +177,11 @@ def edit_mailing(request, mailing_id):
             messages.success(request, "Рассылка обновлена!")
             return redirect('mailing:mailing_list')
     else:
-        form = MailingForm(instance=mailing, initial={"test_email": test_email})
+        initial = {"test_email": test_email}
+        if mailing.saas_update_time:
+            initial["saas_update_time"] = mailing.saas_update_time.strftime('%Y-%m-%dT%H:%M')
+
+        form = MailingForm(instance=mailing, initial=initial)
 
     return render(request, 'mailings/edit_mailing.html', {'form': form, 'mailing': mailing})
 

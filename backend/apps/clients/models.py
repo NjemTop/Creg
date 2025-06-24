@@ -1,4 +1,5 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 from django.utils import timezone
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
@@ -30,6 +31,30 @@ class Language(models.Model):
         for lang in defaults:
             Language.objects.get_or_create(code=lang["code"], defaults={"name": lang["name"]})
 
+class ServicePack(models.Model):
+    """Тарифные планы обслуживания"""
+    code = models.CharField(max_length=50, unique=True, verbose_name="Код")
+    name = models.CharField(max_length=100, unique=True, verbose_name="Название")
+
+    class Meta:
+        verbose_name = "Тарифный план"
+        verbose_name_plural = "Тарифные планы"
+        db_table = "service_pack"
+
+    def __str__(self):
+        return self.name
+
+    @staticmethod
+    def initialize_default_packs():
+        default_packs = [
+            {"code": "bronze", "name": "Bronze"},
+            {"code": "silver", "name": "Silver"},
+            {"code": "gold", "name": "Gold"},
+            {"code": "platinum", "name": "Platinum"},
+        ]
+        for pack in default_packs:
+            ServicePack.objects.get_or_create(code=pack["code"], defaults={"name": pack["name"]})
+
 
 class Client(models.Model):
     """ Клиенты """
@@ -46,6 +71,8 @@ class Client(models.Model):
     notes = models.TextField(verbose_name="Примечание", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True, verbose_name="Активен")
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = "Клиент"
@@ -78,6 +105,8 @@ class Contact(models.Model):
     notes = models.TextField(verbose_name="Примечание", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True, verbose_name="Активен")
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = "Контакт"
@@ -95,7 +124,12 @@ class Contact(models.Model):
 class ServiceInfo(models.Model):
     """ Обслуживание клиента """
     client = models.OneToOneField(Client, on_delete=models.CASCADE, related_name="service_info", verbose_name="Клиент")
-    service_pack = models.CharField(verbose_name="Тарифный план", max_length=255)
+    service_pack = models.ForeignKey(
+        "ServicePack",
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        verbose_name="Тарифный план"
+    )
     manager = models.ForeignKey(
         "company.Employee",
         on_delete=models.SET_NULL,
@@ -106,6 +140,7 @@ class ServiceInfo(models.Model):
     loyalty = models.CharField(verbose_name="Лояльность", max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = "Обслуживание клиента"
@@ -139,6 +174,7 @@ class TechnicalInfo(models.Model):
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = "Техническая информация"
@@ -282,9 +318,12 @@ class Server(models.Model):
     ip_address = models.GenericIPAddressField(verbose_name="IP-адрес", protocol='both', unpack_ipv4=True)
     operating_system = models.CharField(verbose_name="Операционная система", max_length=100, blank=True)
     url = models.URLField(verbose_name="URL", blank=True, null=True)
+    platform = models.ForeignKey("Platform", on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Платформа")
     role = models.ForeignKey("ServerRole", on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Роль сервера")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True, verbose_name="Активен")
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = "Сервер"
@@ -311,6 +350,21 @@ class ServerRole(models.Model):
     def __str__(self):
         return self.name
 
+class Platform(models.Model):
+    """Платформа, на которой развёрнут клиент"""
+    name = models.CharField(verbose_name="Название платформы", max_length=100, unique=True)
+    description = models.TextField(verbose_name="Описание", blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Платформа"
+        verbose_name_plural = "Платформы"
+        db_table = "platform"
+
+    def __str__(self):
+        return self.name
+
 
 class TechAccount(models.Model):
     """ Технические учетные записи """
@@ -320,6 +374,8 @@ class TechAccount(models.Model):
     description = models.CharField(verbose_name="Описание", max_length=255, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True, verbose_name="Активен")
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = "Техническая учётная запись"

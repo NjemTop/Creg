@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 import json
 import os
 import logging
-from apps.mailings.services.utils.config import get_config_path
 from apps.configurations.config_loader import get_integration_settings
 
 logger = logging.getLogger(__name__)
@@ -12,27 +11,43 @@ logging.getLogger("atlassian").setLevel(logging.WARNING)
 logging.getLogger("rest_client").setLevel(logging.WARNING)
 
 
+class ConfluenceAuthError(Exception):
+    """Ошибка аутентификации в Confluence"""
+
+
+class ConfluenceAccessError(Exception):
+    """Ошибка доступа к странице в Confluence"""
+
+
 def get_server_release_notes(server_version, lang_key):
     server_updates = None
     data = get_integration_settings()
+    URL = data.get("CONFLUENCE", {}).get("URL")
     USERNAME = data.get("CONFLUENCE", {}).get("USERNAME")
     PASSWORD = data.get("CONFLUENCE", {}).get("PASSWORD")
-    url = 'https://confluence.boardmaps.ru'
+
+    if not USERNAME or not PASSWORD:
+        error_message = "Confluence логин/пароль не заданы."
+        logger.error(error_message)
+        raise ConfluenceAuthError(error_message)
+
     try:
-        confluence = Confluence(url=url, username=USERNAME, password=PASSWORD)
+        confluence = Confluence(url=URL, username=USERNAME, password=PASSWORD)
     except Exception as error_message:
         logger.error("Не удалось создать объект Confluence: %s", error_message)
-        raise
+        raise ConfluenceAuthError("Ошибка подключения к Confluence — проверьте логин и пароль.") from error_message
+
     server_title = f"BM {server_version}"
     try:
         page = confluence.get_page_by_title(title=server_title, space="development", expand='body.view')
-        if page:
-            server_updates = extract_content(page)
-            return server_updates.get(lang_key, [])
+        if not page:
+            logger.warning("Страница '%s' не найдена в Confluence.", server_title)
+            return []
+        server_updates = extract_content(page)
+        return server_updates.get(lang_key, [])
     except Exception as error_message:
-        logger.error("Не удалось получить страницы: %s", error_message)
-        raise
-    return []
+        logger.error("Ошибка при запросе страницы Confluence: %s", error_message)
+        raise ConfluenceAccessError(f"Confluence: нет доступа к странице '{server_title}'. Проверьте права пользователя.") from error_message
 
 
 def get_ipad_release_notes(ipad_version, lang_key):
@@ -40,14 +55,21 @@ def get_ipad_release_notes(ipad_version, lang_key):
         logger.info("Мобильная версия iPad не указана.")
         return []
     data = get_integration_settings()
+    URL = data.get("CONFLUENCE", {}).get("URL")
     USERNAME = data.get("CONFLUENCE", {}).get("USERNAME")
     PASSWORD = data.get("CONFLUENCE", {}).get("PASSWORD")
-    url = 'https://confluence.boardmaps.ru'
+
+    if not USERNAME or not PASSWORD:
+        error_message = "Confluence логин/пароль не заданы."
+        logger.error(error_message)
+        raise ConfluenceAuthError(error_message)
+
     try:
-        confluence = Confluence(url=url, username=USERNAME, password=PASSWORD)
+        confluence = Confluence(url=URL, username=USERNAME, password=PASSWORD)
     except Exception as error_message:
         logger.error("Не удалось создать объект Confluence: %s", error_message)
-        raise
+        raise ConfluenceAuthError("Ошибка подключения к Confluence — проверьте логин и пароль.") from error_message
+
     ipad_title = f"BM iOS/iPadOS {ipad_version}"
     try:
         page = confluence.get_page_by_title(title=ipad_title, space="development", expand='body.view')
@@ -58,7 +80,7 @@ def get_ipad_release_notes(ipad_version, lang_key):
         return ipad_updates.get(lang_key, [])
     except Exception as error_message:
         logger.error("Не удалось получить страницы: %s", error_message)
-        raise
+        raise ConfluenceAccessError(f"Confluence: нет доступа к странице '{ipad_title}'. Проверьте права пользователя.") from error_message
 
 
 def get_android_release_notes(android_version, lang_key):
@@ -66,14 +88,21 @@ def get_android_release_notes(android_version, lang_key):
         logger.info("Мобильная версия Android не указана.")
         return []
     data = get_integration_settings()
+    URL = data.get("CONFLUENCE", {}).get("URL")
     USERNAME = data.get("CONFLUENCE", {}).get("USERNAME")
     PASSWORD = data.get("CONFLUENCE", {}).get("PASSWORD")
-    url = 'https://confluence.boardmaps.ru'
+
+    if not USERNAME or not PASSWORD:
+        error_message = "Confluence логин/пароль не заданы."
+        logger.error(error_message)
+        raise ConfluenceAuthError(error_message)
+
     try:
-        confluence = Confluence(url=url, username=USERNAME, password=PASSWORD)
+        confluence = Confluence(url=URL, username=USERNAME, password=PASSWORD)
     except Exception as error_message:
         logger.error("Не удалось создать объект Confluence: %s", error_message)
-        raise
+        raise ConfluenceAuthError("Ошибка подключения к Confluence — проверьте логин и пароль.") from error_message
+
     android_title = f"Android {android_version}"
     try:
         page = confluence.get_page_by_title(title=android_title, space="development", expand='body.view')
@@ -85,7 +114,7 @@ def get_android_release_notes(android_version, lang_key):
             return []
     except Exception as error_message:
         logger.error("Не удалось получить страницы: %s", error_message)
-        raise
+        raise ConfluenceAccessError(f"Confluence: нет доступа к странице '{android_title}'. Проверьте права пользователя.") from error_message
 
 
 def extract_content(page_content):

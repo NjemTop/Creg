@@ -55,17 +55,21 @@ mailings.forEach(item => {
         let statusElement = document.getElementById(`status-${mailingId}`);
 
         if (statusElement && data.status) {
-            statusElement.innerText = data.status;
+            const statusText = typeof data.status === "object"
+                ? data.status.display
+                : data.status;
+
+            statusElement.innerText = statusText;
 
             // Обновляем кнопку
             let actionContainer = statusElement.closest("tr").querySelector(".d-flex");
-            if (data.status !== "Черновик") {
+            if (statusText !== "Черновик") {
                 actionContainer.innerHTML = `<a href="/mailings/detail/${mailingId}/" class="styled-btn view-result">Результат</a>`;
             }
 
             console.log("data:", data.status)
             // Показываем алерт только если рассылка завершилась ошибкой
-            if (data.status === "Ошибка") {
+            if (statusText === "Ошибка") {
                 showBootstrapToast(`Рассылка #${mailingId} завершилась с ошибкой!`, "danger");
             }
         }

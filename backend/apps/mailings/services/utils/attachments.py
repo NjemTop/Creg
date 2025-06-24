@@ -1,3 +1,11 @@
+"""
+
+Содержит вспомогательные функции для подготовки и прикрепления вложений в письма рассылки:
+- `attach_images`: прикрепляет изображения (например, логотипы) к письму.
+- `attach_files`: прикрепляет PDF-документацию на основе языка.
+- `update_documentation`: скачивает документацию с Яндекс.Диска, если она не найдена локально.
+- `embed_hidden_logo`: встраивает скрытый логотип и уникальный ID в HTML письма.
+"""
 import os
 import uuid
 import random
@@ -10,13 +18,15 @@ from PIL import Image
 from django.conf import settings
 from apps.mailings.services.integrations.yandex_disk import update_local_documentation
 
-# logging
-import logging
-
-logger = logging.getLogger(__name__)
 
 def attach_images(msg, logger=None):
-    """Attach images from the HTML/Images folder to the email message."""
+    """
+    Прикрепляет изображения из папки HTML/Images к сообщению email.
+
+    Args:
+        msg (MIMEMultipart): Объект письма.
+        logger (logging.Logger, optional): Логгер для отладки.
+    """
     images_dir = os.path.join(settings.BASE_DIR, 'scripts', 'release', 'HTML', 'Images')
     for image in os.listdir(images_dir):
         image_path = os.path.join(images_dir, image)
@@ -31,8 +41,16 @@ def attach_images(msg, logger=None):
             if logger:
                 logger.error("Изображение %s не найдено по пути %s.", image, image_path)
 
+
 def attach_files(msg, language, logger=None):
-    """Attach downloaded PDF files for the given language."""
+    """
+    Прикрепляет PDF-файлы к письму на основе заданного языка.
+
+    Args:
+        msg (MIMEMultipart): Объект письма.
+        language (str): Язык ('ru', 'en' и т.д.).
+        logger (logging.Logger, optional): Логгер для сообщений и ошибок.
+    """
     attachments_dir = os.path.join(settings.BASE_DIR, 'scripts', 'release', 'HTML', 'attachment', language.upper())
     files_attached = False
     if os.path.isdir(attachments_dir):
@@ -54,38 +72,67 @@ def attach_files(msg, language, logger=None):
     if not files_attached and logger:
         logger.error("Ни один файл не был найден для прикрепления.")
 
-def update_documentation(language, release_type, server_version, ipad_version, android_version, config):
-    """Download documentation from Yandex.Disk if it's not present locally."""
-    yandex_token = config["YANDEX_DISK"]["OAUTH-TOKEN"]
+
+def update_documentation(language, release_type, server_version, ipad_version, android_version, config, logger=None):
+    """
+    Проверяет наличие локальной документации и скачивает её с Яндекс.Диска при необходимости.
+
+    Args:
+        language (str): Язык ('ru', 'en').
+        release_type (str): Тип релиза (release3x, hotfix и т.д.).
+        server_version (str): Версия сервера.
+        ipad_version (str): Версия iPad-приложения.
+        android_version (str): Версия Android-приложения.
+        config (dict): Конфигурация с токеном и путями Яндекс.Диска.
+        logger (logging.Logger, optional): Логгер для сообщений и ошибок.
+    """
+    yandex_token = config["YANDEX_DISK"]["OAUTH_TOKEN"]
     yandex_folders = config["YANDEX_DISK_FOLDERS"]
     attachments_dir = os.path.join(settings.BASE_DIR, 'scripts', 'release', 'HTML', 'attachment', language.upper())
 
     try:
         if not os.path.exists(attachments_dir):
             os.makedirs(attachments_dir)
-            logger.info("Создана директория для документации: %s", attachments_dir)
+            if logger:
+                logger.info("Создана директория для документации: %s", attachments_dir)
     except OSError as error_message:
-        logger.error("Ошибка при создании директории %s: %s", attachments_dir, str(error_message))
+        if logger:
+            logger.error("Ошибка при создании директории %s: %s", attachments_dir, str(error_message))
         raise
 
+    # Если папка пуста — загружаем документацию с Яндекс.Диска
     if not os.listdir(attachments_dir):
-        logger.info(
-            "Документация для языка %s и версии %s не найдена локально, начинается скачивание...",
-            language.upper(), server_version)
+        if logger:
+            logger.info(
+                "Документация для языка %s и версии %s не найдена локально, начинается скачивание...",
+                language.upper(), server_version)
         update_local_documentation(
             yandex_token, yandex_folders, release_type, language, server_version, ipad_version, android_version)
     else:
-        logger.info(
-            "Документация для языка %s и версии %s уже скачана, повторное скачивание не требуется.",
-            language.upper(), server_version)
+        if logger:
+            logger.info(
+                "Документация для языка %s и версии %s уже скачана, повторное скачивание не требуется.",
+                language.upper(), server_version)
 
-def embed_hidden_logo(html, language):
-    """Embed a hidden logo and unique id into the rendered HTML."""
+
+def embed_hidden_logo(html, language, logger=None):
+    """
+    Встраивает скрытый логотип и уникальный ID в HTML-контент письма.
+
+    Args:
+        html (str): Сформированный HTML письма.
+        language (str): Язык письма (не используется явно, но может понадобиться в будущем).
+        logger (logging.Logger, optional): Логгер для сообщений и ошибок.
+
+    Returns:
+        str: HTML с вшитым логотипом и ID.
+    """
     try:
         unique_id = uuid.uuid4()
         image_path = os.path.join(settings.BASE_DIR, 'scripts', 'release', 'HTML', 'Images', 'bm_logo.png')
         with Image.open(image_path) as img:
             pixels = img.load()
+            # Незаметно мутируем 50 случайных пикселей изображения (визуально не влияет)
             for _ in range(50):
                 x = random.randint(0, img.width - 1)
                 y = random.randint(0, img.height - 1)
@@ -104,5 +151,6 @@ def embed_hidden_logo(html, language):
         html += f'<p style="display:none;">ID письма: {unique_id}</p>'
         html += f'<img src="data:image/png;base64,{img_base64}" style="display:none;" alt="hidden logo"/>'
     except Exception as e:
-        logger.error("Ошибка при встраивании скрытого логотипа: %s", str(e))
+        if logger:
+            logger.error("Ошибка при встраивании скрытого логотипа: %s", str(e))
     return html
